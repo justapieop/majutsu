@@ -40,3 +40,6 @@ bin/
 
 ### Environment file ###
 .env
+
+### Database file ###
+data.db
