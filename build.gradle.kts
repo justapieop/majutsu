@@ -44,9 +44,12 @@ dependencies {
       exclude(group = "org.openjfx")
     }
     implementation("org.kordamp.ikonli:ikonli-javafx:12.4.0")
-    implementation("org.postgresql:postgresql:42.7.7")
+    implementation("org.xerial:sqlite-jdbc:3.50.2.0")
     implementation("io.github.cdimascio:dotenv-java:3.2.0")
-    implementation("ch.qos.logback:logback-core:1.5.18")
+    implementation("ch.qos.logback:logback-classic:1.5.18")
+    implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("de.mkammerer:argon2-jvm:2.12")
+    implementation("net.java.dev.jna:jna:5.17.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
