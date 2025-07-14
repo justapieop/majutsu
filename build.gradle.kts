@@ -1,9 +1,9 @@
 plugins {
     java
     application
-    id("org.javamodularity.moduleplugin") version "1.8.12"
-    id("org.openjfx.javafxplugin") version "0.0.13"
-    id("org.beryx.jlink") version "2.25.0"
+    id("org.javamodularity.moduleplugin") version "1.8.15"
+    id("org.openjfx.javafxplugin") version "0.1.0"
+    id("org.beryx.jlink") version "3.1.1"
 }
 
 group = "me.justapie"
@@ -13,7 +13,7 @@ repositories {
     mavenCentral()
 }
 
-val junitVersion = "5.10.2"
+val junitVersion = "5.13.3"
 
 java {
     toolchain {
@@ -31,19 +31,22 @@ application {
 }
 
 javafx {
-    version = "17"
+    version = "21"
     modules = listOf("javafx.controls", "javafx.fxml")
 }
 
 dependencies {
-    implementation("org.controlsfx:controlsfx:11.2.1")
+    implementation("org.controlsfx:controlsfx:11.2.2")
     implementation("com.dlsc.formsfx:formsfx-core:11.6.0") {
       exclude(group = "org.openjfx")
     }
-    implementation("net.synedra:validatorfx:0.5.0") {
+    implementation("net.synedra:validatorfx:0.6.1") {
       exclude(group = "org.openjfx")
     }
-    implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
+    implementation("org.kordamp.ikonli:ikonli-javafx:12.4.0")
+    implementation("org.postgresql:postgresql:42.7.7")
+    implementation("io.github.cdimascio:dotenv-java:3.2.0")
+    implementation("ch.qos.logback:logback-core:1.5.18")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
@@ -58,4 +61,8 @@ jlink {
     launcher {
         name = "app"
     }
+}
+
+tasks.build {
+    dependsOn(tasks.jlink)
 }

@@ -6,6 +6,8 @@ module me.justapie.majutsu {
     requires com.dlsc.formsfx;
     requires net.synedra.validatorfx;
     requires org.kordamp.ikonli.javafx;
+    requires io.github.cdimascio.dotenv.java;
+    requires java.sql;
 
     opens me.justapie.majutsu to javafx.fxml;
     exports me.justapie.majutsu;
