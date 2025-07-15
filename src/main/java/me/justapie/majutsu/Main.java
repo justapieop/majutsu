@@ -11,7 +11,6 @@ import me.justapie.majutsu.utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 public class Main extends Application {
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(Main.class);
@@ -44,7 +43,7 @@ public class Main extends Application {
                 }
             } catch (IOException e) {
                 LOGGER.error("Failed to create the database file. Exiting application");
-                LOGGER.error(Arrays.toString(e.getStackTrace()));
+                LOGGER.error(e.getMessage());
                 System.exit(1);
             }
         }
@@ -55,7 +54,7 @@ public class Main extends Application {
             LOGGER.info("Database connected");
         } catch (SQLException e) {
             LOGGER.error("Failed to connect to database. Exiting application");
-            LOGGER.error(Arrays.toString(e.getStackTrace()));
+            LOGGER.error(e.getMessage());
             System.exit(1);
         }
 

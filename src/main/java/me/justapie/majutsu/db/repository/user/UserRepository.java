@@ -1,0 +1,84 @@
+package me.justapie.majutsu.db.repository.user;
+
+import ch.qos.logback.classic.Logger;
+import me.justapie.majutsu.db.DbClient;
+import me.justapie.majutsu.db.schema.User;
+import me.justapie.majutsu.db.schema.UserRole;
+import me.justapie.majutsu.utils.CryptoUtils;
+import me.justapie.majutsu.utils.Utils;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class UserRepository {
+    private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(UserRepository.class);
+    public UserRepository() {
+        super();
+    }
+
+    public String getPassword(String email) {
+        final Connection connection = DbClient.getInstance().getConnection();
+
+        ResultSet result;
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT password FROM users WHERE email = ?");
+            statement.setString(1, email);
+
+            result = statement.executeQuery();
+
+            return result.getString("password");
+        } catch (SQLException e) {
+            LOGGER.error("Error occurred while getting user password");
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public User getUserById(long id) {
+        final Connection connection = DbClient.getInstance().getConnection();
+
+        ResultSet result;
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE id = ?");
+            statement.setLong(1, id);
+
+            result = statement.executeQuery();
+        } catch (SQLException e) {
+            LOGGER.error("Error occurred while getting user");
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+
+        return User.fromResultSet(result);
+    }
+
+    public User createUser(String name, String email, String password) {
+        final Connection connection = DbClient.getInstance().getConnection();
+
+        ResultSet result;
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                            "INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?);"
+            );
+
+            statement.setLong(1, Utils.getInstance().generateSnowflakeId());
+            statement.setString(2, name);
+            statement.setString(3, email);
+            statement.setString(4, CryptoUtils.getInstance().hashPassword(password));
+            statement.setString(5, UserRole.USER.toString());
+
+            statement.executeUpdate();
+
+            // Due to driver limitation, we have to query for the user
+            long id = statement.getGeneratedKeys().getLong("id");
+            return this.getUserById(id);
+        } catch (SQLException e) {
+            LOGGER.error("Error occurred while creating user");
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+}
