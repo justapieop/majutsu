@@ -11,6 +11,8 @@ module me.justapie.majutsu {
     requires org.slf4j;
     requires ch.qos.logback.classic;
     requires de.mkammerer.argon2.nolibs;
+    requires snowflake.lib;
+    requires org.xerial.sqlitejdbc;
 
     opens me.justapie.majutsu to javafx.fxml;
     exports me.justapie.majutsu;

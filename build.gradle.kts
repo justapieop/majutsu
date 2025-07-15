@@ -50,6 +50,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation("de.mkammerer:argon2-jvm:2.12")
     implementation("net.java.dev.jna:jna:5.17.0")
+    implementation("me.fthomys:snowflake-lib:1.0.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
@@ -69,3 +70,5 @@ jlink {
 tasks.build {
     dependsOn(tasks.jlink)
 }
+
+// maven cai lon 
