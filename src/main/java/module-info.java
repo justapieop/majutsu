@@ -13,6 +13,7 @@ module me.justapie.majutsu {
     requires de.mkammerer.argon2.nolibs;
     requires snowflake.lib;
     requires org.xerial.sqlitejdbc;
+    requires atlantafx.base;
 
     opens me.justapie.majutsu to javafx.fxml;
     exports me.justapie.majutsu;

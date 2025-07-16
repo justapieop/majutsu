@@ -1,9 +1,5 @@
 package me.justapie.majutsu;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import ch.qos.logback.classic.Logger;
 import me.justapie.majutsu.db.DbClient;
 import me.justapie.majutsu.utils.Utils;
@@ -12,18 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class Main extends Application {
+public class Main {
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(Main.class);
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1366, 768);
-        primaryStage.setTitle("Hello!");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
     public static void main(String[] args) {
         LOGGER.debug("Debug mode enabled. You will see more logs");
         LOGGER.info("Initializing application");
@@ -59,6 +45,5 @@ public class Main extends Application {
         }
 
         LOGGER.info("Launching windows");
-        launch();
     }
 }

@@ -1,7 +1,6 @@
 package me.justapie.majutsu.db.schema;
 
 import me.justapie.majutsu.db.DbClient;
-import me.justapie.majutsu.exception.InsufficientPermissionException;
 import me.justapie.majutsu.utils.CryptoUtils;
 
 import java.sql.Connection;
@@ -56,14 +55,6 @@ public class User {
 
     public boolean isActive() {
         return this.active;
-    }
-
-    public Admin switchToAdmin() throws InsufficientPermissionException {
-        if (!this.role.equals(UserRole.ADMIN)) {
-            throw new InsufficientPermissionException("Insufficient permission");
-        }
-
-        return (Admin) this;
     }
 
     public void changePassword(String currentPassword, String newPassword) {
