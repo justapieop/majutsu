@@ -16,5 +16,6 @@ module me.justapie.majutsu {
     requires atlantafx.base;
 
     opens me.justapie.majutsu to javafx.fxml;
+    exports me.justapie.majutsu.gui;
     exports me.justapie.majutsu;
 }
