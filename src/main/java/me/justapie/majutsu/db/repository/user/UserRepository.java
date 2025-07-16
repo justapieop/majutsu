@@ -11,19 +11,39 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class UserRepository {
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(UserRepository.class);
+    private static final Connection CONNECTION = DbClient.getInstance().getConnection();
     public UserRepository() {
         super();
     }
 
-    public String getPassword(String email) {
-        final Connection connection = DbClient.getInstance().getConnection();
+    public ArrayList<User> getAllUsers() {
+        ArrayList<User> users = new ArrayList<>();
 
+        try {
+            PreparedStatement statement = CONNECTION.prepareStatement(
+                    "SELECT * FROM users;"
+            );
+
+            ResultSet result = statement.executeQuery();
+
+            while (result.next()) {
+                users.add(User.fromResultSet(result));
+            }
+        } catch (SQLException e) {
+            return users;
+        }
+
+        return users;
+    }
+
+    public String getPassword(String email) {
         ResultSet result;
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT password FROM users WHERE email = ?");
+            PreparedStatement statement = CONNECTION.prepareStatement("SELECT password FROM users WHERE email = ?");
             statement.setString(1, email);
 
             result = statement.executeQuery();
@@ -37,11 +57,9 @@ public class UserRepository {
     }
 
     public User getUserById(long id) {
-        final Connection connection = DbClient.getInstance().getConnection();
-
         ResultSet result;
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE id = ?");
+            PreparedStatement statement = CONNECTION.prepareStatement("SELECT * FROM users WHERE id = ?");
             statement.setLong(1, id);
 
             result = statement.executeQuery();
@@ -55,10 +73,8 @@ public class UserRepository {
     }
 
     public User createUser(String name, String email, String password) {
-        final Connection connection = DbClient.getInstance().getConnection();
-
         try {
-            PreparedStatement statement = connection.prepareStatement(
+            PreparedStatement statement = CONNECTION.prepareStatement(
                             "INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?);"
             );
 
