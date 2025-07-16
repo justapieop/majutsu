@@ -1,10 +1,11 @@
 package me.justapie.majutsu;
 
+import atlantafx.base.theme.PrimerDark;
+import ch.qos.logback.classic.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ch.qos.logback.classic.Logger;
 import me.justapie.majutsu.db.DbClient;
 import me.justapie.majutsu.utils.Utils;
 
@@ -18,6 +19,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main.fxml"));
+        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
         Scene scene = new Scene(fxmlLoader.load(), 1366, 768);
         primaryStage.setTitle("Hello!");
         primaryStage.setScene(scene);
