@@ -1,4 +1,4 @@
-package me.justapie.majutsu.utils;
+package net.justapie.majutsu.utils;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;

@@ -6,7 +6,7 @@ plugins {
     id("org.beryx.jlink") version "3.1.1"
 }
 
-group = "me.justapie"
+group = "net.justapie"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -26,8 +26,8 @@ tasks.withType<JavaCompile> {
 }
 
 application {
-    mainModule.set("me.justapie.majutsu")
-    mainClass.set("me.justapie.majutsu.Main")
+    mainModule.set("net.justapie.majutsu")
+    mainClass.set("net.justapie.majutsu.Main")
 }
 
 javafx {

@@ -1,4 +1,4 @@
-package me.justapie.majutsu.utils;
+package net.justapie.majutsu.utils;
 
 
 import de.mkammerer.argon2.Argon2;

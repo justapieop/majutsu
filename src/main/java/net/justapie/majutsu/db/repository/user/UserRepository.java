@@ -1,11 +1,11 @@
-package me.justapie.majutsu.db.repository.user;
+package net.justapie.majutsu.db.repository.user;
 
 import ch.qos.logback.classic.Logger;
-import me.justapie.majutsu.db.DbClient;
-import me.justapie.majutsu.db.schema.User;
-import me.justapie.majutsu.db.schema.UserRole;
-import me.justapie.majutsu.utils.CryptoUtils;
-import me.justapie.majutsu.utils.Utils;
+import net.justapie.majutsu.db.DbClient;
+import net.justapie.majutsu.db.schema.User;
+import net.justapie.majutsu.db.schema.UserRole;
+import net.justapie.majutsu.utils.CryptoUtils;
+import net.justapie.majutsu.utils.Utils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

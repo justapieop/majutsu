@@ -1,4 +1,4 @@
-package me.justapie.majutsu.db;
+package net.justapie.majutsu.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

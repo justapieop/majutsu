@@ -1,8 +1,10 @@
-package me.justapie.majutsu;
+package net.justapie.majutsu;
 
 import ch.qos.logback.classic.Logger;
-import me.justapie.majutsu.db.DbClient;
-import me.justapie.majutsu.utils.Utils;
+import javafx.application.Application;
+import net.justapie.majutsu.db.DbClient;
+import net.justapie.majutsu.gui.UIManager;
+import net.justapie.majutsu.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +46,8 @@ public class Main {
             System.exit(1);
         }
 
+
         LOGGER.info("Launching windows");
+        Application.launch(UIManager.class, args);
     }
 }

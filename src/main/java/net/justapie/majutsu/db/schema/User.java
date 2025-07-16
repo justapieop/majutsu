@@ -1,7 +1,7 @@
-package me.justapie.majutsu.db.schema;
+package net.justapie.majutsu.db.schema;
 
-import me.justapie.majutsu.db.DbClient;
-import me.justapie.majutsu.utils.CryptoUtils;
+import net.justapie.majutsu.db.DbClient;
+import net.justapie.majutsu.utils.CryptoUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
