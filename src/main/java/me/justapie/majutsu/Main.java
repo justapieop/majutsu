@@ -2,6 +2,7 @@ package me.justapie.majutsu;
 
 import ch.qos.logback.classic.Logger;
 import me.justapie.majutsu.db.DbClient;
+import me.justapie.majutsu.gui.UIMainManagement;
 import me.justapie.majutsu.utils.Utils;
 
 import java.io.File;
@@ -45,5 +46,6 @@ public class Main {
         }
 
         LOGGER.info("Launching windows");
+        new UIMainManagement().launch();
     }
 }
