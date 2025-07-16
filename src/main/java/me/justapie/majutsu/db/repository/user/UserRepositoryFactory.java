@@ -2,7 +2,7 @@ package me.justapie.majutsu.db.repository.user;
 
 import ch.qos.logback.classic.Logger;
 import me.justapie.majutsu.db.DbClient;
-import me.justapie.majutsu.db.provider.RepositoryFactoryProvider;
+import me.justapie.majutsu.provider.RepositoryFactoryProvider;
 import me.justapie.majutsu.utils.Utils;
 
 import java.sql.Connection;
@@ -23,13 +23,16 @@ public class UserRepositoryFactory extends RepositoryFactoryProvider<UserReposit
                     "password TEXT NOT NULL," +
                     "email TEXT UNIQUE NOT NULL," +
                     "role TEXT NOT NULL CHECK (role IN ('ADMIN', 'USER')) DEFAULT 'USER'," +
-                    "created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))" +
+                    "created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))," +
+                    "active BOOLEAN NOT NULL DEFAULT true" +
                     ");");
             LOGGER.info("User repository created");
 
+            LOGGER.info("Creating index for user");
             connection.createStatement().execute("CREATE UNIQUE INDEX IF NOT EXISTS user_idx ON users (" +
                     "id, email" +
                     ");");
+            LOGGER.info("Index created");
         } catch (SQLException e) {
             LOGGER.error("Failed while getting user repository");
             LOGGER.error(e.getMessage());

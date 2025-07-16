@@ -57,8 +57,6 @@ public class UserRepository {
     public User createUser(String name, String email, String password) {
         final Connection connection = DbClient.getInstance().getConnection();
 
-        ResultSet result;
-
         try {
             PreparedStatement statement = connection.prepareStatement(
                             "INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?);"

@@ -51,6 +51,7 @@ dependencies {
     implementation("de.mkammerer:argon2-jvm:2.12")
     implementation("net.java.dev.jna:jna:5.17.0")
     implementation("me.fthomys:snowflake-lib:1.0.0")
+    implementation("io.github.mkpaz:atlantafx-base:2.1.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
