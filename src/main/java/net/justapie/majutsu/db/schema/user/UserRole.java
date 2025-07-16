@@ -1,4 +1,4 @@
-package net.justapie.majutsu.db.schema;
+package net.justapie.majutsu.db.schema.user;
 
 public enum UserRole {
     ADMIN,

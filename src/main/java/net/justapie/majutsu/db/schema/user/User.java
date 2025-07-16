@@ -1,4 +1,4 @@
-package net.justapie.majutsu.db.schema;
+package net.justapie.majutsu.db.schema.user;
 
 import net.justapie.majutsu.db.DbClient;
 import net.justapie.majutsu.utils.CryptoUtils;
