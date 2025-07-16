@@ -1,4 +1,4 @@
-package me.justapie.majutsu.gui;
+package net.justapie.majutsu.gui;
 
 import atlantafx.base.theme.PrimerDark;
 import javafx.application.Application;
@@ -11,9 +11,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import me.justapie.majutsu.db.repository.user.UserRepository;
-import me.justapie.majutsu.db.repository.user.UserRepositoryFactory;
-import me.justapie.majutsu.utils.CryptoUtils;
+import net.justapie.majutsu.db.repository.user.UserRepository;
+import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
+import net.justapie.majutsu.utils.CryptoUtils;
 
 public class UIManager extends Application {
     @Override

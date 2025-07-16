@@ -1,10 +1,10 @@
-package me.justapie.majutsu;
+package net.justapie.majutsu;
 
 import ch.qos.logback.classic.Logger;
 import javafx.application.Application;
-import me.justapie.majutsu.db.DbClient;
-import me.justapie.majutsu.gui.UIManager;
-import me.justapie.majutsu.utils.Utils;
+import net.justapie.majutsu.db.DbClient;
+import net.justapie.majutsu.gui.UIManager;
+import net.justapie.majutsu.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;

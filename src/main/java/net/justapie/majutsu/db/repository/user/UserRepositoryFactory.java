@@ -1,9 +1,9 @@
-package me.justapie.majutsu.db.repository.user;
+package net.justapie.majutsu.db.repository.user;
 
 import ch.qos.logback.classic.Logger;
-import me.justapie.majutsu.db.DbClient;
-import me.justapie.majutsu.provider.RepositoryFactoryProvider;
-import me.justapie.majutsu.utils.Utils;
+import net.justapie.majutsu.db.DbClient;
+import net.justapie.majutsu.provider.RepositoryFactoryProvider;
+import net.justapie.majutsu.utils.Utils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
