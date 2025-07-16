@@ -12,7 +12,6 @@ public abstract class Document {
     protected String publisher;
     protected LocalDate publishedDate;
     protected String isbn;
-    protected String abstraction;
 
     // Timestamps and status
     protected LocalDate createdAt;
@@ -91,15 +90,6 @@ public abstract class Document {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
-        updateTimestamp();
-    }
-
-    public String getAbstraction() {
-        return this.abstraction;
-    }
-
-    public void setAbstraction(String abstraction) {
-        this.abstraction = abstraction;
         updateTimestamp();
     }
 

@@ -1,5 +1,8 @@
 package net.justapie.majutsu.db.schema.book;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public class Book extends Document {
     private String type;
     private String language;
@@ -9,32 +12,32 @@ public class Book extends Document {
         super();
     }
 
-    // Constructor với một tác giả
+   
     public Book(String title, String author, String publisher, String isbn,
                 String type, String language, int pageCount) {
         super();
         this.title = title;
-        this.setAuthor(author);  // Sử dụng setter để xử lý List<String> authors
+        this.setAuthor(author);  
         this.publisher = publisher;
         this.isbn = isbn;
         this.createdAt = LocalDate.now();
-        this.status = DocumentEnum.AVAILABLE;
+        this.status = DocumentStatus.AVAILABLE;
         this.type = type;
         this.language = language;
         this.pageCount = pageCount;
         updateTimestamp();
     }
 
-    // Constructor với nhiều tác giả
+
     public Book(String title, List<String> authors, String publisher, String isbn,
                 String type, String language, int pageCount) {
         super();
         this.title = title;
-        this.setAuthors(authors);  // Sử dụng setter để xử lý List<String> authors
+        this.setAuthors(authors);  
         this.publisher = publisher;
         this.isbn = isbn;
         this.createdAt = LocalDate.now();
-        this.status = DocumentEnum.AVAILABLE;
+        this.status = DocumentStatus.AVAILABLE;
         this.type = type;
         this.language = language;
         this.pageCount = pageCount;
@@ -75,7 +78,7 @@ public class Book extends Document {
     @Override
     public void borrow(long borrowerId, int loanDays) {
         if (isAvailableForLoan()) {
-            this.status = DocumentEnum.BORROWED;
+            this.status = DocumentStatus.BORROWED;
             this.borrowerId = borrowerId;
             this.borrowDate = LocalDate.now();
             this.dueDate = this.borrowDate.plusDays(loanDays);
