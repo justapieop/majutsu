@@ -1,9 +1,13 @@
 package net.justapie.majutsu.db.schema.book;
 
-/**
- * Main interface for Document objects.
- * Combines core document functionality from specialized interfaces.
- */
-public interface DocumentInterface extends Borrowable, Identifiable, Displayable {
+
+interface BorrowInterface {
     // This interface combines all document-related functionality from specialized interfaces
+    void borrow(long borrowerId, int loanDays);
+    void returnDocument();
+    boolean isAvailableForLoan();
+    boolean isBorrowed();
+    void borrow(long borrowerId);
+    
 }
+

@@ -7,6 +7,7 @@ public class Book extends Document {
     private String type;
     private String language;
     private int pageCount;
+    private final int DEFAULT_LOAN_DAYS = 14; // Default loan period for books
 
     public Book() {
         super();
@@ -18,7 +19,7 @@ public class Book extends Document {
                 String type, String language, int pageCount) {
         super();
         this.title = title;
-        this.setAuthors(authors);  
+        this.authors = authors;  
         this.publisher = publisher;
         this.isbn = isbn;
         this.createdAt = LocalDate.now();
@@ -47,11 +48,11 @@ public class Book extends Document {
         return "Book";
     }
 
-    public void borrow(long borrowerId) {
-        borrow(borrowerId, 14);
-    }
-
     public void returnBook() {
         returnDocument();
+    }
+    @Override
+    public int getDefaultLoanDays() {
+        return DEFAULT_LOAN_DAYS; // Return the default loan days for books
     }
 }

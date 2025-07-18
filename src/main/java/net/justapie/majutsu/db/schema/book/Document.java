@@ -4,7 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Document implements DocumentInterface {
+
+public abstract class Document implements DisplayInterface, BorrowInterface{
     // Basic document properties
     protected long id;
     protected String title;
@@ -20,9 +21,13 @@ public abstract class Document implements DocumentInterface {
     protected LocalDate borrowDate;
     protected LocalDate dueDate;
     protected long borrowerId;
+    
 
 
-   
+
+     protected void updateTimestamp() {
+        this.updatedAt = LocalDate.now();
+    }
 
 
     public long getId() {
@@ -67,9 +72,7 @@ public abstract class Document implements DocumentInterface {
         return this.updatedAt;
     }
 
-     protected void updateTimestamp() {
-        this.updatedAt = LocalDate.now();
-    }
+   
 
 
     public DocumentStatus getStatus() {
@@ -88,7 +91,11 @@ public abstract class Document implements DocumentInterface {
         return this.borrowerId;
     }
 
-    // Status check methods
+     public abstract int getDefaultLoanDays();
+
+
+
+
     public boolean isAvailableForLoan() {
         return this.status == DocumentStatus.AVAILABLE;
     }
@@ -108,6 +115,9 @@ public abstract class Document implements DocumentInterface {
            throw new IllegalStateException("Book is not available for loan.");
        }
    }
+   public void borrow(long borrowerId) {
+        borrow(borrowerId, getDefaultLoanDays()); // Default loan period of 14 days
+    }
     
     public void returnDocument() {
         if (isBorrowed()) {
@@ -121,9 +131,7 @@ public abstract class Document implements DocumentInterface {
         }
     }
 
-    
-    // Abstract methods
-    public abstract String getDocumentType();
+   
 
 
 }
