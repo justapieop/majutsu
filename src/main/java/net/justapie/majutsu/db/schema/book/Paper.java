@@ -5,18 +5,9 @@ import java.util.List;
 
 public class Paper extends Document {
     private String doi;
-    private final int DEFAULT_LOAN_DAYS = 7; // Default loan period for papers
+    private final int DEFAULT_LOAN_DAYS = 7; 
 
-
-    // Default constructor
-    public Paper() {
-        this.createdAt = LocalDate.now();
-        this.updatedAt = LocalDate.now();
-        this.status = DocumentStatus.AVAILABLE;
-    }
-
-
-    // Constructor với basic fields
+    
     public Paper(String title, List<String> authors, String publisher, String isbn, String doi) {
         this.title = title;
         this.authors = authors;
@@ -29,7 +20,6 @@ public class Paper extends Document {
     }
 
 
-    // Getters
     public String getDoi() {
         return this.doi;
     }
@@ -46,6 +36,6 @@ public class Paper extends Document {
 
     @Override
     public int getDefaultLoanDays() {
-        return DEFAULT_LOAN_DAYS; // Return the default loan days for papers
+        return DEFAULT_LOAN_DAYS; 
     }
 }

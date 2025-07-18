@@ -18,20 +18,18 @@ interface DisplayInterface {
     LocalDate getDueDate();
     long getBorrowerId();
     String getDocumentType();
-    int getDefaultLoanDays(); // Default loan period in days
+    int getDefaultLoanDays(); 
 
 
 }
 
 
 interface BookDisplayInterface extends DisplayInterface {
-    // Book-specific getters
     String getType();
     String getLanguage();
     int getPageCount();
 }
 
 interface PaperDisplayInterface extends DisplayInterface {
-    // Paper-specific getter
     String getDoi();
 }

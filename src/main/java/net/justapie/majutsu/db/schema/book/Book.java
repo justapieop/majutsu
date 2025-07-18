@@ -7,14 +7,9 @@ public class Book extends Document {
     private String type;
     private String language;
     private int pageCount;
-    private final int DEFAULT_LOAN_DAYS = 14; // Default loan period for books
+    private final int DEFAULT_LOAN_DAYS = 14; 
 
-    public Book() {
-        super();
-    }
-    
-
-    //Multiple authors
+  
     public Book(String title, List<String> authors, String publisher, String isbn,
                 String type, String language, int pageCount) {
         super();
@@ -30,7 +25,6 @@ public class Book extends Document {
         updateTimestamp();
     }
 
-    // Getters
     public String getType() {
         return type;
     }
@@ -53,6 +47,6 @@ public class Book extends Document {
     }
     @Override
     public int getDefaultLoanDays() {
-        return DEFAULT_LOAN_DAYS; // Return the default loan days for books
+        return DEFAULT_LOAN_DAYS; 
     }
 }

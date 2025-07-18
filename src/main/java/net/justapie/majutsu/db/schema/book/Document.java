@@ -98,7 +98,7 @@ public abstract class Document implements DisplayInterface, BorrowInterface{
     public boolean isBorrowed() {
         return this.status == DocumentStatus.BORROWED;
     }
-    // Common return method
+
     public void borrow(long borrowerId, int loanDays) {
        if (isAvailableForLoan()) {
            this.status = DocumentStatus.BORROWED;
@@ -111,7 +111,7 @@ public abstract class Document implements DisplayInterface, BorrowInterface{
        }
    }
    public void borrow(long borrowerId) {
-        borrow(borrowerId, getDefaultLoanDays()); // Default loan period of 14 days
+        borrow(borrowerId, getDefaultLoanDays()); 
     }
     
     public void returnDocument() {
