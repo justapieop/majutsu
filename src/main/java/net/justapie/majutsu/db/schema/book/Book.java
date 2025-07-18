@@ -12,12 +12,12 @@ public class Book extends Document {
         super();
     }
 
-    // Constructor với một tác giả
+   
     public Book(String title, String author, String publisher, String isbn,
                 String type, String language, int pageCount) {
         super();
         this.title = title;
-        this.setAuthor(author);  // Sử dụng setter để xử lý List<String> authors
+        this.setAuthor(author);  
         this.publisher = publisher;
         this.isbn = isbn;
         this.createdAt = LocalDate.now();
@@ -28,12 +28,12 @@ public class Book extends Document {
         updateTimestamp();
     }
 
-    // Constructor với nhiều tác giả
+
     public Book(String title, List<String> authors, String publisher, String isbn,
                 String type, String language, int pageCount) {
         super();
         this.title = title;
-        this.setAuthors(authors);  // Sử dụng setter để xử lý List<String> authors
+        this.setAuthors(authors);  
         this.publisher = publisher;
         this.isbn = isbn;
         this.createdAt = LocalDate.now();
