@@ -33,13 +33,6 @@ public class Paper extends Document {
         return this.doi;
     }
 
-
-    // Setters
-    public void setDoi(String doi) {
-        this.doi = doi;
-    }
-
-
     @Override
     public String getDocumentType() {
         return "Paper";
