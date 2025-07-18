@@ -91,11 +91,6 @@ public abstract class Document implements DisplayInterface, BorrowInterface{
         return this.borrowerId;
     }
 
-     public abstract int getDefaultLoanDays();
-
-
-
-
     public boolean isAvailableForLoan() {
         return this.status == DocumentStatus.AVAILABLE;
     }
