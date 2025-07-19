@@ -4,7 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Document {
+
+public abstract class Document implements DisplayInterface, BorrowInterface{
     // Basic document properties
     protected long id;
     protected String title;
@@ -20,9 +21,13 @@ public abstract class Document {
     protected LocalDate borrowDate;
     protected LocalDate dueDate;
     protected long borrowerId;
+    
 
 
-   
+
+     protected void updateTimestamp() {
+        this.updatedAt = LocalDate.now();
+    }
 
 
     public long getId() {
@@ -40,16 +45,8 @@ public abstract class Document {
     }
 
     public String getAuthor() {
-        return this.authors != null && !this.authors.isEmpty() ? this.authors.get(0) : null;
+        return this.authors.get(0); 
     }
-
-
-    public void setAuthors(List<String> authors) {
-        this.authors = new ArrayList<>(authors);
-        updateTimestamp();
-    }
-
-
 
     public String getPublisher() {
         return this.publisher;
@@ -71,64 +68,29 @@ public abstract class Document {
         return this.createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public LocalDate getUpdatedAt() {
         return this.updatedAt;
     }
 
-     protected void updateTimestamp() {
-        this.updatedAt = LocalDate.now();
-    }
+   
 
 
     public DocumentStatus getStatus() {
         return this.status;
     }
 
-    public void setStatus(DocumentStatus status) {
-        this.status = status;
-        updateTimestamp();
-    }
-
     public LocalDate getBorrowDate() {
         return this.borrowDate;
-    }
-
-    // Borrowing setters
-    public void setBorrowDate(LocalDate borrowDate) {
-        this.borrowDate = borrowDate;
     }
 
     public LocalDate getDueDate() {
         return this.dueDate;
     }
 
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
-
     public long getBorrowerId() {
         return this.borrowerId;
     }
 
-    public void setBorrowerId(long borrowerId) {
-        this.borrowerId = borrowerId;
-    }
-
-    public void addAuthor(String author) {
-        if (this.authors == null) {
-            this.authors = new ArrayList<>();
-        }
-        if (!this.authors.contains(author)) {
-            this.authors.add(author);
-            updateTimestamp();
-        }
-    }
-
-    // Status check methods
     public boolean isAvailableForLoan() {
         return this.status == DocumentStatus.AVAILABLE;
     }
@@ -136,7 +98,7 @@ public abstract class Document {
     public boolean isBorrowed() {
         return this.status == DocumentStatus.BORROWED;
     }
-    // Common return method
+
     public void borrow(long borrowerId, int loanDays) {
        if (isAvailableForLoan()) {
            this.status = DocumentStatus.BORROWED;
@@ -148,6 +110,9 @@ public abstract class Document {
            throw new IllegalStateException("Book is not available for loan.");
        }
    }
+   public void borrow(long borrowerId) {
+        borrow(borrowerId, getDefaultLoanDays()); 
+    }
     
     public void returnDocument() {
         if (isBorrowed()) {
@@ -161,9 +126,7 @@ public abstract class Document {
         }
     }
 
-    
-    // Abstract methods
-    public abstract String getDocumentType();
+   
 
 
 }
