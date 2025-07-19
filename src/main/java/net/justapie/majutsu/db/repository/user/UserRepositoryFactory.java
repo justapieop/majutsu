@@ -16,7 +16,7 @@ public class UserRepositoryFactory extends RepositoryFactoryProvider<UserReposit
         final Connection connection = DbClient.getInstance().getConnection();
 
         try {
-            LOGGER.info("Getting user repository. Creating repository if not exists");
+
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS users (" +
                     "id INTEGER PRIMARY KEY UNIQUE NOT NULL," +
                     "name TEXT NOT NULL DEFAULT 'Unknown'," +
@@ -28,7 +28,7 @@ public class UserRepositoryFactory extends RepositoryFactoryProvider<UserReposit
                     ");");
             LOGGER.info("User repository created");
 
-            LOGGER.info("Creating index for user");
+            LOGGER.info("Creating index for user if not exists");
             connection.createStatement().execute("CREATE UNIQUE INDEX IF NOT EXISTS user_idx ON users (" +
                     "id, email" +
                     ");");
