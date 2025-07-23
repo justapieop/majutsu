@@ -125,8 +125,4 @@ public abstract class Document implements DisplayInterface, BorrowInterface{
             throw new IllegalStateException("Document is not currently borrowed.");
         }
     }
-
-   
-
-
 }
