@@ -1,3 +1,7 @@
+package net.justapie.majutsu.new_gui;
+
+import atlantafx.base.theme.PrimerDark;
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.geometry.HPos;
@@ -9,7 +13,9 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.image.*;
-
+import net.justapie.majutsu.db.repository.user.UserRepository;
+import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
+import net.justapie.majutsu.utils.CryptoUtils;
 import java.util.ArrayList;
 
 public class DashboardConsole {
