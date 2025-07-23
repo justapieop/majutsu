@@ -24,12 +24,4 @@ interface DisplayInterface {
 }
 
 
-interface BookDisplayInterface extends DisplayInterface {
-    String getType();
-    String getLanguage();
-    int getPageCount();
-}
 
-interface PaperDisplayInterface extends DisplayInterface {
-    String getDoi();
-}
