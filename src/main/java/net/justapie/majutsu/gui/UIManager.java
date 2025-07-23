@@ -16,6 +16,9 @@ import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
 import net.justapie.majutsu.utils.CryptoUtils;
 
 public class UIManager extends Application {
+
+    private Scene loginScene;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
@@ -48,7 +51,7 @@ public class UIManager extends Application {
             root.setHgap(15);
             root.setVgap(10);
 
-            root.add(new Label("Enter you email and password!"), 0, 0, 2, 1);
+            root.add(new Label("Enter email and password!"), 0, 0, 2, 1);
 
             GridPane.setHalignment(emailLabel, HPos.RIGHT);
             root.add(emailLabel, 0, 1, 1, 1);
@@ -65,8 +68,9 @@ public class UIManager extends Application {
             GridPane.setHalignment(loginButton, HPos.RIGHT);
             root.add(loginButton, 1, 3, 1, 1);
 
-            Scene loginScene = new Scene(root, 600, 300);
-            primaryStage.setTitle("Welcome to ... dmm tu dien ten app");
+            loginScene = new Scene(root, 600, 300);
+
+            primaryStage.setTitle("Welcome to Majutsu - Library Management Tool.");
             primaryStage.setScene(loginScene);
             primaryStage.show();
         }
