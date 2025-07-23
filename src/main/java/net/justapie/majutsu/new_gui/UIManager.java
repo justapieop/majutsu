@@ -1,17 +1,21 @@
+package net.justapie.majutsu.new_gui;
+
+import atlantafx.base.theme.PrimerDark;
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.image.*;
+import net.justapie.majutsu.db.repository.user.UserRepository;
+import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
+import net.justapie.majutsu.utils.CryptoUtils;
 
 // All classes inside folder "GUI" are all used for GUI.
 
