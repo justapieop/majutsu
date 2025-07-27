@@ -103,6 +103,32 @@ public class UserRepository {
         return User.fromResultSet(result);
     }
 
+    public void changePassword(long id, String password) {
+        try {
+            PreparedStatement statement = CONNECTION.prepareStatement("UPDATE users SET password = ? WHERE id = ?");
+            statement.setString(1, CryptoUtils.getInstance().hashPassword(password));
+            statement.setLong(2, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.error("Error occurred while getting updating user password");
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+    public void changeName(long id, String name) {
+        try {
+            PreparedStatement statement = CONNECTION.prepareStatement("UPDATE users SET name = ? WHERE id = ?");
+            statement.setString(1, name);
+            statement.setLong(2, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.error("Error occurred while getting updating user name");
+            LOGGER.error(e.getMessage());
+        }
+    }
+
     /**
      * Due to driver limitation, there must be two queries to be executed
      */
