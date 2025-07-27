@@ -15,7 +15,7 @@ module net.justapie.majutsu {
     requires org.xerial.sqlitejdbc;
     requires atlantafx.base;
 
-    opens net.justapie.majutsu.gui to javafx.fxml;
+    opens net.justapie.majutsu.gui.controller to javafx.fxml;
+    exports net.justapie.majutsu.gui.controller;
     exports net.justapie.majutsu.gui;
-    exports net.justapie.majutsu;
 }
