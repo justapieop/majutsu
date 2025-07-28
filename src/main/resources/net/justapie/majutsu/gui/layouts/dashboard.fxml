@@ -36,15 +36,13 @@
         </GridPane>
     </top>
     <left>
-        <GridPane BorderPane.alignment="CENTER">
+        <GridPane prefHeight="717.0" prefWidth="157.0" BorderPane.alignment="CENTER">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="434.0" minHeight="10.0" prefHeight="358.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="366.0" minHeight="10.0" prefHeight="359.0" vgrow="SOMETIMES"/>
             </rowConstraints>
         </GridPane>
     </left>
