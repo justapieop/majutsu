@@ -3,8 +3,6 @@ package net.justapie.majutsu.new_gui;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-// All classes inside folder "GUI" are all used for GUI.
-
 public class UIManager extends Application {
 
     // Object states are declared here. If you move it, you are gay.
