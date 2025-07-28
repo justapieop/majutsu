@@ -12,6 +12,7 @@ import java.sql.SQLException;
 
 public class Main {
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(Main.class);
+
     public static void main(String[] args) {
         LOGGER.debug("Debug mode enabled. You will see more logs");
         LOGGER.info("Initializing application");
