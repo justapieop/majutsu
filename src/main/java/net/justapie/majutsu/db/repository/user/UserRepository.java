@@ -44,7 +44,7 @@ public class UserRepository {
         ResultSet result;
         try {
             PreparedStatement statement = CONNECTION.prepareStatement("SELECT password FROM users WHERE email = ?");
-            statement.setString(1, email);
+            statement.setString(1, email.toLowerCase());
 
             result = statement.executeQuery();
 
@@ -56,6 +56,21 @@ public class UserRepository {
         }
     }
 
+    public long getUserIdByEmail(String email) {
+        ResultSet result;
+        try {
+            PreparedStatement statement = CONNECTION.prepareStatement("SELECT * FROM users WHERE email = ?");
+            statement.setString(1, email);
+
+            result = statement.executeQuery();
+            return result.getLong("id");
+        } catch (SQLException e) {
+            LOGGER.error("Error occurred while getting user id by email");
+            LOGGER.error(e.getMessage());
+            return 0;
+        }
+    }
+
     public User getUserById(long id) {
         ResultSet result;
         try {
@@ -64,7 +79,7 @@ public class UserRepository {
 
             result = statement.executeQuery();
         } catch (SQLException e) {
-            LOGGER.error("Error occurred while getting user");
+            LOGGER.error("Error occurred while getting user by id");
             LOGGER.error(e.getMessage());
             return null;
         }
@@ -72,24 +87,69 @@ public class UserRepository {
         return User.fromResultSet(result);
     }
 
+    public User getUserByEmail(String email) {
+        ResultSet result;
+        try {
+            PreparedStatement statement = CONNECTION.prepareStatement("SELECT * FROM users WHERE email = ?");
+            statement.setString(1, email.toLowerCase());
+
+            result = statement.executeQuery();
+        } catch (SQLException e) {
+            LOGGER.error("Error occurred while getting user by email");
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+
+        return User.fromResultSet(result);
+    }
+
+    public void changePassword(long id, String password) {
+        try {
+            PreparedStatement statement = CONNECTION.prepareStatement("UPDATE users SET password = ? WHERE id = ?");
+            statement.setString(1, CryptoUtils.getInstance().hashPassword(password));
+            statement.setLong(2, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.error("Error occurred while getting updating user password");
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+    public void changeName(long id, String name) {
+        try {
+            PreparedStatement statement = CONNECTION.prepareStatement("UPDATE users SET name = ? WHERE id = ?");
+            statement.setString(1, name);
+            statement.setLong(2, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.error("Error occurred while getting updating user name");
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+    /**
+     * Due to driver limitation, there must be two queries to be executed
+     */
     public User createUser(String name, String email, String password) {
         try {
+
             PreparedStatement statement = CONNECTION.prepareStatement(
                             "INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?);"
             );
 
             statement.setLong(1, Utils.getInstance().generateSnowflakeId());
             statement.setString(2, name);
-            statement.setString(3, email);
+            statement.setString(3, email.toLowerCase());
             statement.setString(4, CryptoUtils.getInstance().hashPassword(password));
             statement.setString(5, UserRole.USER.toString());
 
             statement.executeUpdate();
 
-            // Due to driver limitation, we have to query for the user
-            long id = statement.getGeneratedKeys().getLong("id");
-            return this.getUserById(id);
+            return this.getUserByEmail(email);
         } catch (SQLException e) {
+            if (e.getMessage().startsWith("[SQLITE_CONSTRAINT_UNIQUE]")) return null;
             LOGGER.error("Error occurred while creating user");
             LOGGER.error(e.getMessage());
             return null;

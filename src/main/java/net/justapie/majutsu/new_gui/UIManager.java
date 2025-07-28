@@ -1,19 +1,7 @@
-import javafx.application.Application;
-import javafx.geometry.Pos;
-import javafx.geometry.HPos;
-import javafx.geometry.VPos;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.*;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.scene.image.*;
+package net.justapie.majutsu.new_gui;
 
-// All classes inside folder "GUI" are all used for GUI.
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 public class UIManager extends Application {
 

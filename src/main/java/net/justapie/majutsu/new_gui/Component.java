@@ -1,14 +1,7 @@
-import javafx.application.Application;
-import javafx.geometry.Pos;
-import javafx.geometry.HPos;
-import javafx.geometry.VPos;
-import javafx.geometry.Insets;
+package net.justapie.majutsu.new_gui;
+
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.scene.image.*;
 
 public class Component {
 
