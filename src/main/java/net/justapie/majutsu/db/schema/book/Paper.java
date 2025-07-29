@@ -154,7 +154,7 @@ public class Paper implements Borrowable {
         }
         this.borrowedBy = user;
         this.borrowedAt = LocalDate.now();
-        this.dueDate = LocalDate.now().plusDays(DEFAULT_PAPER_LOAN_DATES); // Example: 2 weeks loan
+        this.dueDate = LocalDate.now().plusDays(DEFAULT_PAPER_LOAN_DATES); 
         this.status = DocumentStatus.BORROWED;
         return true;
     }
