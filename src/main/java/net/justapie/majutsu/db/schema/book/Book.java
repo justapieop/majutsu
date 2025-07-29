@@ -1,63 +1,13 @@
 package net.justapie.majutsu.db.schema.book;
 
-import net.justapie.majutsu.db.DbClient;
-
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.sql.Connection;
 import java.sql.ResultSet;
 
 
-public class Book implements Borrowable {
-    public long getId() {
-        return id;
-    }
-    public String getTitle() {
-        return title;
-    }
-    public List<String> getAuthors() {
-        return authors;
-    }
-    public String getPublisher() {
-        return publisher;
-    }
-    public LocalDate getPublishDate() {
-        return publishDate;
-    }
-    public String getIsbn() {
-        return isbn;
-    }
-    public String getBorrowedBy() {
-        return borrowedBy;
-    }
-    public LocalDate getBorrowedAt() {
-        return borrowedAt;
-    }
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-    public LocalDate getUpdatedAt() {
-        return updatedAt;
-    }
-    public DocumentStatus getStatus() {
-        return status;
-    }
-    public String getBookType() {
-        return bookType;
-    }
-    public String getLanguage() {
-        return language;
-    }
-    public int getPageCount() {
-        return pageCount;
-    }
-    final int DEFAULT_LOAN_DATES = 14; 
+public class Book implements Borrowable{
+    private final int DEFAULT_LOAN_DATES = 14; 
     
     
     private long id;
@@ -81,7 +31,65 @@ public class Book implements Borrowable {
     private String language;
     private int pageCount;
 
+    public long getId() {
+        return id;
+    }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public List<String> getAuthors() {
+        return authors;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public LocalDate getPublishDate() {
+        return publishDate;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public String getBorrowedBy() {
+        return borrowedBy;
+    }
+
+    public LocalDate getBorrowedAt() {
+        return borrowedAt;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDate getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public DocumentStatus getStatus() {
+        return status;
+    }
+
+    public String getBookType() {
+        return bookType;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public int getPageCount() {
+        return pageCount;
+    }
 
     public static Book fromResultSet(ResultSet rs) {
         final Book book = new Book();
@@ -114,11 +122,36 @@ public class Book implements Borrowable {
         }
         this.borrowedBy = user;
         this.borrowedAt = LocalDate.now();
-        this.dueDate = LocalDate.now().plusDays(DEFAULT_LOAN_DATES); // Example: 2 weeks loan
+        this.dueDate = LocalDate.now().plusDays(DEFAULT_LOAN_DATES); 
         this.status = DocumentStatus.BORROWED;
         return true;
     }
+
+      @Override
+    public boolean borrow(String user, int days) {
+        if (this.status == DocumentStatus.BORROWED) {
+            return false;
+        }
+        this.borrowedBy = user;
+        this.borrowedAt = LocalDate.now();
+        this.dueDate = LocalDate.now().plusDays(days); 
+        this.status = DocumentStatus.BORROWED;
+        return true;
+    }
+
     @Override
+    public void returnItem()
+    {
+         this.status = DocumentStatus.AVAILABLE;
+    }
+    @Override
+    public boolean isAvailable(){
+        return this.status == DocumentStatus.AVAILABLE;
+    }
+    @Override
+    public boolean isBorrowed(){
+        return this.status == DocumentStatus.BORROWED;
+    }
 
    
 }

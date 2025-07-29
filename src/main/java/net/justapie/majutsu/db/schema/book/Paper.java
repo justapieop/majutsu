@@ -6,49 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class Paper implements Borrowable {
-    public long getId() {
-        return id;
-    }
-    public String getTitle() {
-        return title;
-    }
-    public List<String> getAuthors() {
-        return authors;
-    }
-    public String getPublisher() {
-        return publisher;
-    }
-    public LocalDate getPublishDate() {
-        return publishDate;
-    }
-    public String getIsbn() {
-        return isbn;
-    }
-    public String getLanguage() {
-        return language;
-    }
-    public int getPageCount() {
-        return pageCount;
-    }
-    public String getBorrowedBy() {
-        return borrowedBy;
-    }
-    public LocalDate getBorrowedAt() {
-        return borrowedAt;
-    }
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-    public LocalDate getUpdatedAt() {
-        return updatedAt;
-    }
-    public DocumentStatus getStatus() {
-        return status;
-    }
-    final int DEFAULT_LOAN_DATES = 14; 
+    final int DEFAULT_PAPER_LOAN_DATES = 7; 
     
     private long id;
     private String title;
@@ -58,8 +16,6 @@ public class Paper implements Borrowable {
     private String isbn;
     private String language;
     private int pageCount;
-
-    
 
     private String borrowedBy;
     private LocalDate borrowedAt;
@@ -77,24 +33,86 @@ public class Paper implements Borrowable {
     private Long sourceBookId;
     private String documentType;
 
+    public long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public List<String> getAuthors() {
+        return authors;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public LocalDate getPublishDate() {
+        return publishDate;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public String getBorrowedBy() {
+        return borrowedBy;
+    }
+
+    public LocalDate getBorrowedAt() {
+        return borrowedAt;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDate getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public DocumentStatus getStatus() {
+        return status;
+    }
+
     public String getConference() {
         return conference;
     }
+
     public String getJournal() {
         return journal;
     }
+
     public String getVolume() {
         return volume;
     }
+
     public String getIssue() {
         return issue;
     }
+
     public String getDoi() {
         return doi;
     }
+
     public Long getSourceBookId() {
         return sourceBookId;
     }
+
     public String getDocumentType() {
         return documentType;
     }
@@ -136,7 +154,19 @@ public class Paper implements Borrowable {
         }
         this.borrowedBy = user;
         this.borrowedAt = LocalDate.now();
-        this.dueDate = LocalDate.now().plusDays(DEFAULT_LOAN_DATES); // Example: 2 weeks loan
+        this.dueDate = LocalDate.now().plusDays(DEFAULT_PAPER_LOAN_DATES); 
+        this.status = DocumentStatus.BORROWED;
+        return true;
+    }
+
+    @Override
+    public boolean borrow(String user, int days) {
+        if (this.status == DocumentStatus.BORROWED) {
+            return false;
+        }
+        this.borrowedBy = user;
+        this.borrowedAt = LocalDate.now();
+        this.dueDate = LocalDate.now().plusDays(days); 
         this.status = DocumentStatus.BORROWED;
         return true;
     }
@@ -153,5 +183,7 @@ public class Paper implements Borrowable {
     public boolean isBorrowed(){
         return this.status == DocumentStatus.BORROWED;
     }
+
+
 
 }

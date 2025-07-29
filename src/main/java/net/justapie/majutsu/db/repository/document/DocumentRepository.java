@@ -72,6 +72,7 @@ public class DocumentRepository {
         }
         return books;
     }
+
   
     public boolean createBook(Book book) {
         String sql = "INSERT INTO documents (title, authors, publisher, publish_date, isbn, book_type, language, page_count, borrowed_by, borrowed_at, due_date, created_at, updated_at, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -93,6 +94,17 @@ public class DocumentRepository {
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             LOGGER.error("Error creating book: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean deleteDocument(int id){
+        String sql = "DELETE FROM documents WHERE id = ?";
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (Exception e) {
+            LOGGER.error("Error deleteing document:" + e.getMessage());
             return false;
         }
     }
