@@ -6,7 +6,7 @@ import java.util.List;
 import java.sql.ResultSet;
 
 
-public class Book implements Borrowable{
+public class Book {
     private final int DEFAULT_LOAN_DATES = 14; 
     
     
@@ -22,6 +22,7 @@ public class Book implements Borrowable{
     private String borrowedBy;
     private LocalDate borrowedAt;
     private LocalDate dueDate;
+    private boolean Borrowed;
 
     private LocalDate createdAt;
     private LocalDate updatedAt;
@@ -109,48 +110,11 @@ public class Book implements Borrowable{
             book.createdAt = rs.getDate("created_at").toLocalDate();
             book.updatedAt = rs.getDate("updated_at").toLocalDate();
             book.status = DocumentStatus.valueOf(rs.getString("status"));
+            book.Borrowed = rs.getBoolean("borrowed");
         } catch (SQLException e) {
             return null;
         }
         return book;
-    }
-
-    @Override
-    public boolean borrow(String user) {
-        if (this.status == DocumentStatus.BORROWED) {
-            return false;
-        }
-        this.borrowedBy = user;
-        this.borrowedAt = LocalDate.now();
-        this.dueDate = LocalDate.now().plusDays(DEFAULT_LOAN_DATES); 
-        this.status = DocumentStatus.BORROWED;
-        return true;
-    }
-
-      @Override
-    public boolean borrow(String user, int days) {
-        if (this.status == DocumentStatus.BORROWED) {
-            return false;
-        }
-        this.borrowedBy = user;
-        this.borrowedAt = LocalDate.now();
-        this.dueDate = LocalDate.now().plusDays(days); 
-        this.status = DocumentStatus.BORROWED;
-        return true;
-    }
-
-    @Override
-    public void returnItem()
-    {
-         this.status = DocumentStatus.AVAILABLE;
-    }
-    @Override
-    public boolean isAvailable(){
-        return this.status == DocumentStatus.AVAILABLE;
-    }
-    @Override
-    public boolean isBorrowed(){
-        return this.status == DocumentStatus.BORROWED;
     }
 
    

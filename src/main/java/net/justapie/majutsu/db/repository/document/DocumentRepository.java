@@ -13,10 +13,81 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.time.LocalDate;
+
 
 public class DocumentRepository {
+
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(DocumentRepository.class);
     private static final Connection CONNECTION = DbClient.getInstance().getConnection();
+
+    public boolean setAvailable(int id) {
+        String sql = "UPDATE documents SET borrowed = 0, borrowed_by = NULL, borrowed_at = NULL, due_date = NULL WHERE id = ?";
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            LOGGER.error("Error resetting borrow status: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean setBorrowed(int id, String borrowedBy, LocalDate dueDate) {
+        String sql = "UPDATE documents SET borrowed = 1, borrowed_by = ?, borrowed_at = ?, due_date = ? WHERE id = ?";
+        LocalDate now = LocalDate.now();
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
+            stmt.setString(1, borrowedBy);
+            stmt.setObject(2, now);
+            stmt.setObject(3, dueDate);
+            stmt.setInt(4, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            LOGGER.error("Error updating borrowed status: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public ArrayList<Object> getAllBorrowed() {
+        ArrayList<Object> borrowedDocs = new ArrayList<>();
+        String sql = "SELECT * FROM documents WHERE borrowed = 1";
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String type = rs.getString("document_type");
+                if ("BOOK".equalsIgnoreCase(type)) {
+                    Book book = Book.fromResultSet(rs);
+                    if (book != null) borrowedDocs.add(book);
+                } else if ("PAPER".equalsIgnoreCase(type)) {
+                    Paper paper = Paper.fromResultSet(rs);
+                    if (paper != null) borrowedDocs.add(paper);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error fetching borrowed documents: " + e.getMessage());
+        }
+        return borrowedDocs;
+    }
+
+    public ArrayList<Object> getAllAvailable() {
+        ArrayList<Object> availableDocs = new ArrayList<>();
+        String sql = "SELECT * FROM documents WHERE borrowed = 0";
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String type = rs.getString("document_type");
+                if ("BOOK".equalsIgnoreCase(type)) {
+                    Book book = Book.fromResultSet(rs);
+                    if (book != null) availableDocs.add(book);
+                } else if ("PAPER".equalsIgnoreCase(type)) {
+                    Paper paper = Paper.fromResultSet(rs);
+                    if (paper != null) availableDocs.add(paper);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error fetching available documents: " + e.getMessage());
+        }
+        return availableDocs;
+    }
 
     public ArrayList<Object> getAllDocuments() {
         ArrayList<Object> documents = new ArrayList<>();

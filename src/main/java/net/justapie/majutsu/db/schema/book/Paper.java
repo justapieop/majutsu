@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
-public class Paper implements Borrowable {
+public class Paper {
     final int DEFAULT_PAPER_LOAN_DATES = 7; 
     
     private long id;
@@ -20,6 +20,7 @@ public class Paper implements Borrowable {
     private String borrowedBy;
     private LocalDate borrowedAt;
     private LocalDate dueDate;
+    private boolean borrowed;
 
     private LocalDate createdAt;
     private LocalDate updatedAt;
@@ -141,49 +142,13 @@ public class Paper implements Borrowable {
             paper.createdAt = rs.getDate("created_at").toLocalDate();
             paper.updatedAt = rs.getDate("updated_at").toLocalDate();
             paper.status = DocumentStatus.valueOf(rs.getString("status"));
+            paper.borrowed = rs.getBoolean("borrowed");
         } catch (SQLException e) {
             return null;
         }
         return paper;
     }
 
-    @Override
-    public boolean borrow(String user) {
-        if (this.status == DocumentStatus.BORROWED) {
-            return false;
-        }
-        this.borrowedBy = user;
-        this.borrowedAt = LocalDate.now();
-        this.dueDate = LocalDate.now().plusDays(DEFAULT_PAPER_LOAN_DATES); 
-        this.status = DocumentStatus.BORROWED;
-        return true;
-    }
-
-    @Override
-    public boolean borrow(String user, int days) {
-        if (this.status == DocumentStatus.BORROWED) {
-            return false;
-        }
-        this.borrowedBy = user;
-        this.borrowedAt = LocalDate.now();
-        this.dueDate = LocalDate.now().plusDays(days); 
-        this.status = DocumentStatus.BORROWED;
-        return true;
-    }
-    @Override
-    public void returnItem()
-    {
-         this.status = DocumentStatus.AVAILABLE;
-    }
-    @Override
-    public boolean isAvailable(){
-        return this.status == DocumentStatus.AVAILABLE;
-    }
-    @Override
-    public boolean isBorrowed(){
-        return this.status == DocumentStatus.BORROWED;
-    }
-
-
+   
 
 }
