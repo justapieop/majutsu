@@ -2,8 +2,10 @@ package net.justapie.majutsu.db.repository.document;
 
 import ch.qos.logback.classic.Logger;
 import net.justapie.majutsu.db.DbClient;
+
 import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.db.schema.book.Paper;
+
 import net.justapie.majutsu.utils.Utils;
 
 import java.sql.Connection;
@@ -71,6 +73,7 @@ public class DocumentRepository {
         return books;
     }
 
+  
     public boolean createBook(Book book) {
         String sql = "INSERT INTO documents (title, authors, publisher, publish_date, isbn, book_type, language, page_count, borrowed_by, borrowed_at, due_date, created_at, updated_at, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
