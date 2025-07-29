@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "net.justapie"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -64,12 +64,12 @@ jlink {
     imageZip.set(layout.buildDirectory.file("/distributions/app-${javafx.platform.classifier}.zip"))
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
     launcher {
-        name = "app"
+        name = "Majutsu"
     }
 }
 
 tasks.build {
-    dependsOn(tasks.jlink)
+    dependsOn(tasks.jpackage)
 }
 
 // maven cai lon 
