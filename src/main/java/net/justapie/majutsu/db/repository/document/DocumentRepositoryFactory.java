@@ -6,9 +6,9 @@ import net.justapie.majutsu.provider.RepositoryFactoryProvider;
 import net.justapie.majutsu.utils.Utils;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Objects;
+
 
 public class DocumentRepositoryFactory extends RepositoryFactoryProvider<DocumentRepository> {
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(DocumentRepositoryFactory.class);
@@ -19,7 +19,7 @@ public class DocumentRepositoryFactory extends RepositoryFactoryProvider<Documen
 
         try {
             LOGGER.info("Getting document repository. Creating repository if not exists");
-            PreparedStatement stmt = connection.prepareStatement(
+            connection.createStatement().execute(
                     "CREATE TABLE IF NOT EXISTS documents (" +
                             "id INTEGER PRIMARY KEY NOT NULL UNIQUE," +
                             "title TEXT NOT NULL," + 
