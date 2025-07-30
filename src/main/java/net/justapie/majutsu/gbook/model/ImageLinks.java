@@ -1,4 +1,4 @@
-package net.justapie.majutsu.gbook;
+package net.justapie.majutsu.gbook.model;
 
 public class ImageLinks {
     public String small;

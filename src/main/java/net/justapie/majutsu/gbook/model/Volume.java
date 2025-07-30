@@ -1,4 +1,4 @@
-package net.justapie.majutsu.gbook;
+package net.justapie.majutsu.gbook.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
