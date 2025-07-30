@@ -1,9 +1,11 @@
 package net.justapie.majutsu.gui.fetcher;
 
-import net.justapie.majutsu.gui.DataFetchable;
+import net.justapie.majutsu.gui.fetcher.DataFetchable;
+import net.justapie.majutsu.gui.cache.GenericType;
 
-public class DocumentFetcher implements DataFetchable<V> {
+public class DocumentFetcher implements DataFetchable<GenericType> {
     @Override
-    public V fetch(long key) {
+    public GenericType fetch(long key) {
+        return null;
     }
 }

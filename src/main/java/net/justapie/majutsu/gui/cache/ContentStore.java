@@ -1,39 +1,39 @@
 package net.justapie.majutsu.gui.cache;
 
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.justapie.majutsu.gui.fetcher.DocumentFetcher;
 
-
 public class ContentStore implements Cacheable<ContentStore> {
-    private final Map<long, CacheEntry<V>> store = new HashMap<>();
+    private final HashMap<Long, CacheEntry<GenericType>> store = new HashMap<>();
     private long ttlMs;
-    private final DocumentFetcher<V> fetcher;
+    private DocumentFetcher fetcher;
 
     private static final ContentStore INSTANCE = new ContentStore();
 
     ContentStore() {
     }
 
-    public void setConfiguration(long ttlMs, DocumentFetcher<V> fetcher) {
+    public void setConfiguration(long ttlMs, DocumentFetcher fetcher) {
         this.ttlMs = ttlMs;
         this.fetcher = fetcher;
     }
 
+    @Override
     public ContentStore getInstance() {
         return INSTANCE;
     }
 
-    public void put(long key, V value) {
+    public void put(long key, GenericType value) {
         store.put(key, new CacheEntry<>(value, ttlMs));
     }
 
-    public V get(long key) {
-        CacheEntry<V> entry = store.get(key);
+    public GenericType get(long key) {
+        CacheEntry<GenericType> entry = store.get(key);
 
         if (entry == null || entry.isExpired()) {
-            V newValue = fetcher.fetch(key);
+            GenericType newValue = fetcher.fetch(key);
             if (entry == null) {
                 put(key, newValue);
             } else {
@@ -46,12 +46,27 @@ public class ContentStore implements Cacheable<ContentStore> {
     }
 
     public void refreshAll() {
-        for (Map.Entry<long, CacheEntry<V>> entry : store.entrySet()) {
+        for (HashMap.Entry<Long, CacheEntry<GenericType>> entry : store.entrySet()) {
             long key = entry.getKey();
-            CacheEntry<V> value = entry.getValue();
+            CacheEntry<GenericType> value = entry.getValue();
             if (value.isExpired()) {
                 value.refresh(fetcher.fetch(key), ttlMs);
             }
         }
+    }
+
+    @Override
+    public ArrayList<GenericType> getBorrowed() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public ArrayList<GenericType> getAvailable() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public ArrayList<GenericType> getExpired() {
+        return new ArrayList<>();
     }
 }

@@ -1,8 +1,10 @@
 package net.justapie.majutsu.gui.cache;
 
+import java.util.ArrayList;
+
 public interface Cacheable<T> {
     T getInstance();
-    ArrayList<DUCUMENT_TYPE> getBorrowed();
-    ArrayList<DUCUMENT_TYPE> getAvailable();
-    ArrayList<DUCUMENT_TYPE> getExpired();
+    abstract ArrayList<GenericType> getBorrowed();
+    abstract ArrayList<GenericType> getAvailable();
+    abstract ArrayList<GenericType> getExpired();
 }
