@@ -6,8 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class Paper {
-    final int DEFAULT_PAPER_LOAN_DATES = 7; 
-    
     private long id;
     private String title;
     private List<String> authors;
@@ -24,7 +22,7 @@ public class Paper {
 
     private LocalDate createdAt;
     private LocalDate updatedAt;
-    private DocumentStatus status;
+
     
     private String conference;
     private String journal;
@@ -86,10 +84,6 @@ public class Paper {
         return updatedAt;
     }
 
-    public DocumentStatus getStatus() {
-        return status;
-    }
-
     public String getConference() {
         return conference;
     }
@@ -141,7 +135,6 @@ public class Paper {
             paper.dueDate = rs.getDate("due_date").toLocalDate();
             paper.createdAt = rs.getDate("created_at").toLocalDate();
             paper.updatedAt = rs.getDate("updated_at").toLocalDate();
-            paper.status = DocumentStatus.valueOf(rs.getString("status"));
             paper.borrowed = rs.getBoolean("borrowed");
         } catch (SQLException e) {
             return null;

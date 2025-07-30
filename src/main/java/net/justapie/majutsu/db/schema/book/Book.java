@@ -6,10 +6,7 @@ import java.util.List;
 import java.sql.ResultSet;
 
 
-public class Book {
-    private final int DEFAULT_LOAN_DATES = 14; 
-    
-    
+public class Book {    
     private long id;
     private String title;
     private List<String> authors;
@@ -26,7 +23,6 @@ public class Book {
 
     private LocalDate createdAt;
     private LocalDate updatedAt;
-    private DocumentStatus status;
 
     private String bookType;
     private String language;
@@ -76,10 +72,6 @@ public class Book {
         return updatedAt;
     }
 
-    public DocumentStatus getStatus() {
-        return status;
-    }
-
     public String getBookType() {
         return bookType;
     }
@@ -109,7 +101,6 @@ public class Book {
             book.dueDate = rs.getDate("due_date").toLocalDate();
             book.createdAt = rs.getDate("created_at").toLocalDate();
             book.updatedAt = rs.getDate("updated_at").toLocalDate();
-            book.status = DocumentStatus.valueOf(rs.getString("status"));
             book.Borrowed = rs.getBoolean("borrowed");
         } catch (SQLException e) {
             return null;
