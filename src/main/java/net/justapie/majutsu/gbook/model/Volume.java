@@ -1,65 +1,16 @@
 package net.justapie.majutsu.gbook.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.google.gson.annotations.Expose;
 
 public class Volume {
+    @Expose
     protected String id;
-    protected String title;
-    protected String subtitle;
-    protected ArrayList<String> authors;
-    protected String description;
-    protected ArrayList<IndustryIdentifier> industryIdentifiers;
-    protected int pageCount;
-    protected String mainCategory;
-    protected ArrayList<String> categories;
-    protected PrintType printType;
-    protected String language;
-    protected ImageLinks imageLinks;
 
-    public ImageLinks getImageLinks() {
-        return this.imageLinks;
-    }
+    @Expose
+    protected VolumeInfo volumeInfo;
 
-    public String getLanguage() {
-        return this.language;
-    }
-
-    public List<String> getCategories() {
-        return Collections.unmodifiableList(this.categories);
-    }
-
-    public PrintType getPrintType() {
-        return this.printType;
-    }
-
-    public String getMainCategory() {
-        return this.mainCategory;
-    }
-
-    public int getPageCount() {
-        return this.pageCount;
-    }
-
-    public List<IndustryIdentifier> getIndustryIdentifiers() {
-        return Collections.unmodifiableList(this.industryIdentifiers);
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public List<String> getAuthors() {
-        return Collections.unmodifiableList(this.authors);
-    }
-
-    public String getSubtitle() {
-        return this.subtitle;
-    }
-
-    public String getTitle() {
-        return this.title;
+    public VolumeInfo getVolumeInfo() {
+        return this.volumeInfo;
     }
 
     public String getId() {
