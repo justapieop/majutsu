@@ -17,7 +17,7 @@ public class Book {
     private String borrowedBy;
     private LocalDate borrowedAt;
     private LocalDate dueDate;
-    private boolean Borrowed;
+    private boolean borrowed;
 
     private LocalDate createdAt;
     private LocalDate updatedAt;
@@ -70,7 +70,7 @@ public class Book {
             book.dueDate = rs.getDate("due_date").toLocalDate();
             book.createdAt = rs.getDate("created_at").toLocalDate();
             book.updatedAt = rs.getDate("updated_at").toLocalDate();
-            book.Borrowed = rs.getBoolean("borrowed");
+            book.borrowed = rs.getBoolean("borrowed");
         } catch (SQLException e) {
             return null;
         }
