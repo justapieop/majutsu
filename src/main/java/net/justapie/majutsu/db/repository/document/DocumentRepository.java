@@ -161,7 +161,6 @@ public class DocumentRepository {
             stmt.setObject(11, book.getDueDate());
             stmt.setObject(12, book.getCreatedAt());
             stmt.setObject(13, book.getUpdatedAt());
-            stmt.setString(14, book.getStatus() != null ? book.getStatus().name() : null);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             LOGGER.error("Error creating book: " + e.getMessage());
