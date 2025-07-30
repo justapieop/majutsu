@@ -1,4 +1,4 @@
-package net.justapie.majutsu.gui;
+package net.justapie.majutsu.gui.cache;
 
 public class CacheEntry<T> {
     private T value;
