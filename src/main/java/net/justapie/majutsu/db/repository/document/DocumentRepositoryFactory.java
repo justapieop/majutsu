@@ -21,19 +21,14 @@ public class DocumentRepositoryFactory extends RepositoryFactoryProvider<Documen
             LOGGER.info("Getting document repository. Creating repository if not exists");
             connection.createStatement().execute(
                     "CREATE TABLE IF NOT EXISTS documents (" +
-                            "id INTEGER PRIMARY KEY NOT NULL UNIQUE," +
-                            "title TEXT NOT NULL," + 
-                            "authors TEXT NOT NULL," + 
-                            "isbn TEXT," + 
-                            "doi TEXT,"+
-
-                            "borrowed_by TEXT," +
+                            "id tEXT PRIMARY KEY NOT NULL UNIQUE," +
+    
+                            "borrowed_by LONG," +
                             "borrowed_at DATE," +
-                            "due_date DATE," +
+                            "return_date DATE," +
                             "borrowed BOOLEAN NOT NULL,"+
                         
-                            
-                            "document_type TEXT NOT NULL CHECK (document_type IN ('BOOK', 'PAPER'))" +
+                      
                             "created_at INTEGER DEFAULT (strftime('%s', 'now')),"+
                             "updated at INTEGER DEFAULT (strftime('%s', 'now'))"+
                             ");"
@@ -45,7 +40,7 @@ public class DocumentRepositoryFactory extends RepositoryFactoryProvider<Documen
 
             LOGGER.info("Creating index for documents if not exists");
             connection.createStatement().execute("CREATE UNIQUE INDEX IF NOT EXISTS documents_idx ON documents (" +
-                    "id, title, authors, isbn, doi" + ");");
+                    "id" + ");");
             LOGGER.info("Index created");
             
         } catch (SQLException e) {
