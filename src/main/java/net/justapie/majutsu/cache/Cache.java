@@ -18,17 +18,18 @@ public class Cache {
         return INSTANCE;
     }
 
-    public void put(String key, Object data, long ttl) {
-        this.cacheMap.put(key, CacheObject.create(ttl, data));
+    public <T> void put(String key, T data, long ttl) {
+        this.cacheMap.put(key, new CacheObject<T>(ttl, data));
     }
 
     public void put(String key, Object data) {
         this.put(key, data, this.defaultTtl);
     }
 
-    public CacheObject get(String key) {
-        CacheObject cacheObject = this.cacheMap.get(key);
+    public <T> CacheObject<T> get(String key) {
+        CacheObject<T> cacheObject = this.cacheMap.get(key);
         if (Objects.isNull(cacheObject) || cacheObject.isExpired()) {
+            this.cacheMap.remove(key);
             return null;
         }
         return cacheObject;
