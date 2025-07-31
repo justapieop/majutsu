@@ -5,7 +5,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
 
-public class BaseFetcher<T, K extends HttpResponse.BodyHandler<T>> extends Thread {
+public abstract class BaseFetcher<T, K extends HttpResponse.BodyHandler<T>> extends Thread {
     private final HttpRequest httpRequest;
     private final HttpClient httpClient;
     private HttpResponse<T> httpResponse;
@@ -17,17 +17,17 @@ public class BaseFetcher<T, K extends HttpResponse.BodyHandler<T>> extends Threa
         this.bodyHandler = bodyHandler;
     }
 
-    protected HttpClient getHttpClient() {
-        return this.httpClient;
-    }
-
-    protected HttpRequest getHttpRequest() {
+    public HttpRequest getHttpRequest() {
         return this.httpRequest;
     }
 
-    public T get() {
-        return this.httpResponse.body();
+    public HttpResponse<T> getHttpResponse() {
+        return this.httpResponse;
     }
+
+    public abstract String extractId();
+
+    public abstract T get() throws InterruptedException;
 
     @Override
     public void run() {
