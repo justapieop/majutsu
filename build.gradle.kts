@@ -52,6 +52,7 @@ dependencies {
     implementation("net.java.dev.jna:jna:5.17.0")
     implementation("me.fthomys:snowflake-lib:1.0.0")
     implementation("io.github.mkpaz:atlantafx-base:2.1.0")
+    implementation("com.google.code.gson:gson:2.13.1")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
@@ -69,7 +70,7 @@ jlink {
 }
 
 tasks.build {
-    dependsOn(tasks.jpackage)
+    dependsOn(tasks.jlink)
 }
 
 // maven cai lon 
