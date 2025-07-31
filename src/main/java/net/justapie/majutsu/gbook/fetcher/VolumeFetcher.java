@@ -5,31 +5,10 @@ import net.justapie.majutsu.gbook.model.Volume;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.util.concurrent.ExecutionException;
 
-public class VolumeFetcher extends BaseFetcher<Volume> {
+public class VolumeFetcher extends BaseFetcher<Volume, GetVolumeHandler> {
     public VolumeFetcher(HttpClient httpClient, HttpRequest httpRequest) {
-        super(httpClient, httpRequest);
+        super(httpClient, httpRequest, new GetVolumeHandler());
         this.start();
-    }
-
-    @Override
-    public Volume get() {
-        return this.getHttpResponse().body();
-    }
-
-    @Override
-    public void run() {
-        try {
-            this.setHttpResponse(
-                    this.getHttpClient()
-                            .sendAsync(
-                                    this.getHttpRequest(),
-                                    new GetVolumeHandler()
-                            ).get()
-            );
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
