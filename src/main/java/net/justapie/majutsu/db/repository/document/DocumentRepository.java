@@ -20,11 +20,23 @@ public class DocumentRepository {
 
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(DocumentRepository.class);
     private static final Connection CONNECTION = DbClient.getInstance().getConnection();
+    
+    private boolean updateTime(int id){
+        String sql = "UPDATE documents SET updated_at = strftime('%s', 'now') WHERE id = ?";
+        try(PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e){
+            LOGGER.error("Error updating timestamp: " + e.getMessage());
+            return false;
+        }
+    }
 
     public boolean setAvailable(int id) {
         String sql = "UPDATE documents SET borrowed = 0, borrowed_by = NULL, borrowed_at = NULL, due_date = NULL WHERE id = ?";
         try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
             stmt.setInt(1, id);
+            updateTime(id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             LOGGER.error("Error resetting borrow status: " + e.getMessage());
@@ -32,14 +44,15 @@ public class DocumentRepository {
         }
     }
 
-    public boolean setBorrowed(int id, String borrowedBy, LocalDate dueDate) {
+    public boolean setBorrowed(int id, String borrowName, LocalDate dueDate) {
         String sql = "UPDATE documents SET borrowed = 1, borrowed_by = ?, borrowed_at = ?, due_date = ? WHERE id = ?";
         LocalDate now = LocalDate.now();
         try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
-            stmt.setString(1, borrowedBy);
+            stmt.setString(1, borrowName);
             stmt.setObject(2, now);
             stmt.setObject(3, dueDate);
-            stmt.setInt(4, id);
+            stmt.setInt(4, id); 
+            updateTime(id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             LOGGER.error("Error updating borrowed status: " + e.getMessage());
@@ -146,21 +159,28 @@ public class DocumentRepository {
 
   
     public boolean createBook(Book book) {
-        String sql = "INSERT INTO documents (title, authors, publisher, publish_date, isbn, book_type, language, page_count, borrowed_by, borrowed_at, due_date, created_at, updated_at, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO documents (title, authors, isbn, document_type, borrowed, created_at, updated_at) VALUES (?, ?, ?, ?, ?, strftime('%s', 'now'), strftime('%s', 'now'))";
         try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
             stmt.setString(1, book.getTitle());
             stmt.setString(2, String.join(",", book.getAuthors()));
-            stmt.setString(3, book.getPublisher());
-            stmt.setObject(4, book.getPublishDate());
-            stmt.setString(5, book.getIsbn());
-            stmt.setString(6, book.getBookType());
-            stmt.setString(7, book.getLanguage());
-            stmt.setInt(8, book.getPageCount());
-            stmt.setString(9, book.getBorrowedBy());
-            stmt.setObject(10, book.getBorrowedAt());
-            stmt.setObject(11, book.getDueDate());
-            stmt.setObject(12, book.getCreatedAt());
-            stmt.setObject(13, book.getUpdatedAt());
+            stmt.setString(3, book.getIsbn());
+            stmt.setString(4, "BOOK");
+            stmt.setBoolean(5, false); 
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            LOGGER.error("Error creating book: " + e.getMessage());
+            return false;
+        }
+    }
+
+     public boolean createPaper(Paper paper) {
+        String sql = "INSERT INTO documents (title, authors, doi, document_type, borrowed, created_at, updated_at) VALUES (?, ?, ?, ?, ?, strftime('%s', 'now'), strftime('%s', 'now'))";
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
+            stmt.setString(1, paper.getTitle());
+            stmt.setString(2, String.join(",", paper.getAuthors()));
+            stmt.setString(3, paper.getDoi());
+            stmt.setString(4, "PAPER");
+            stmt.setBoolean(5, false); 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             LOGGER.error("Error creating book: " + e.getMessage());
@@ -172,6 +192,7 @@ public class DocumentRepository {
         String sql = "DELETE FROM documents WHERE id = ?";
         try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
             stmt.setInt(1, id);
+            updateTime(id);
             return stmt.executeUpdate() > 0;
         } catch (Exception e) {
             LOGGER.error("Error deleteing document:" + e.getMessage());

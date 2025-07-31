@@ -37,7 +37,7 @@ public class AccountController extends BaseController implements Initializable {
     @FXML
     private void onSaveName() {
         if (this.newNameField.getText().isEmpty()) {
-            this.changePasswordPrompt.setText("Please enter your new name.");
+            this.changePasswordPrompt.setText("Please enter your new name");
             return;
         }
 
@@ -47,14 +47,14 @@ public class AccountController extends BaseController implements Initializable {
             return;
         }
 
-        this.changePasswordPrompt.setText("Name changed.");
+        this.changePasswordPrompt.setText("Name changed");
         UserRepositoryFactory.getInstance().create().changeName(user.getId(), this.newNameField.getText());
     }
 
     @FXML
     private void onSavePassword() {
         if (this.confirmPasswordField.getText().isEmpty() || this.newPasswordField.getText().isEmpty()) {
-            this.changePasswordPrompt.setText("Please enter your current and new password.");
+            this.changePasswordPrompt.setText("Please enter your current and new password");
             return;
         }
 
@@ -65,12 +65,12 @@ public class AccountController extends BaseController implements Initializable {
         }
 
         if (!CryptoUtils.getInstance().comparePassword(this.confirmPasswordField.getText(), user.getHashedPassword())) {
-            this.changePasswordPrompt.setText("Wrong password.");
+            this.changePasswordPrompt.setText("Wrong password");
             return;
         }
 
         UserRepositoryFactory.getInstance().create().changePassword(user.getId(), this.newPasswordField.getText());
-        this.changePasswordPrompt.setText("Password changed.");
+        this.changePasswordPrompt.setText("Password changed");
     }
 
     @Override

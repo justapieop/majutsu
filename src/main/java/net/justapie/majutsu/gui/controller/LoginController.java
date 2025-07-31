@@ -29,7 +29,7 @@ public class LoginController extends BaseController {
     @FXML
     private void onRegisterButtonClick(ActionEvent event) {
         if (!this.validateInput()) {
-            this.authPrompt.setText("Invalid email or password.");
+            this.authPrompt.setText("Invalid email or password");
             return;
         }
         String email = this.emailField.getText();
@@ -38,7 +38,7 @@ public class LoginController extends BaseController {
         User user = UserRepositoryFactory.getInstance().create().createUser("User", email, password);
 
         if (Objects.isNull(user)) {
-            this.authPrompt.setText("User already exists.");
+            this.authPrompt.setText("User already exists");
             return;
         }
 
@@ -52,7 +52,7 @@ public class LoginController extends BaseController {
     @FXML
     private void onLoginButtonClick(ActionEvent event) {
         if (!this.validateInput()) {
-            this.authPrompt.setText("Invalid email or password.");
+            this.authPrompt.setText("Invalid email or password");
             return;
         }
         String email = this.emailField.getText();
@@ -61,7 +61,7 @@ public class LoginController extends BaseController {
         String hashedPassword = UserRepositoryFactory.getInstance().create().getPassword(email);
 
         if (Objects.isNull(hashedPassword) || !CryptoUtils.getInstance().comparePassword(password, hashedPassword)) {
-            this.authPrompt.setText("Invalid credentials.");
+            this.authPrompt.setText("Invalid credentials");
             return;
         }
 

@@ -14,7 +14,11 @@ module net.justapie.majutsu {
     requires snowflake.lib;
     requires org.xerial.sqlitejdbc;
     requires atlantafx.base;
+    requires java.net.http;
+    requires com.google.gson;
+    requires java.desktop;
 
+    opens net.justapie.majutsu.gbook.model to com.google.gson;
     opens net.justapie.majutsu.gui.controller to javafx.fxml;
     exports net.justapie.majutsu.gui.controller;
     exports net.justapie.majutsu.gui;
