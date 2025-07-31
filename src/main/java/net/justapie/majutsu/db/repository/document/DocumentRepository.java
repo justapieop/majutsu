@@ -97,7 +97,7 @@ public class DocumentRepository {
         VolumeFetcher fetcher = GBookClient.getInstance().getVolumeById(id);
         fetcher.run();
         Volume volume = fetcher.get();
-        String sql = "INSERT INTO documents (id, borrowed_by, borrowed_at, return_date, borrowed) VALUES (?, null, null, null, 0)";
+        String sql = "INSERT INTO documents (id, borrowed_by, borrowed_at, return_date, borrowed, created_at, updated_at) VALUES (?, null, null, null, 0, strftime('%s', 'now'), strftime('%s', 'now'))";
         try(PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
             stmt.setString(1, volume.getId());
             stmt.executeUpdate();
