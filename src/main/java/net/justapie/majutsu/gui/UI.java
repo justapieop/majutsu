@@ -4,7 +4,7 @@ import atlantafx.base.theme.PrimerDark;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class UIManager extends Application {
+public class UI extends Application {
     @Override
     public void start(Stage primaryStage) {
         Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());

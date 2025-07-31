@@ -2,6 +2,8 @@ package net.justapie.majutsu.utils;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvBuilder;
 import me.fthomys.SnowflakeLib.SnowflakeFactory;
@@ -25,6 +27,7 @@ public class Utils {
             .enableNtpCheck(true)
             .withCustomNtpServer("time.google.com")
             .build();
+    private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     public String getEnv(String key) {
         return DOTENV.get(key);
@@ -48,6 +51,10 @@ public class Utils {
     public boolean checkValidEmail(String email) {
         if (Objects.isNull(email)) return false;
         return EMAIL_REGEX.matcher(email).matches();
+    }
+
+    public Gson getGson() {
+        return GSON;
     }
 
     public long generateSnowflakeId() {

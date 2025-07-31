@@ -42,19 +42,20 @@ public class DashboardController extends BaseController implements Initializable
 
         this.comboBox.setValue("Welcome, " + user.getName() + "!");
 
-        this.comboBox.getItems().add("My account.");
-        this.comboBox.getItems().add("Logout.");
+        this.comboBox.getItems().add("My account");
+        this.comboBox.getItems().add("Logout");
 
         this.comboBox.setOnAction(event -> {
             String selectedItem = this.comboBox.getSelectionModel().getSelectedItem();
 
             switch (selectedItem) {
-                case "My account.": {
+                case "My account": {
                     this.switchToScene((Node) event.getSource(), SceneType.ACCOUNT);
                     break;
                 }
 
-                case "Logout.": {
+                case "Logout": {
+                    SessionStore.getInstance().clearSession();
                     this.switchToScene((Node) event.getSource(), SceneType.LOGIN);
                     break;
                 }
