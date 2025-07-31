@@ -25,7 +25,7 @@ public class DocumentRepository {
     private boolean updateTime(String id){
         String sql = "UPDATE documents SET updated_at = strftime('%s', 'now') WHERE id = ?";
         try(PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
-            stmt.setInt(1, id);
+            stmt.setString(1, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e){
             LOGGER.error("Error updating timestamp: " + e.getMessage());
@@ -36,7 +36,7 @@ public class DocumentRepository {
     public Book getDocumentById(String id){
         String sql = "SELECT * FROM documents WHERE id = ?";
         try(PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
-            stmt.setInt(1, id);
+            stmt.setString(1, id);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
                 return Book.fromResultSet(rs);
