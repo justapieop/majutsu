@@ -52,7 +52,7 @@ public class DocumentRepository {
         ArrayList<Book> results = new ArrayList<>();
         String sql = "SELECT * FROM documents WHERE title LIKE ?";
         try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
-            stmt.setString(1, sql);
+            stmt.setString(1, "%" + title + "%");
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Book book = Book.fromResultSet(rs);
@@ -61,6 +61,7 @@ public class DocumentRepository {
         } catch (SQLException e) {
             LOGGER.error("Error searching documents by title: " + e.getMessage());
         }
+        return results;
     }
 
 
@@ -99,7 +100,13 @@ public class DocumentRepository {
         String sql = "INSERT INTO documents (id, borrowed_by, borrowed_at, return_date, borrowed) VALUES (?, null, null, null, 0)";
         try(PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
             stmt.setString(1, volume.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.error("Error inserting book: " + e.getMessage());
+            return null;
         }
+        // You may want to return a Book object here, e.g. Book.fromVolume(volume)
+        return Book.fromVolume(volume);
     }
   
 
