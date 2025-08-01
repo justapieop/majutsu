@@ -70,7 +70,6 @@ public class DocumentRepository {
         String sql = "DELETE FROM documents WHERE id = ?";
         try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
             stmt.setString(1, id);
-            updateTime(id);
             return stmt.executeUpdate() > 0;
         } catch (Exception e) {
             LOGGER.error("Error deleteing document:" + e.getMessage());
