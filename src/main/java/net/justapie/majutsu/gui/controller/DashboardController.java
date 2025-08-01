@@ -1,10 +1,18 @@
 package net.justapie.majutsu.gui.controller;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import net.justapie.majutsu.db.schema.user.User;
 import net.justapie.majutsu.db.schema.user.UserRole;
 import net.justapie.majutsu.gui.SceneType;
@@ -36,6 +44,9 @@ public class DashboardController extends BaseController implements Initializable
 
     private Integer numberOfExpiredBooks;
 
+    @FXML
+    private VBox availableBookContainer;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         User user = SessionStore.getInstance().getCurrentUser();
@@ -65,6 +76,8 @@ public class DashboardController extends BaseController implements Initializable
                 }
             }
         });
+
+//        GBookClient.getInstance().getVolumeById()
 
         // Insert here init functions for numbers.
         numberOfBorrowedBooks = 10;
@@ -97,7 +110,30 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
+    private void onAddBookClick(ActionEvent event) {
+        availableBookContainer.getChildren().add(createRow());
+    }
+
+    private HBox createRow() {
+        HBox row = new HBox();
+
+        row.setAlignment(Pos.CENTER);
+        row.setPadding(new Insets(5, 10, 5, 10));
+
+        row.getChildren().addAll(
+                new Label("ID"),
+                new Region(),
+                new Label("Name"),
+                new Region(),
+                new Label("Last Modified"),
+                new Region(),
+                new Label("Status")
+        );
+
+        return row;
+    }
     private void onAdminSwitchClick() {
         new AdminSplashController().process();
     }
+
 }
