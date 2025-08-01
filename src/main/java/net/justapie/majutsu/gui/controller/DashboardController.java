@@ -1,11 +1,13 @@
 package net.justapie.majutsu.gui.controller;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import net.justapie.majutsu.db.schema.user.User;
+import net.justapie.majutsu.db.schema.user.UserRole;
 import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 
@@ -30,6 +32,9 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private Label expiredBooksPrompt;
 
+    @FXML
+    private Button adminSwitchBtn;
+
     private Integer numberOfExpiredBooks;
 
     @Override
@@ -50,13 +55,13 @@ public class DashboardController extends BaseController implements Initializable
 
             switch (selectedItem) {
                 case "My account": {
-                    this.switchToScene((Node) event.getSource(), SceneType.ACCOUNT);
+                    this.switchToScene(SceneType.ACCOUNT);
                     break;
                 }
 
                 case "Logout": {
                     SessionStore.getInstance().clearSession();
-                    this.switchToScene((Node) event.getSource(), SceneType.LOGIN);
+                    this.switchToScene(SceneType.LOGIN);
                     break;
                 }
             }
@@ -86,6 +91,14 @@ public class DashboardController extends BaseController implements Initializable
         else {
             expiredBooksPrompt.setText(String.format("Number of expired books: %d.", numberOfExpiredBooks));
         }
+
+        if (!user.getRole().equals(UserRole.ADMIN)) {
+            this.adminSwitchBtn.setVisible(false);
+        }
     }
 
+    @FXML
+    private void onAdminSwitchClick(ActionEvent event) {
+        new AdminSplashController().process();
+    }
 }

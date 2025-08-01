@@ -4,6 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import net.justapie.majutsu.gui.SceneManager;
+import net.justapie.majutsu.gui.UI;
 
 public abstract class BaseController {
     public void closeScene(Node node) {
@@ -12,8 +13,8 @@ public abstract class BaseController {
         stage.close();
     }
 
-    public void switchToScene(Node node, String path) {
-        Stage stage = (Stage) node.getScene().getWindow();
+    public void switchToScene(String path) {
+        Stage stage = UI.stage;
 
         Scene newScene = SceneManager.loadScene(path);
 
