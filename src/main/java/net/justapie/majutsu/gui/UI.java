@@ -13,6 +13,7 @@ public class UI extends Application {
         primaryStage.setScene(
                 SceneManager.loadScene(SceneType.LOGIN)
         );
+        primaryStage.centerOnScreen();
         primaryStage.sizeToScene();
         primaryStage.setResizable(false);
         primaryStage.show();

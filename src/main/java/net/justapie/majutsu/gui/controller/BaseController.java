@@ -19,6 +19,7 @@ public abstract class BaseController {
 
         stage.setScene(newScene);
         stage.setResizable(false);
+        stage.centerOnScreen();
         stage.sizeToScene();
     }
 }
