@@ -4,4 +4,6 @@ public class SceneType {
     public static final String LOGIN = "layouts/login.fxml";
     public static final String DASHBOARD = "layouts/dashboard.fxml";
     public static final String ACCOUNT = "layouts/account.fxml";
+    public static final String ADMIN = "layouts/admin.fxml";
+    public static final String SPLASH = "layouts/splash.fxml";
 }
