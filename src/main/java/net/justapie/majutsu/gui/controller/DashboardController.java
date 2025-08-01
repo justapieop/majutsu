@@ -1,12 +1,17 @@
 package net.justapie.majutsu.gui.controller;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import net.justapie.majutsu.db.schema.user.User;
-import net.justapie.majutsu.gbook.GBookClient;
 import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 
@@ -32,6 +37,9 @@ public class DashboardController extends BaseController implements Initializable
     private Label expiredBooksPrompt;
 
     private Integer numberOfExpiredBooks;
+
+    @FXML
+    private VBox availableBookContainer;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -89,6 +97,30 @@ public class DashboardController extends BaseController implements Initializable
         else {
             expiredBooksPrompt.setText(String.format("Number of expired books: %d.", numberOfExpiredBooks));
         }
+    }
+
+    @FXML
+    private void onAddBookClick(ActionEvent event) {
+        availableBookContainer.getChildren().add(createRow());
+    }
+
+    private HBox createRow() {
+        HBox row = new HBox();
+
+        row.setAlignment(Pos.CENTER);
+        row.setPadding(new Insets(5, 10, 5, 10));
+
+        row.getChildren().addAll(
+                new Label("ID"),
+                new Region(),
+                new Label("Name"),
+                new Region(),
+                new Label("Last Modified"),
+                new Region(),
+                new Label("Status")
+        );
+
+        return row;
     }
 
 }

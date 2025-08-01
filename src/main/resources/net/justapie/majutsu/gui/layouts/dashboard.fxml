@@ -58,7 +58,12 @@
                                  </font>
                               </Label>
                               <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" text="Edit book list">
+                              <Button mnemonicParsing="false" onAction="#onAddBookClick" text="Add book">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" text="Remove book">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -70,13 +75,10 @@
                         </HBox>
                         <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
                            <content>
-                              <VBox prefHeight="200.0" prefWidth="100.0">
+                              <VBox fx:id="availableBookContainer" prefHeight="200.0" prefWidth="100.0">
                                  <padding>
                                     <Insets left="20.0" right="20.0" top="12.0" />
                                  </padding>
-                                 <children>
-                                    <Label text="new1" />
-                                 </children>
                               </VBox>
                            </content>
                         </ScrollPane>
