@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import net.justapie.majutsu.db.schema.user.User;
+import net.justapie.majutsu.gbook.GBookClient;
 import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 
@@ -61,6 +62,8 @@ public class DashboardController extends BaseController implements Initializable
                 }
             }
         });
+
+//        GBookClient.getInstance().getVolumeById()
 
         // Insert here init functions for numbers.
         numberOfBorrowedBooks = 10;
