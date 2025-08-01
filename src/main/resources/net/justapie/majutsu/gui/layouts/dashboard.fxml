@@ -18,8 +18,9 @@
    <top>
         <GridPane prefHeight="51.0" prefWidth="1366.0" BorderPane.alignment="CENTER">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1141.0" minWidth="10.0" prefWidth="1090.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="678.0" minWidth="10.0" prefWidth="276.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1141.0" minWidth="10.0" prefWidth="691.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1141.0" minWidth="10.0" prefWidth="331.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="678.0" minWidth="10.0" prefWidth="409.0" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -36,7 +37,8 @@
                         <Insets left="10.0" />
                     </padding>
                 </Label>
-                <ComboBox fx:id="comboBox" prefWidth="150.0" GridPane.columnIndex="1" />
+                <ComboBox fx:id="comboBox" prefWidth="150.0" GridPane.columnIndex="2" />
+            <Button fx:id="adminSwitchBtn" mnemonicParsing="false" onAction="#onAdminSwitchClick" text="Switch to admin console" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
             </children>
         </GridPane>
    </top>

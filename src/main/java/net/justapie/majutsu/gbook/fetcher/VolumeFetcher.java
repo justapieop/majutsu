@@ -1,35 +1,39 @@
 package net.justapie.majutsu.gbook.fetcher;
 
+import net.justapie.majutsu.cache.Cache;
+import net.justapie.majutsu.cache.CacheObject;
 import net.justapie.majutsu.gbook.handler.GetVolumeHandler;
 import net.justapie.majutsu.gbook.model.Volume;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-public class VolumeFetcher extends BaseFetcher<Volume> {
+public class VolumeFetcher extends BaseFetcher<Volume, GetVolumeHandler> {
     public VolumeFetcher(HttpClient httpClient, HttpRequest httpRequest) {
-        super(httpClient, httpRequest);
-        this.start();
+        super(httpClient, httpRequest, new GetVolumeHandler());
+    }
+
+    @Override
+    public String extractId() {
+        String path = this.getHttpRequest().uri().getPath();
+        String[] split = path.split("/");
+        return split[split.length - 1];
     }
 
     @Override
     public Volume get() {
-        return this.getHttpResponse().body();
-    }
+        CacheObject<Volume> vol = Cache.getInstance().get("volume:" + this.extractId());
 
-    @Override
-    public void run() {
-        try {
-            this.setHttpResponse(
-                    this.getHttpClient()
-                            .sendAsync(
-                                    this.getHttpRequest(),
-                                    new GetVolumeHandler()
-                            ).get()
-            );
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+        if (!Objects.isNull(vol)) {
+            return vol.getData();
         }
+
+        this.start();
+
+        Volume v = this.getHttpResponse().body();
+        Cache.getInstance().put("volume:" + this.extractId(), v);
+        return v;
     }
 }

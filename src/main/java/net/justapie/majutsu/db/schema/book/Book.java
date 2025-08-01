@@ -1,61 +1,80 @@
 package net.justapie.majutsu.db.schema.book;
 
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.List;
-
-import net.justapie.majutsu.db.schema.user.User;
-import net.justapie.majutsu.db.schema.user.UserRole;
+import net.justapie.majutsu.gbook.GBookClient;
 import net.justapie.majutsu.gbook.model.Volume;
 
-
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.Instant;
+import java.util.Date;
 
 
-public class Book extends Volume{    
+public class Book extends Volume {
     private long borrowedBy;
-    private LocalDate borrowedAt;
-    private LocalDate expectedReturn;
+    private Date borrowedAt;
+    private Date expectedReturn;
+    private Date returnDate;
+    private Date createdAt;
+    private boolean borrowed;
+    private boolean available;
 
-    Book(){
+    private Book() {
         super();
     }
 
-    public long getBorrowedBy(){
-       return borrowedBy;
-    }
-
-    public LocalDate getBorrowedAt(){
-        return borrowedAt;
-    }
-
-    public LocalDate expectedReturn(){
-        return expectedReturn;
-    }
-
-    public static Book fromVolume(Volume volume){
+    public static Book fromVolume(Volume volume) {
         Book book = new Book();
-        book.borrowedAt = null;
-        book.expectedReturn = null;
-        book.borrowedBy = 0;
+
+        book.id = volume.getId();
+        book.volumeInfo = volume.getVolumeInfo();
+
         return book;
     }
 
     public static Book fromResultSet(ResultSet resultSet) {
-        final Book book = new Book();
-
         try {
-            book.borrowedAt = resultSet.getDate("borrowed_at").toLocalDate();
-            book.borrowedBy = resultSet.getLong("borrowed_by");
-            book.expectedReturn = resultSet.getDate("return_date").toLocalDate();
+            String id = resultSet.getString("id");
+            Book gBook = Book.fromVolume(GBookClient.getInstance().getVolumeById(id).get());
 
+            gBook.borrowedBy = resultSet.getLong("borrowed_by");
+            gBook.borrowedAt = Date.from(Instant.ofEpochSecond(resultSet.getLong("borrowed_at")));
+            gBook.expectedReturn = Date.from(Instant.ofEpochSecond(resultSet.getLong("expected_return")));
+            gBook.returnDate = Date.from(Instant.ofEpochSecond(resultSet.getLong("returned_at")));
+            gBook.borrowed = resultSet.getBoolean("borrowed");
+            gBook.available = resultSet.getBoolean("available");
+            gBook.createdAt = Date.from(Instant.ofEpochSecond(resultSet.getLong("created_at")));
+
+            return gBook;
         } catch (SQLException e) {
             return null;
         }
-
-        return book;
     }
 
-    
-   
+    public Date getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public boolean isAvailable() {
+        return this.available;
+    }
+
+    public boolean isBorrowed() {
+        return this.borrowed;
+    }
+
+    public long getBorrowedBy() {
+        return this.borrowedBy;
+    }
+
+    public Date getBorrowedAt() {
+        return this.borrowedAt;
+    }
+
+    public Date expectedReturn() {
+        return this.expectedReturn;
+    }
+
+    public Date getReturnDate() {
+        return this.returnDate;
+    }
 }

@@ -12,6 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class UserRepository {
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(UserRepository.class);
@@ -20,7 +22,7 @@ public class UserRepository {
         super();
     }
 
-    public ArrayList<User> getAllUsers() {
+    public List<User> getAllUsers() {
         ArrayList<User> users = new ArrayList<>();
 
         try {
@@ -37,7 +39,7 @@ public class UserRepository {
             return users;
         }
 
-        return users;
+        return Collections.unmodifiableList(users);
     }
 
     public String getPassword(String email) {
