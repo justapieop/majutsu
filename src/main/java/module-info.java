@@ -22,6 +22,4 @@ module net.justapie.majutsu {
     opens net.justapie.majutsu.gui.controller to javafx.fxml;
     exports net.justapie.majutsu.gui.controller;
     exports net.justapie.majutsu.gui;
-    exports net.justapie.majutsu.gui.fetcher;
-    exports net.justapie.majutsu.gui.cache;
 }

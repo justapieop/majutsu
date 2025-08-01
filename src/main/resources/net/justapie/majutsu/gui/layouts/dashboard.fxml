@@ -48,42 +48,42 @@
                   <Insets left="80.0" right="80.0" top="56.0" />
                </padding>
                <children>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-                     <content>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                           <padding>
-                              <Insets left="20.0" right="20.0" top="12.0" />
-                           </padding>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                            <children>
-                              <Label text="new1" />
+                              <Label text="Available book list">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                              <Button mnemonicParsing="false" onAction="#onAddBookClick" text="Add book">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" text="Remove book">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
                            </children>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-                     <content>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
                            <padding>
-                              <Insets left="20.0" right="20.0" top="12.0" />
+                              <Insets left="32.0" right="32.0" />
                            </padding>
-                           <children>
-                              <Label text="new2" />
-                           </children>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-                     <content>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                           <padding>
-                              <Insets left="20.0" right="20.0" top="12.0" />
-                           </padding>
-                           <children>
-                              <Label text="Label" />
-                           </children>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
+                        </HBox>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+                           <content>
+                              <VBox fx:id="availableBookContainer" prefHeight="200.0" prefWidth="100.0">
+                                 <padding>
+                                    <Insets left="20.0" right="20.0" top="12.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </VBox>
                </children>
             </VBox>
          </content>
