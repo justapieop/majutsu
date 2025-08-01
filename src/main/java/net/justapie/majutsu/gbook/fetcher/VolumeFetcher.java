@@ -8,6 +8,7 @@ import net.justapie.majutsu.gbook.model.Volume;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class VolumeFetcher extends BaseFetcher<Volume, GetVolumeHandler> {
     public VolumeFetcher(HttpClient httpClient, HttpRequest httpRequest) {
@@ -17,7 +18,8 @@ public class VolumeFetcher extends BaseFetcher<Volume, GetVolumeHandler> {
     @Override
     public String extractId() {
         String path = this.getHttpRequest().uri().getPath();
-        return path.split("/")[path.length() - 1];
+        String[] split = path.split("/");
+        return split[split.length - 1];
     }
 
     @Override
@@ -30,14 +32,8 @@ public class VolumeFetcher extends BaseFetcher<Volume, GetVolumeHandler> {
 
         this.start();
 
-        try {
-            this.join();
-
-            Volume v = this.getHttpResponse().body();
-            Cache.getInstance().put("volume:" + this.extractId(), v);
-            return v;
-        } catch (InterruptedException e) {
-            return null;
-        }
+        Volume v = this.getHttpResponse().body();
+        Cache.getInstance().put("volume:" + this.extractId(), v);
+        return v;
     }
 }

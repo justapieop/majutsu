@@ -30,15 +30,9 @@ public class SearchVolumeFetcher extends BaseFetcher<SearchItems, SearchVolumeHa
 
         this.start();
 
-        try {
-            this.join();
+        SearchItems items = this.getHttpResponse().body();
 
-            SearchItems items = this.getHttpResponse().body();
-
-            Cache.getInstance().put("search:" + this.extractId(), items);
-            return items;
-        } catch (InterruptedException e) {
-            return null;
-        }
+        Cache.getInstance().put("search:" + this.extractId(), items);
+        return items;
     }
 }
