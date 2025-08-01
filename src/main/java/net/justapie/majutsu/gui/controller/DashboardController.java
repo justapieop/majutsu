@@ -1,6 +1,5 @@
 package net.justapie.majutsu.gui.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -98,7 +97,7 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
-    private void onAdminSwitchClick(ActionEvent event) {
+    private void onAdminSwitchClick() {
         new AdminSplashController().process();
     }
 }

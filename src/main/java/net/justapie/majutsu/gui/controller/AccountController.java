@@ -1,6 +1,5 @@
 package net.justapie.majutsu.gui.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -29,7 +28,7 @@ public class AccountController extends BaseController implements Initializable {
     private TextField confirmPasswordField;
 
     @FXML
-    private void onAccountBackButton(ActionEvent event) {
+    private void onAccountBackButton() {
         this.switchToScene(SceneType.DASHBOARD);
     }
 

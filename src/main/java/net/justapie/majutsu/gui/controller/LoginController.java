@@ -1,6 +1,5 @@
 package net.justapie.majutsu.gui.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -26,7 +25,7 @@ public class LoginController extends BaseController {
 
 
     @FXML
-    private void onRegisterButtonClick(ActionEvent event) {
+    private void onRegisterButtonClick() {
         if (!this.validateInput()) {
             this.authPrompt.setText("Invalid email or password");
             return;
@@ -49,7 +48,7 @@ public class LoginController extends BaseController {
     }
 
     @FXML
-    private void onLoginButtonClick(ActionEvent event) {
+    private void onLoginButtonClick() {
         if (!this.validateInput()) {
             this.authPrompt.setText("Invalid email or password");
             return;

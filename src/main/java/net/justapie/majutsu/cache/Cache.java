@@ -11,12 +11,6 @@ public class Cache {
     private Cache() {
         this.ttl = TimeUnit.MINUTES.toMillis(2);
         this.cacheMap = new HashMap<>();
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                cacheMap.clear();
-            }
-        }, this.ttl, this.ttl);
     }
 
     public static Cache getInstance() {
@@ -24,7 +18,14 @@ public class Cache {
     }
 
     public <T> void put(String key, T data) {
-        this.cacheMap.put(key, new CacheObject<T>(data));
+        this.cacheMap.put(key, new CacheObject<T>(data, this.ttl));
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                cacheMap.remove(key);
+            }
+        }, this.ttl);
     }
 
     public <T> CacheObject<T> get(String key) {
