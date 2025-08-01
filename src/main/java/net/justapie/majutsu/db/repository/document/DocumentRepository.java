@@ -4,8 +4,10 @@ import ch.qos.logback.classic.Logger;
 import net.justapie.majutsu.db.DbClient;
 
 import net.justapie.majutsu.db.schema.book.Book;
-import net.justapie.majutsu.db.schema.book.Paper;
-
+import net.justapie.majutsu.gbook.GBookClient;
+import net.justapie.majutsu.gbook.fetcher.SearchVolumeFetcher;
+import net.justapie.majutsu.gbook.fetcher.VolumeFetcher;
+import net.justapie.majutsu.gbook.model.Volume;
 import net.justapie.majutsu.utils.Utils;
 
 import java.sql.Connection;
@@ -17,14 +19,13 @@ import java.time.LocalDate;
 
 
 public class DocumentRepository {
-
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(DocumentRepository.class);
     private static final Connection CONNECTION = DbClient.getInstance().getConnection();
     
-    private boolean updateTime(int id){
+    private boolean updateTime(String id){
         String sql = "UPDATE documents SET updated_at = strftime('%s', 'now') WHERE id = ?";
         try(PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
-            stmt.setInt(1, id);
+            stmt.setString(1, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e){
             LOGGER.error("Error updating timestamp: " + e.getMessage());
@@ -32,10 +33,42 @@ public class DocumentRepository {
         }
     }
 
-    public boolean setAvailable(int id) {
+    public Book getDocumentById(String id){
+        String sql = "SELECT * FROM documents WHERE id = ?";
+        try(PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
+            stmt.setString(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return Book.fromResultSet(rs);
+            }
+        } catch (SQLException e){
+                LOGGER.error("Error fetching document by id: " + e.getMessage());
+            }
+        return null;
+
+    }
+
+    public ArrayList<Book> searchDocumentsByTitle(String title){
+        ArrayList<Book> results = new ArrayList<>();
+        String sql = "SELECT * FROM documents WHERE title LIKE ?";
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
+            stmt.setString(1, "%" + title + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Book book = Book.fromResultSet(rs);
+                if(book != null) results.add(book);
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error searching documents by title: " + e.getMessage());
+        }
+        return results;
+    }
+
+
+    public boolean setAvailable(String id) {
         String sql = "UPDATE documents SET borrowed = 0, borrowed_by = NULL, borrowed_at = NULL, due_date = NULL WHERE id = ?";
         try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+            stmt.setString(1, id);
             updateTime(id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -44,14 +77,14 @@ public class DocumentRepository {
         }
     }
 
-    public boolean setBorrowed(int id, String borrowName, LocalDate dueDate) {
+    public boolean setBorrowed(String id, String borrowName, LocalDate returnDate) {
         String sql = "UPDATE documents SET borrowed = 1, borrowed_by = ?, borrowed_at = ?, due_date = ? WHERE id = ?";
         LocalDate now = LocalDate.now();
         try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
             stmt.setString(1, borrowName);
             stmt.setObject(2, now);
-            stmt.setObject(3, dueDate);
-            stmt.setInt(4, id); 
+            stmt.setObject(3, returnDate);
+            stmt.setString(4, id); 
             updateTime(id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -60,138 +93,27 @@ public class DocumentRepository {
         }
     }
 
-    public ArrayList<Object> getAllBorrowed() {
-        ArrayList<Object> borrowedDocs = new ArrayList<>();
-        String sql = "SELECT * FROM documents WHERE borrowed = 1";
-        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                String type = rs.getString("document_type");
-                if ("BOOK".equalsIgnoreCase(type)) {
-                    Book book = Book.fromResultSet(rs);
-                    if (book != null) borrowedDocs.add(book);
-                } else if ("PAPER".equalsIgnoreCase(type)) {
-                    Paper paper = Paper.fromResultSet(rs);
-                    if (paper != null) borrowedDocs.add(paper);
-                }
-            }
+    public Book createBookById(String id){
+        VolumeFetcher fetcher = GBookClient.getInstance().getVolumeById(id);
+        fetcher.run();
+        Volume volume = fetcher.get();
+        String sql = "INSERT INTO documents (id, borrowed_by, borrowed_at, return_date, borrowed, created_at, updated_at) VALUES (?, null, null, null, 0, strftime('%s', 'now'), strftime('%s', 'now'))";
+        try(PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
+            stmt.setString(1, volume.getId());
+            stmt.executeUpdate();
         } catch (SQLException e) {
-            LOGGER.error("Error fetching borrowed documents: " + e.getMessage());
+            LOGGER.error("Error inserting book: " + e.getMessage());
+            return null;
         }
-        return borrowedDocs;
+        // You may want to return a Book object here, e.g. Book.fromVolume(volume)
+        return Book.fromVolume(volume);
     }
-
-    public ArrayList<Object> getAllAvailable() {
-        ArrayList<Object> availableDocs = new ArrayList<>();
-        String sql = "SELECT * FROM documents WHERE borrowed = 0";
-        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                String type = rs.getString("document_type");
-                if ("BOOK".equalsIgnoreCase(type)) {
-                    Book book = Book.fromResultSet(rs);
-                    if (book != null) availableDocs.add(book);
-                } else if ("PAPER".equalsIgnoreCase(type)) {
-                    Paper paper = Paper.fromResultSet(rs);
-                    if (paper != null) availableDocs.add(paper);
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Error fetching available documents: " + e.getMessage());
-        }
-        return availableDocs;
-    }
-
-    public ArrayList<Object> getAllDocuments() {
-        ArrayList<Object> documents = new ArrayList<>();
-        String sql = "SELECT * FROM documents";
-        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                String type = rs.getString("document_type");
-                if ("BOOK".equalsIgnoreCase(type)) {
-                    Book book = Book.fromResultSet(rs);
-                    if (book != null) documents.add(book);
-                } else if ("PAPER".equalsIgnoreCase(type)) {
-                    Paper paper = Paper.fromResultSet(rs);
-                    if (paper != null) documents.add(paper);
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Error fetching documents: " + e.getMessage());
-        }
-        return documents;
-    }
-
-    public ArrayList<Paper> getAllPapers() {
-        ArrayList<Paper> papers = new ArrayList<>();
-        String sql = "SELECT * FROM documents WHERE document_type = 'PAPER'";
-        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Paper paper = Paper.fromResultSet(rs);
-                if (paper != null) {
-                    papers.add(paper);
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Error fetching papers: " + e.getMessage());
-        }
-        return papers;
-    }
-
-    public ArrayList<Book> getAllBooks() {
-        ArrayList<Book> books = new ArrayList<>();
-        String sql = "SELECT * FROM documents WHERE document_type = 'BOOK'";
-        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Book book = Book.fromResultSet(rs);
-                if (book != null) {
-                    books.add(book);
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Error fetching books: " + e.getMessage());
-        }
-        return books;
-    }
-
   
-    public boolean createBook(Book book) {
-        String sql = "INSERT INTO documents (title, authors, isbn, document_type, borrowed, created_at, updated_at) VALUES (?, ?, ?, ?, ?, strftime('%s', 'now'), strftime('%s', 'now'))";
-        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
-            stmt.setString(1, book.getTitle());
-            stmt.setString(2, String.join(",", book.getAuthors()));
-            stmt.setString(3, book.getIsbn());
-            stmt.setString(4, "BOOK");
-            stmt.setBoolean(5, false); 
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            LOGGER.error("Error creating book: " + e.getMessage());
-            return false;
-        }
-    }
 
-     public boolean createPaper(Paper paper) {
-        String sql = "INSERT INTO documents (title, authors, doi, document_type, borrowed, created_at, updated_at) VALUES (?, ?, ?, ?, ?, strftime('%s', 'now'), strftime('%s', 'now'))";
-        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)) {
-            stmt.setString(1, paper.getTitle());
-            stmt.setString(2, String.join(",", paper.getAuthors()));
-            stmt.setString(3, paper.getDoi());
-            stmt.setString(4, "PAPER");
-            stmt.setBoolean(5, false); 
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            LOGGER.error("Error creating book: " + e.getMessage());
-            return false;
-        }
-    }
-    
-    public boolean deleteDocument(int id){
+    public boolean deleteDocument(String id){
         String sql = "DELETE FROM documents WHERE id = ?";
         try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
-            stmt.setInt(1, id);
+            stmt.setString(1, id);
             updateTime(id);
             return stmt.executeUpdate() > 0;
         } catch (Exception e) {
