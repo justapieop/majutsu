@@ -18,9 +18,7 @@ public class GBookClient {
     private GBookClient() {
         super();
         this.httpClient = HttpClient.newHttpClient();
-        this.httpRequestBuilder = HttpRequest.newBuilder()
-                .header("Accept-Encoding", "gzip")
-                .header("User-Agent", "majutsu (gzip)");
+        this.httpRequestBuilder = HttpRequest.newBuilder();
     }
 
     public static GBookClient getInstance() {
