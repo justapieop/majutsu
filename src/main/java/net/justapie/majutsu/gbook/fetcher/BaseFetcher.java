@@ -5,7 +5,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
 
-public abstract class BaseFetcher<T, K extends HttpResponse.BodyHandler<T>> extends Thread {
+public abstract class BaseFetcher<T, K extends HttpResponse.BodyHandler<T>> {
     private final HttpRequest httpRequest;
     private final HttpClient httpClient;
     private HttpResponse<T> httpResponse;
@@ -29,8 +29,7 @@ public abstract class BaseFetcher<T, K extends HttpResponse.BodyHandler<T>> exte
 
     public abstract T get() throws InterruptedException;
 
-    @Override
-    public void run() {
+    public void start() {
         try {
             this.httpResponse = this.httpClient.sendAsync(this.httpRequest, this.bodyHandler).get();
         } catch (InterruptedException | ExecutionException e) {
