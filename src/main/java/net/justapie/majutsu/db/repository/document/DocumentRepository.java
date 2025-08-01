@@ -56,7 +56,7 @@ public class DocumentRepository {
     public Book createBookById(String id){
         VolumeFetcher fetcher = GBookClient.getInstance().getVolumeById(id);
         Volume volume = fetcher.get();
-        String sql = "INSERT INTO documents (id, borrowed_by, borrowed_at, return_date, borrowed, created_at, updated_at) VALUES (?, null, null, null, 0, strftime('%s', 'now'), strftime('%s', 'now'))";
+        String sql = "INSERT INTO documents (id, borrowed, created_at, updated_at) VALUES (?, 0, strftime('%s', 'now'), strftime('%s', 'now'))";
         try(PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
             stmt.setString(1, volume.getId());
             stmt.executeUpdate();
@@ -64,7 +64,6 @@ public class DocumentRepository {
             LOGGER.error("Error inserting book: " + e.getMessage());
             return null;
         }
-        // You may want to return a Book object here, e.g. Book.fromVolume(volume)
         return Book.fromVolume(volume);
     }
   
