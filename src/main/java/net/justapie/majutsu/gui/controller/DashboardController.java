@@ -5,8 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -103,10 +102,6 @@ public class DashboardController extends BaseController implements Initializable
         else {
             expiredBooksPrompt.setText(String.format("Number of expired books: %d.", numberOfExpiredBooks));
         }
-
-        if (!user.getRole().equals(UserRole.ADMIN)) {
-            this.adminSwitchBtn.setVisible(false);
-        }
     }
 
     @FXML
@@ -132,8 +127,21 @@ public class DashboardController extends BaseController implements Initializable
 
         return row;
     }
-    private void onAdminSwitchClick() {
-        new AdminSplashController().process();
+
+    @FXML
+    private void onAdminSwitchClick(ActionEvent event) {
+        User user = SessionStore.getInstance().getCurrentUser();
+
+        if (Objects.isNull(user) || !user.getRole().equals(UserRole.ADMIN) || true) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Announcement!");
+            alert.setHeaderText("Access denied!");
+            alert.setContentText("Describe problem: Authorization violation!");
+            alert.show();
+        }
+        else {
+            new AdminSplashController().process();
+        }
     }
 
 }

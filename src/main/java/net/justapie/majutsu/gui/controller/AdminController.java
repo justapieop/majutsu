@@ -45,15 +45,6 @@ public class AdminController extends BaseController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        User user = SessionStore.getInstance().getCurrentUser();
-
-        System.out.println("test");
-
-        if (Objects.isNull(user) || !user.getRole().equals(UserRole.ADMIN)) {
-            Platform.runLater(() -> this.switchToScene(SceneType.DASHBOARD));
-            return;
-        }
-
         List<Book> books = DocumentRepositoryFactory.getInstance().create().getAllBooks();
 
         System.out.println(books.size());
