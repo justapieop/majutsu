@@ -11,6 +11,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import net.justapie.majutsu.db.schema.user.User;
 import net.justapie.majutsu.db.schema.user.UserRole;
 import net.justapie.majutsu.gui.SceneManager;
@@ -111,12 +112,12 @@ public class DashboardController extends BaseController implements Initializable
 
     @FXML
     private void onBorrowBookClick(ActionEvent event) {
-        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.BORROW));
+        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.BORROW), BorrowBox.getInstance());
     }
 
     @FXML
     private void onReturnBookClick(ActionEvent event) {
-        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.RETURN));
+        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.RETURN), ReturnBox.getInstance());
     }
 
     private HBox createRow() {
