@@ -21,12 +21,12 @@
         <RowConstraints maxHeight="369.6000259399414" minHeight="10.0" prefHeight="369.6000259399414" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
-        <Label alignment="CENTER" prefHeight="58.0" prefWidth="782.0" text="Majutsu LMS: Borrowing section." GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+        <Label alignment="CENTER" prefHeight="58.0" prefWidth="782.0" text="Majutsu LMS: Returning section." GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
             <font>
                 <Font name="System Bold" size="21.0" />
             </font>
         </Label>
-        <Label fx:id="authPrompt" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="90.0" prefWidth="779.0" text="Please select the books you wish to borrow:" GridPane.rowIndex="1">
+        <Label fx:id="authPrompt" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="90.0" prefWidth="779.0" text="Please select the books you want to return:" GridPane.rowIndex="1">
             <padding>
                 <Insets left="20.0" right="20.0" />
             </padding>
@@ -43,7 +43,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Button alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" prefHeight="32.0" prefWidth="90.0" text="Confirm" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+                <Button alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#setOnConfirmButton" prefHeight="32.0" prefWidth="90.0" text="Confirm" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
                     <font>
                         <Font size="15.0" />
                     </font>
