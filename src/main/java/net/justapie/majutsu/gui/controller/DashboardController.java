@@ -10,10 +10,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import net.justapie.majutsu.db.schema.user.User;
 import net.justapie.majutsu.db.schema.user.UserRole;
+import net.justapie.majutsu.gui.SceneManager;
 import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 
@@ -104,9 +104,19 @@ public class DashboardController extends BaseController implements Initializable
         }
     }
 
+//    @FXML
+//    private void onAddBookClick(ActionEvent event) {
+//        availableBookContainer.getChildren().add(createRow());
+//    }
+
     @FXML
-    private void onAddBookClick(ActionEvent event) {
-        availableBookContainer.getChildren().add(createRow());
+    private void onBorrowBookClick(ActionEvent event) {
+        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.BORROW));
+    }
+
+    @FXML
+    private void onReturnBookClick(ActionEvent event) {
+        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.RETURN));
     }
 
     private HBox createRow() {
@@ -115,15 +125,29 @@ public class DashboardController extends BaseController implements Initializable
         row.setAlignment(Pos.CENTER);
         row.setPadding(new Insets(5, 10, 5, 10));
 
+        Label idLabel = new Label("ID");
+        idLabel.setPrefWidth(64);
+
+        Label nameLabel = new Label("Name");
+        nameLabel.setPrefWidth(200);
+
+        Label statusLabel = new Label("Status");
+        statusLabel.setPrefWidth(100);
+
+        Label modifiedLabel = new Label("Last Modified");
+        modifiedLabel.setPrefWidth(120);
+
         row.getChildren().addAll(
-                new Label("ID"),
-                new Region(),
-                new Label("Name"),
-                new Region(),
-                new Label("Last Modified"),
-                new Region(),
-                new Label("Status")
+                idLabel,
+                nameLabel,
+                modifiedLabel,
+                statusLabel
         );
+
+        row.setStyle("""
+                -fx-border-color: #d0d0d0;
+                -fx-border-width: 1;
+        """);
 
         return row;
     }

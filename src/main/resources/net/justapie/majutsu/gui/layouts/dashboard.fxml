@@ -60,12 +60,12 @@
                                  </font>
                               </Label>
                               <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" onAction="#onAddBookClick" text="Add book">
+                              <Button mnemonicParsing="false" onAction="#onBorrowBookClick" text="Borrow books">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Button>
-                              <Button mnemonicParsing="false" text="Remove book">
+                              <Button mnemonicParsing="false" onAction="#onReturnBookClick" text="Return books">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
