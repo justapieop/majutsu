@@ -25,7 +25,7 @@ public class ReturnBox implements Selectable {
     }
 
     @FXML
-    public void setOnConfirmButton(ActionEvent event) {
+    private void setOnConfirmButton(ActionEvent event) {
 
         getInstance().terminateWindow();
     }

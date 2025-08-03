@@ -157,7 +157,7 @@ public class DashboardController extends BaseController implements Initializable
     private void onAdminSwitchClick(ActionEvent event) {
         User user = SessionStore.getInstance().getCurrentUser();
 
-        if (Objects.isNull(user) || !user.getRole().equals(UserRole.ADMIN) || true) {
+        if (Objects.isNull(user) || !user.getRole().equals(UserRole.ADMIN)) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Announcement!");
             alert.setHeaderText("Access denied!");

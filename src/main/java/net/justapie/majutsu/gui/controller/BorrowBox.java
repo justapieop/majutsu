@@ -25,7 +25,7 @@ public class BorrowBox implements Selectable {
     }
 
     @FXML
-    public void setOnConfirmButton(ActionEvent event) {
+    private void setOnConfirmButton(ActionEvent event) {
 
         getInstance().terminateWindow();
     }
