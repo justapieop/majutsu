@@ -1,6 +1,5 @@
 package net.justapie.majutsu.gui.controller;
 
-import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
@@ -11,14 +10,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import net.justapie.majutsu.cache.Cache;
 import net.justapie.majutsu.db.schema.book.Book;
-import net.justapie.majutsu.db.schema.user.User;
-import net.justapie.majutsu.db.schema.user.UserRole;
 import net.justapie.majutsu.gui.SceneType;
-import net.justapie.majutsu.gui.SessionStore;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class AdminController extends BaseController implements Initializable {
@@ -62,15 +57,6 @@ public class AdminController extends BaseController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        User user = SessionStore.getInstance().getCurrentUser();
-
-        System.out.println("test");
-
-        if (Objects.isNull(user) || !user.getRole().equals(UserRole.ADMIN)) {
-            Platform.runLater(() -> this.switchToScene(SceneType.DASHBOARD));
-            return;
-        }
-
         this.setupBookColumns();
 
         this.books = Cache.getInstance().<ArrayList<Book>>get("books").getData();
