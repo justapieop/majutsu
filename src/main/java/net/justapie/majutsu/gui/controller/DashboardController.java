@@ -11,6 +11,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import net.justapie.majutsu.db.repository.document.DocumentRepositoryFactory;
+import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.db.schema.user.User;
 import net.justapie.majutsu.db.schema.user.UserRole;
 import net.justapie.majutsu.gui.SceneManager;
@@ -18,8 +20,11 @@ import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 
 import java.net.URL;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class DashboardController extends BaseController implements Initializable {
     @FXML
@@ -76,32 +81,32 @@ public class DashboardController extends BaseController implements Initializable
             }
         });
 
-//        GBookClient.getInstance().getVolumeById()
+        List<Book> bookList = DocumentRepositoryFactory.getInstance().create().getAllBooks();
+
+//        Book book = bookList.getFirst();
+//        book.getVolumeInfo().getTitle();
+//        book.getId()
+
+        List<Book> borrowedBooks = bookList.stream().filter((b) -> {
+            return b.isBorrowed() && (new Date().compareTo(b.expectedReturn()) > 0);
+        }).toList();
+
+        List<Book> availableBooks = bookList.stream().filter((b) -> {
+            return b.isAvailable();
+        }).toList();
+
+        List<Book> expiredBooks = bookList.stream().filter((b) -> {
+            return b.isBorrowed() && (new Date().compareTo(b.expectedReturn()) < 0);
+        }).toList();
 
         // Insert here init functions for numbers.
-        numberOfBorrowedBooks = 10;
-        numberOfAvailableBooks = 20;
-        numberOfExpiredBooks = 30;
+        this.numberOfBorrowedBooks = borrowedBooks.size();
+        this.numberOfAvailableBooks = availableBooks.size();
+        this.numberOfExpiredBooks = expiredBooks.size();
 
-        if (numberOfBorrowedBooks == null) {
-            borrowedBooksPrompt.setText("Number of borrowed books: loading...");
-        } else {
-            borrowedBooksPrompt.setText(String.format("Number of borrowed books: %d.", numberOfBorrowedBooks));
-        }
-
-        if (numberOfAvailableBooks == null) {
-            availableBooksPrompt.setText("Number of available books: loading...");
-        }
-        else {
-            availableBooksPrompt.setText(String.format("Number of available books: %d.", numberOfAvailableBooks));
-        }
-
-        if (numberOfExpiredBooks == null) {
-            expiredBooksPrompt.setText("Number of expired books: loading...");
-        }
-        else {
-            expiredBooksPrompt.setText(String.format("Number of expired books: %d.", numberOfExpiredBooks));
-        }
+        this.borrowedBooksPrompt.setText(String.format("Number of borrowed books: %d.", numberOfBorrowedBooks));
+        this.availableBooksPrompt.setText(String.format("Number of available books: %d.", numberOfAvailableBooks));
+        this.expiredBooksPrompt.setText(String.format("Number of expired books: %d.", numberOfExpiredBooks));
     }
 
 //    @FXML
