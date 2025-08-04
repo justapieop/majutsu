@@ -5,14 +5,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import net.justapie.majutsu.db.schema.user.User;
 import net.justapie.majutsu.db.schema.user.UserRole;
+import net.justapie.majutsu.gui.SceneManager;
 import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 
@@ -101,15 +103,21 @@ public class DashboardController extends BaseController implements Initializable
         else {
             expiredBooksPrompt.setText(String.format("Number of expired books: %d.", numberOfExpiredBooks));
         }
+    }
 
-        if (!user.getRole().equals(UserRole.ADMIN)) {
-            this.adminSwitchBtn.setVisible(false);
-        }
+//    @FXML
+//    private void onAddBookClick(ActionEvent event) {
+//        availableBookContainer.getChildren().add(createRow());
+//    }
+
+    @FXML
+    private void onBorrowBookClick(ActionEvent event) {
+        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.BORROW), BorrowBox.getInstance());
     }
 
     @FXML
-    private void onAddBookClick(ActionEvent event) {
-        availableBookContainer.getChildren().add(createRow());
+    private void onReturnBookClick(ActionEvent event) {
+        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.RETURN), ReturnBox.getInstance());
     }
 
     private HBox createRow() {
@@ -118,22 +126,47 @@ public class DashboardController extends BaseController implements Initializable
         row.setAlignment(Pos.CENTER);
         row.setPadding(new Insets(5, 10, 5, 10));
 
+        Label idLabel = new Label("ID");
+        idLabel.setPrefWidth(64);
+
+        Label nameLabel = new Label("Name");
+        nameLabel.setPrefWidth(200);
+
+        Label statusLabel = new Label("Status");
+        statusLabel.setPrefWidth(100);
+
+        Label modifiedLabel = new Label("Last Modified");
+        modifiedLabel.setPrefWidth(120);
+
         row.getChildren().addAll(
-                new Label("ID"),
-                new Region(),
-                new Label("Name"),
-                new Region(),
-                new Label("Last Modified"),
-                new Region(),
-                new Label("Status")
+                idLabel,
+                nameLabel,
+                modifiedLabel,
+                statusLabel
         );
+
+        row.setStyle("""
+                -fx-border-color: #d0d0d0;
+                -fx-border-width: 1;
+        """);
 
         return row;
     }
 
     @FXML
-    private void onAdminSwitchClick() {
-        new AdminSplashController().process();
+    private void onAdminSwitchClick(ActionEvent event) {
+        User user = SessionStore.getInstance().getCurrentUser();
+
+        if (Objects.isNull(user) || !user.getRole().equals(UserRole.ADMIN)) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Announcement!");
+            alert.setHeaderText("Access denied!");
+            alert.setContentText("Describe problem: Authorization violation!");
+            alert.show();
+        }
+        else {
+            new AdminSplashController().process();
+        }
     }
 
 }
