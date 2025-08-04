@@ -20,10 +20,7 @@ import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 
 import java.net.URL;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DashboardController extends BaseController implements Initializable {
@@ -88,7 +85,7 @@ public class DashboardController extends BaseController implements Initializable
 //        book.getId()
 
         List<Book> borrowedBooks = bookList.stream().filter((b) -> {
-            return b.isBorrowed() && (new Date().compareTo(b.expectedReturn()) > 0);
+            return b.isBorrowed() && !isExpired(b);
         }).toList();
 
         List<Book> availableBooks = bookList.stream().filter((b) -> {
@@ -96,7 +93,7 @@ public class DashboardController extends BaseController implements Initializable
         }).toList();
 
         List<Book> expiredBooks = bookList.stream().filter((b) -> {
-            return b.isBorrowed() && (new Date().compareTo(b.expectedReturn()) < 0);
+            return b.isBorrowed() && isExpired(b);
         }).toList();
 
         // Insert here init functions for numbers.
@@ -124,28 +121,47 @@ public class DashboardController extends BaseController implements Initializable
         SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.RETURN), ReturnBox.getInstance());
     }
 
-    private HBox createRow() {
+    private boolean isExpired(Book book) {
+        return new Date().compareTo(book.expectedReturn())  < 0;
+    }
+
+    private Label authorsLabel(Book book) {
+        String text = new String();
+        for (final String author : book.getVolumeInfo().getAuthors()) {
+            text += author + ", ";
+        }
+        Label result = new Label();
+        if (!text.isBlank() && text.length() > 1) {
+            result.setText(text.substring(0, text.length() - 2) + ".");
+        }
+        result.setWrapText(true);
+        return result;
+    }
+
+    private HBox createRow(Book book) {
         HBox row = new HBox();
 
         row.setAlignment(Pos.CENTER);
         row.setPadding(new Insets(5, 10, 5, 10));
 
-        Label idLabel = new Label("ID");
+        Label idLabel = new Label(book.getId());
         idLabel.setPrefWidth(64);
 
-        Label nameLabel = new Label("Name");
+        Label nameLabel = new Label(book.getVolumeInfo().getTitle());
         nameLabel.setPrefWidth(200);
+        nameLabel.setWrapText(true);
 
-        Label statusLabel = new Label("Status");
+        String currentStatus = (book.isAvailable() ? "Available" : (isExpired(book) ? "Expired" : "Borrowed"));
+        Label statusLabel = new Label(currentStatus);
         statusLabel.setPrefWidth(100);
 
-        Label modifiedLabel = new Label("Last Modified");
-        modifiedLabel.setPrefWidth(120);
+        Label bookAuthors = authorsLabel(book);
+        bookAuthors.setPrefWidth(200);
 
         row.getChildren().addAll(
                 idLabel,
                 nameLabel,
-                modifiedLabel,
+                bookAuthors,
                 statusLabel
         );
 
