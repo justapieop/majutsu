@@ -6,9 +6,13 @@ import net.justapie.majutsu.cache.CacheObject;
 import net.justapie.majutsu.db.DbClient;
 
 import net.justapie.majutsu.db.schema.book.Book;
+import net.justapie.majutsu.gbook.GBookClient;
+import net.justapie.majutsu.gbook.fetcher.VolumeFetcher;
+import net.justapie.majutsu.gbook.model.Volume;
 import net.justapie.majutsu.utils.Utils;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -51,9 +55,8 @@ public class DocumentRepository {
 
     public Book createBookById(String id){
         VolumeFetcher fetcher = GBookClient.getInstance().getVolumeById(id);
-        fetcher.run();
         Volume volume = fetcher.get();
-        String sql = "INSERT INTO documents (id, borrowed_by, borrowed_at, return_date, borrowed, created_at, updated_at) VALUES (?, null, null, null, 0, strftime('%s', 'now'), strftime('%s', 'now'))";
+        String sql = "INSERT INTO documents (id, borrowed, created_at, updated_at) VALUES (?, 0, strftime('%s', 'now'), strftime('%s', 'now'))";
         try(PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
             stmt.setString(1, volume.getId());
             stmt.executeUpdate();
@@ -61,7 +64,6 @@ public class DocumentRepository {
             LOGGER.error("Error inserting book: " + e.getMessage());
             return null;
         }
-        // You may want to return a Book object here, e.g. Book.fromVolume(volume)
         return Book.fromVolume(volume);
     }
   
@@ -70,7 +72,6 @@ public class DocumentRepository {
         String sql = "DELETE FROM documents WHERE id = ?";
         try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
             stmt.setString(1, id);
-            updateTime(id);
             return stmt.executeUpdate() > 0;
         } catch (Exception e) {
             LOGGER.error("Error deleteing document:" + e.getMessage());
