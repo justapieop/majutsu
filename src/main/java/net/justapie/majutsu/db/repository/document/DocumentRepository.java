@@ -4,15 +4,10 @@ import ch.qos.logback.classic.Logger;
 import net.justapie.majutsu.cache.Cache;
 import net.justapie.majutsu.cache.CacheObject;
 import net.justapie.majutsu.db.DbClient;
-
 import net.justapie.majutsu.db.schema.book.Book;
-import net.justapie.majutsu.gbook.GBookClient;
-import net.justapie.majutsu.gbook.fetcher.VolumeFetcher;
-import net.justapie.majutsu.gbook.model.Volume;
 import net.justapie.majutsu.utils.Utils;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,31 +47,4 @@ public class DocumentRepository {
             throw new RuntimeException(e);
         }
     }
-
-    public Book createBookById(String id){
-        VolumeFetcher fetcher = GBookClient.getInstance().getVolumeById(id);
-        Volume volume = fetcher.get();
-        String sql = "INSERT INTO documents (id, borrowed, created_at, updated_at) VALUES (?, 0, strftime('%s', 'now'), strftime('%s', 'now'))";
-        try(PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
-            stmt.setString(1, volume.getId());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            LOGGER.error("Error inserting book: " + e.getMessage());
-            return null;
-        }
-        return Book.fromVolume(volume);
-    }
-  
-
-    public boolean deleteDocument(String id){
-        String sql = "DELETE FROM documents WHERE id = ?";
-        try (PreparedStatement stmt = CONNECTION.prepareStatement(sql)){
-            stmt.setString(1, id);
-            return stmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            LOGGER.error("Error deleteing document:" + e.getMessage());
-            return false;
-        }
-    }
-
 }

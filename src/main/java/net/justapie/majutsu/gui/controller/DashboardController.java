@@ -11,7 +11,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import net.justapie.majutsu.db.schema.user.User;
 import net.justapie.majutsu.db.schema.user.UserRole;
 import net.justapie.majutsu.gui.SceneManager;
@@ -159,12 +158,9 @@ public class DashboardController extends BaseController implements Initializable
 
         if (Objects.isNull(user) || !user.getRole().equals(UserRole.ADMIN)) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Announcement!");
             alert.setHeaderText("Access denied!");
-            alert.setContentText("Describe problem: Authorization violation!");
             alert.show();
-        }
-        else {
+        } else {
             new AdminSplashController().process();
         }
     }

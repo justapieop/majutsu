@@ -18,9 +18,6 @@ module net.justapie.majutsu {
     requires com.google.gson;
     requires java.desktop;
 
-    exports net.justapie.majutsu.db.schema.user;
-    opens net.justapie.majutsu.gbook.model to com.google.gson;
-    opens net.justapie.majutsu.gui.controller to javafx.fxml;
-    exports net.justapie.majutsu.gui.controller;
-    exports net.justapie.majutsu.gui;
+    opens net.justapie.majutsu to com.google.gson, javafx.fxml;
+    exports net.justapie.majutsu;
 }
