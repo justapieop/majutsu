@@ -9,7 +9,7 @@ public class UI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-//        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
+        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
 
         stage = primaryStage;
 
