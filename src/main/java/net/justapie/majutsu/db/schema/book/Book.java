@@ -1,5 +1,7 @@
 package net.justapie.majutsu.db.schema.book;
 
+import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
+import net.justapie.majutsu.db.schema.user.User;
 import net.justapie.majutsu.gbook.GBookClient;
 import net.justapie.majutsu.gbook.model.Volume;
 
@@ -10,15 +12,15 @@ import java.util.Date;
 
 
 public class Book extends Volume {
-    private long borrowedBy;
-    private Date borrowedAt;
-    private Date expectedReturn;
-    private Date returnDate;
-    private Date createdAt;
-    private boolean borrowed;
-    private boolean available;
+    protected User borrowedBy;
+    protected Date borrowedAt;
+    protected Date expectedReturn;
+    protected Date returnDate;
+    protected Date createdAt;
+    protected boolean borrowed;
+    protected boolean available;
 
-    private Book() {
+    protected Book() {
         super();
     }
 
@@ -36,7 +38,12 @@ public class Book extends Volume {
             String id = resultSet.getString("id");
             Book gBook = Book.fromVolume(GBookClient.getInstance().getVolumeById(id).get());
 
-            gBook.borrowedBy = resultSet.getLong("borrowed_by");
+            long borrowedUserId = resultSet.getLong("borrowed_by");
+
+            if (borrowedUserId != 0) {
+                gBook.borrowedBy = UserRepositoryFactory.getInstance().create().getUserById(borrowedUserId);
+            }
+
             gBook.borrowedAt = Date.from(Instant.ofEpochSecond(resultSet.getLong("borrowed_at")));
             gBook.expectedReturn = Date.from(Instant.ofEpochSecond(resultSet.getLong("expected_return")));
             gBook.returnDate = Date.from(Instant.ofEpochSecond(resultSet.getLong("returned_at")));
@@ -62,7 +69,7 @@ public class Book extends Volume {
         return this.borrowed;
     }
 
-    public long getBorrowedBy() {
+    public User getBorrowedBy() {
         return this.borrowedBy;
     }
 

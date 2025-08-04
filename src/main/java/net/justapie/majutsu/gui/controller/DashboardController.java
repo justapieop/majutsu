@@ -5,8 +5,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -132,6 +130,8 @@ public class DashboardController extends BaseController implements Initializable
 
         return row;
     }
+
+    @FXML
     private void onAdminSwitchClick() {
         new AdminSplashController().process();
     }
