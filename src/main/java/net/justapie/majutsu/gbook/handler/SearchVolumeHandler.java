@@ -15,7 +15,6 @@ public class SearchVolumeHandler implements HttpResponse.BodyHandler<SearchItems
         return HttpResponse.BodySubscribers.mapping(
                 upstream,
                 (body) -> Utils.getInstance().getGson().fromJson(body, SearchItems.class)
-
         );
     }
 }

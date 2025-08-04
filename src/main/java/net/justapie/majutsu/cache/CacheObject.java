@@ -2,33 +2,26 @@ package net.justapie.majutsu.cache;
 
 import java.util.Date;
 
-public class CacheObject implements Cacheable {
-    private final long ttl;
-    private final Object data;
+public class CacheObject<T> {
+    private final T data;
     private final long createdAt;
+    private final long ttl;
 
-    private CacheObject(long ttl, Object data) {
-        this.ttl = ttl;
+    public CacheObject(T data, long ttl) {
         this.data = data;
+        this.ttl = ttl;
         this.createdAt = new Date().getTime();
     }
 
-    public static CacheObject create(long ttl, Object data) {
-        return new CacheObject(ttl, data);
-    }
-
-    @Override
-    public long getTtl() {
-        return this.ttl;
-    }
-
-    @Override
     public boolean isExpired() {
-        return new Date().getTime() > (this.createdAt + this.ttl);
+        return new Date().getTime() > this.createdAt + this.ttl;
     }
 
-    @Override
-    public Object getData() {
+    public long getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public T getData() {
         return this.data;
     }
 }

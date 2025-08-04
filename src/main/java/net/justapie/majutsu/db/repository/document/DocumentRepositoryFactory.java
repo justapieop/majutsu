@@ -12,6 +12,7 @@ import java.util.Objects;
 
 public class DocumentRepositoryFactory extends RepositoryFactoryProvider<DocumentRepository> {
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(DocumentRepositoryFactory.class);
+    private static final DocumentRepositoryFactory INSTANCE = new DocumentRepositoryFactory();
 
     @Override
     public DocumentRepository create() {
@@ -20,17 +21,15 @@ public class DocumentRepositoryFactory extends RepositoryFactoryProvider<Documen
         try {
             LOGGER.info("Getting document repository. Creating repository if not exists");
             connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS documents (" +
-                            "id tEXT PRIMARY KEY NOT NULL UNIQUE," +
-    
-                            "borrowed_by LONG," +
-                            "borrowed_at DATE," +
-                            "return_date DATE," +
+                    "CREATE TABLE IF NOT EXISTS books (" +
+                            "id TEXT PRIMARY KEY NOT NULL UNIQUE," +
+                            "borrowed_by INTEGER," +
+                            "borrowed_at INTEGER," +
+                            "expected_return INTEGER," +
+                            "returned_at INTEGER," +
                             "borrowed BOOLEAN NOT NULL,"+
-                        
-                      
-                            "created_at INTEGER DEFAULT (strftime('%s', 'now')),"+
-                            "updated at INTEGER DEFAULT (strftime('%s', 'now'))"+
+                            "created_at INTEGER DEFAULT (strftime('%s', 'now'))," +
+                            "available BOOLEAN NOT NULL DEFAULT true"+
                             ");"
             );
 
@@ -39,8 +38,7 @@ public class DocumentRepositoryFactory extends RepositoryFactoryProvider<Documen
             LOGGER.info("Document repository created");
 
             LOGGER.info("Creating index for documents if not exists");
-            connection.createStatement().execute("CREATE UNIQUE INDEX IF NOT EXISTS documents_idx ON documents (" +
-                    "id" + ");");
+            connection.createStatement().execute("CREATE UNIQUE INDEX IF NOT EXISTS book_idx ON books (id);");
             LOGGER.info("Index created");
             
         } catch (SQLException e) {
@@ -52,5 +50,9 @@ public class DocumentRepositoryFactory extends RepositoryFactoryProvider<Documen
             this.repository = new DocumentRepository();
         }
         return this.repository;
+    }
+
+    public static DocumentRepositoryFactory getInstance() {
+        return INSTANCE;
     }
 }

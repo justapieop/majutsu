@@ -3,22 +3,21 @@ package net.justapie.majutsu.gbook.fetcher;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.ExecutionException;
 
-public abstract class BaseFetcher<T> extends Thread {
+public abstract class BaseFetcher<T, K extends HttpResponse.BodyHandler<T>> {
     private final HttpRequest httpRequest;
     private final HttpClient httpClient;
     private HttpResponse<T> httpResponse;
+    private final K bodyHandler;
 
-    protected BaseFetcher(HttpClient httpClient, HttpRequest httpRequest) {
+    protected BaseFetcher(HttpClient httpClient, HttpRequest httpRequest, K bodyHandler) {
         this.httpClient = httpClient;
         this.httpRequest = httpRequest;
+        this.bodyHandler = bodyHandler;
     }
 
-    protected HttpClient getHttpClient() {
-        return this.httpClient;
-    }
-
-    protected HttpRequest getHttpRequest() {
+    public HttpRequest getHttpRequest() {
         return this.httpRequest;
     }
 
@@ -26,9 +25,15 @@ public abstract class BaseFetcher<T> extends Thread {
         return this.httpResponse;
     }
 
-    public void setHttpResponse(HttpResponse<T> httpResponse) {
-        this.httpResponse = httpResponse;
-    }
+    public abstract String extractId();
 
-    public abstract Object get();
+    public abstract T get() throws InterruptedException;
+
+    public void start() {
+        try {
+            this.httpResponse = this.httpClient.sendAsync(this.httpRequest, this.bodyHandler).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

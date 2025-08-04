@@ -26,12 +26,16 @@ public class GBookClient {
     }
 
     public VolumeFetcher getVolumeById(String id) {
-        this.httpRequest = this.httpRequestBuilder.GET().uri(URI.create(GBOOK_BASE_URL + "/" + id)).build();
+        this.httpRequest = this.httpRequestBuilder.GET()
+                .uri(URI.create(GBOOK_BASE_URL + "/" + id))
+                .build();
         return new VolumeFetcher(this.httpClient, this.httpRequest);
     }
 
     public SearchVolumeFetcher searchVolume(String query) {
-        this.httpRequest = this.httpRequestBuilder.GET().uri(URI.create(GBOOK_BASE_URL + "?q=" + query)).build();
+        this.httpRequest = this.httpRequestBuilder.GET()
+                .uri(URI.create(GBOOK_BASE_URL + "?q=" + query))
+                .build();
         return new SearchVolumeFetcher(this.httpClient, this.httpRequest);
     }
 }
