@@ -5,7 +5,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
 import net.justapie.majutsu.db.schema.user.User;
-import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 import net.justapie.majutsu.utils.CryptoUtils;
 import net.justapie.majutsu.utils.Utils;
@@ -44,7 +43,7 @@ public class LoginController extends BaseController {
                 user.getId()
         );
 
-        this.switchToScene(SceneType.DASHBOARD);
+        new DashboardSplashController().process();
     }
 
     @FXML
@@ -67,7 +66,7 @@ public class LoginController extends BaseController {
                 UserRepositoryFactory.getInstance().create().getUserIdByEmail(email)
         );
 
-        this.switchToScene(SceneType.DASHBOARD);
+        new DashboardSplashController().process();
     }
 
     private boolean validateInput() {
