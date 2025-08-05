@@ -47,14 +47,10 @@
             </Button>
             <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
                <content>
-                  <VBox fillWidth="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="553.0" spacing="12.0">
+                  <VBox fx:id="selectionSection" fillWidth="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="553.0" spacing="12.0">
                      <padding>
                         <Insets left="12.0" right="20.0" top="12.0" />
                      </padding>
-                     <children>
-                        <CheckBox mnemonicParsing="false" text="CheckBox" />
-                        <CheckBox mnemonicParsing="false" text="CheckBox" />
-                     </children>
                   </VBox>
                </content>
             </ScrollPane>
