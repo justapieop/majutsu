@@ -24,7 +24,6 @@ import net.justapie.majutsu.gui.SessionStore;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DashboardController extends BaseController implements Initializable {
     @FXML

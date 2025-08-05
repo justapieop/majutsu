@@ -7,7 +7,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import net.justapie.majutsu.db.schema.book.Book;
-import net.justapie.majutsu.gui.SceneManager;
 
 import java.util.ArrayList;
 import java.util.List;
