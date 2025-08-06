@@ -15,11 +15,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class DocumentRepository {
-    private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(DocumentRepository.class);
+public class BookRepository {
+    private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(BookRepository.class);
     private static final Connection CONNECTION = DbClient.getInstance().getConnection();
 
     public List<Book> getAllBooks() {
+        LOGGER.debug("Preparing fetch all books in db");
         try {
             CacheObject<ArrayList<Book>> cachedBooks = Cache.getInstance().get("books");
 
@@ -44,7 +45,8 @@ public class DocumentRepository {
 
             return Collections.unmodifiableList(books);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            LOGGER.error("Failed while fetching all books");
         }
+        return Collections.emptyList();
     }
 }

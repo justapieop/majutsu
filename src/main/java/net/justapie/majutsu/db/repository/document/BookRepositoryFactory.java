@@ -10,16 +10,16 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 
-public class DocumentRepositoryFactory extends RepositoryFactoryProvider<DocumentRepository> {
-    private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(DocumentRepositoryFactory.class);
-    private static final DocumentRepositoryFactory INSTANCE = new DocumentRepositoryFactory();
+public class BookRepositoryFactory extends RepositoryFactoryProvider<BookRepository> {
+    private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(BookRepositoryFactory.class);
+    private static final BookRepositoryFactory INSTANCE = new BookRepositoryFactory();
 
     @Override
-    public DocumentRepository create() {
-        Connection connection = DbClient.getInstance().getConnection();
+    public BookRepository create() {
+        final Connection connection = DbClient.getInstance().getConnection();
+        LOGGER.debug("Preparing to create books table if not exists");
 
         try {
-            LOGGER.info("Getting document repository. Creating repository if not exists");
             connection.createStatement().execute(
                     "CREATE TABLE IF NOT EXISTS books (" +
                             "id TEXT PRIMARY KEY NOT NULL UNIQUE," +
@@ -33,26 +33,20 @@ public class DocumentRepositoryFactory extends RepositoryFactoryProvider<Documen
                             ");"
             );
 
-        
-            
-            LOGGER.info("Document repository created");
-
-            LOGGER.info("Creating index for documents if not exists");
             connection.createStatement().execute("CREATE UNIQUE INDEX IF NOT EXISTS book_idx ON books (id);");
-            LOGGER.info("Index created");
-            
+
         } catch (SQLException e) {
             LOGGER.error("Failed while getting document repository");
             LOGGER.error(e.getMessage());
         }
 
         if (Objects.isNull(this.repository)) {
-            this.repository = new DocumentRepository();
+            this.repository = new BookRepository();
         }
         return this.repository;
     }
 
-    public static DocumentRepositoryFactory getInstance() {
+    public static BookRepositoryFactory getInstance() {
         return INSTANCE;
     }
 }
