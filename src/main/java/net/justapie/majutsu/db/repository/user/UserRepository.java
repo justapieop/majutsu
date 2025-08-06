@@ -24,6 +24,7 @@ public class UserRepository {
 
     public List<User> getAllUsers() {
         ArrayList<User> users = new ArrayList<>();
+        LOGGER.debug("Preparing to fetch all users");
 
         try {
             PreparedStatement statement = CONNECTION.prepareStatement(
@@ -60,6 +61,7 @@ public class UserRepository {
 
     public long getUserIdByEmail(String email) {
         ResultSet result;
+        LOGGER.debug("Preparing to fetch user id by email");
         try {
             PreparedStatement statement = CONNECTION.prepareStatement("SELECT * FROM users WHERE email = ?");
             statement.setString(1, email);
@@ -75,6 +77,7 @@ public class UserRepository {
 
     public User getUserById(long id) {
         ResultSet result;
+        LOGGER.debug("Preparing to fetch user by id");
         try {
             PreparedStatement statement = CONNECTION.prepareStatement("SELECT * FROM users WHERE id = ?");
             statement.setLong(1, id);
@@ -90,6 +93,7 @@ public class UserRepository {
     }
 
     public User getUserByEmail(String email) {
+        LOGGER.debug("Preparing to fetch user by email");
         ResultSet result;
         try {
             PreparedStatement statement = CONNECTION.prepareStatement("SELECT * FROM users WHERE email = ?");
@@ -106,6 +110,7 @@ public class UserRepository {
     }
 
     public void changePassword(long id, String password) {
+        LOGGER.debug("Preparing to fetch change user {}'s password", id);
         try {
             PreparedStatement statement = CONNECTION.prepareStatement("UPDATE users SET password = ? WHERE id = ?");
             statement.setString(1, CryptoUtils.getInstance().hashPassword(password));
@@ -119,6 +124,7 @@ public class UserRepository {
     }
 
     public void changeName(long id, String name) {
+        LOGGER.debug("Preparing to change user {}'s name", id);
         try {
             PreparedStatement statement = CONNECTION.prepareStatement("UPDATE users SET name = ? WHERE id = ?");
             statement.setString(1, name);
@@ -135,8 +141,8 @@ public class UserRepository {
      * Due to driver limitation, there must be two queries to be executed
      */
     public User createUser(String name, String email, String password) {
+        LOGGER.debug("Preparing to create user");
         try {
-
             PreparedStatement statement = CONNECTION.prepareStatement(
                             "INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?);"
             );
