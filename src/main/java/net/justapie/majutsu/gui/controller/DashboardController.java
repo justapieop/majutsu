@@ -13,7 +13,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import net.justapie.majutsu.db.repository.document.DocumentRepositoryFactory;
+import net.justapie.majutsu.db.repository.document.BookRepositoryFactory;
 import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.db.schema.user.User;
 import net.justapie.majutsu.db.schema.user.UserRole;
@@ -65,8 +65,11 @@ public class DashboardController extends BaseController implements Initializable
 
         this.comboBox.setValue("Welcome, " + user.getName() + "!");
 
-        this.comboBox.getItems().add("My account");
-        this.comboBox.getItems().add("Logout");
+        this.comboBox.getItems().addAll("My account", "Logout");
+
+        if (user.getRole().equals(UserRole.ADMIN)) {
+            this.comboBox.getItems().add("Switch to admin panel");
+        }
 
         this.comboBox.setOnAction(event -> {
             String selectedItem = this.comboBox.getSelectionModel().getSelectedItem();
@@ -82,10 +85,15 @@ public class DashboardController extends BaseController implements Initializable
                     this.switchToScene(SceneType.LOGIN);
                     break;
                 }
+
+                case "Switch to admin panel": {
+                    this.onAdminSwitchClick();
+                    break;
+                }
             }
         });
 
-        List<Book> bookList = DocumentRepositoryFactory.getInstance().create().getAllBooks();
+        List<Book> bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
 
         borrowedBooks = bookList.stream().filter((b) -> {
             return b.isBorrowed() && !isExpired(b);
@@ -224,8 +232,7 @@ public class DashboardController extends BaseController implements Initializable
         return row;
     }
 
-    @FXML
-    private void onAdminSwitchClick(ActionEvent event) {
+    private void onAdminSwitchClick() {
         User user = SessionStore.getInstance().getCurrentUser();
 
         if (Objects.isNull(user) || !user.getRole().equals(UserRole.ADMIN)) {

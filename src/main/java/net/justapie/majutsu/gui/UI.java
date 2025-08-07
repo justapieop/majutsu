@@ -2,7 +2,9 @@ package net.justapie.majutsu.gui;
 
 import atlantafx.base.theme.PrimerDark;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class UI extends Application {
     public static Stage stage;
@@ -20,6 +22,7 @@ public class UI extends Application {
         primaryStage.centerOnScreen();
         primaryStage.sizeToScene();
         primaryStage.setResizable(false);
+        primaryStage.setOnCloseRequest(event -> System.exit(0));
         primaryStage.show();
     }
 }

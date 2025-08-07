@@ -4,9 +4,9 @@ import javafx.application.Platform;
 import net.justapie.majutsu.db.repository.document.BookRepositoryFactory;
 import net.justapie.majutsu.gui.SceneType;
 
-public class AdminSplashController extends BaseSplashController {
-    public AdminSplashController() {
-        super(SceneType.ADMIN);
+public class DashboardSplashController extends BaseSplashController {
+    public DashboardSplashController() {
+        super(SceneType.DASHBOARD);
     }
 
     @Override
