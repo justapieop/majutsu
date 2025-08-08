@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import net.justapie.majutsu.cache.Cache;
 import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.gui.SceneType;
+import net.justapie.majutsu.gui.model.DisplayableBook;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,37 +21,37 @@ public class AdminController extends BaseController implements Initializable {
     private ArrayList<Book> books;
 
     @FXML
-    private TableView<Book> bookTable;
+    private TableView<DisplayableBook> bookTable;
 
     @FXML
-    private TableColumn<CheckBox, CheckBox> bookSelectCol;
+    private TableColumn<DisplayableBook, CheckBox> bookSelectCol;
 
     @FXML
-    private TableColumn<Book, String> idCol;
+    private TableColumn<DisplayableBook, String> idCol;
 
     @FXML
-    private TableColumn<Book, String> nameCol;
+    private TableColumn<DisplayableBook, String> nameCol;
 
     @FXML
-    private TableColumn<Book, String> createdAtCol;
+    private TableColumn<DisplayableBook, String> createdAtCol;
 
     @FXML
-    private TableColumn<Book, String> availableCol;
+    private TableColumn<DisplayableBook, String> availableCol;
 
     @FXML
-    private TableColumn<Book, String> borrowedCol;
+    private TableColumn<DisplayableBook, String> borrowedCol;
 
     @FXML
-    private TableColumn<Book, String> borrowedAtCol;
+    private TableColumn<DisplayableBook, String> borrowedAtCol;
 
     @FXML
-    private TableColumn<Book, String> expectedReturnCol;
+    private TableColumn<DisplayableBook, String> expectedReturnCol;
 
     @FXML
-    private TableColumn<Book, String> returnDateCol;
+    private TableColumn<DisplayableBook, String> returnDateCol;
 
     @FXML
-    private TableColumn<Book, String> borrowedByCol;
+    private TableColumn<DisplayableBook, String> borrowedByCol;
 
     @FXML
     private TextField bookSearchTextField;
@@ -61,7 +62,16 @@ public class AdminController extends BaseController implements Initializable {
 
         this.books = Cache.getInstance().<ArrayList<Book>>get("books").getData();
 
-        this.bookTable.getItems().addAll(this.books);
+        for (final Book book : this.books) {
+            this.bookTable.getItems().add(
+                    DisplayableBook.fromBook(book)
+            );
+        }
+    }
+
+    @FXML
+    private void onAdminBookAdd() {
+        this.switchToScene(SceneType.ADMIN_BOOK_SEARCH);
     }
 
     @FXML
@@ -76,14 +86,7 @@ public class AdminController extends BaseController implements Initializable {
 
     protected void setupBookColumns() {
         this.bookSelectCol.setCellValueFactory(
-                c -> {
-                    CheckBox cb = new CheckBox();
-
-                    cb.setSelected(false);
-                    cb.setText("");
-
-                    return new SimpleObjectProperty<>(cb);
-                }
+                c -> new SimpleObjectProperty<>(c.getValue().getCheckBox())
         );
         this.idCol.setCellValueFactory(
                 c -> new SimpleStringProperty(

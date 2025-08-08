@@ -22,6 +22,7 @@ public class DisplayableBook extends Book {
         displayableBook.returnDate = book.getReturnDate();
         displayableBook.expectedReturn = book.expectedReturn();
         displayableBook.available = book.isAvailable();
+        displayableBook.createdAt = book.getCreatedAt();
 
         return displayableBook;
     }

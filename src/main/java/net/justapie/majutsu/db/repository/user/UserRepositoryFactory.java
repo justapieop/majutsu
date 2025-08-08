@@ -14,9 +14,8 @@ public class UserRepositoryFactory extends RepositoryFactoryProvider<UserReposit
 
     public UserRepository create() {
         final Connection connection = DbClient.getInstance().getConnection();
-
+        LOGGER.debug("Preparing to create users table if not exists");
         try {
-
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS users (" +
                     "id INTEGER PRIMARY KEY UNIQUE NOT NULL," +
                     "name TEXT NOT NULL DEFAULT 'Unknown'," +
@@ -26,13 +25,10 @@ public class UserRepositoryFactory extends RepositoryFactoryProvider<UserReposit
                     "created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))," +
                     "active BOOLEAN NOT NULL DEFAULT true" +
                     ");");
-            LOGGER.info("User repository created");
 
-            LOGGER.info("Creating index for user if not exists");
             connection.createStatement().execute("CREATE UNIQUE INDEX IF NOT EXISTS user_idx ON users (" +
                     "id, email" +
                     ");");
-            LOGGER.info("Index created");
         } catch (SQLException e) {
             LOGGER.error("Failed while getting user repository");
             LOGGER.error(e.getMessage());

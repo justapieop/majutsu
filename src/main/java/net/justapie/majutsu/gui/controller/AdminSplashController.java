@@ -1,7 +1,7 @@
 package net.justapie.majutsu.gui.controller;
 
 import javafx.application.Platform;
-import net.justapie.majutsu.db.repository.document.DocumentRepositoryFactory;
+import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
 import net.justapie.majutsu.gui.SceneType;
 
 public class AdminSplashController extends BaseSplashController {
@@ -12,7 +12,7 @@ public class AdminSplashController extends BaseSplashController {
     @Override
     public void process() {
         new Thread(() -> {
-            DocumentRepositoryFactory.getInstance().create().getAllBooks();
+            BookRepositoryFactory.getInstance().create().getAllBooks();
 
             Platform.runLater(() -> this.switchToScene(this.getNextScene()));
         }).start();
