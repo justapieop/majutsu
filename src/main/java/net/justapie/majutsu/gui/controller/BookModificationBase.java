@@ -44,12 +44,18 @@ public abstract class BookModificationBase {
 
     @FXML
     protected void setOnConfirmButton(ActionEvent event) {
+        setConfirmation(true);
         terminateWindow();
     }
 
     @FXML
     protected void setOnCancelButton(ActionEvent event) {
+        setConfirmation(false);
         terminateWindow();
+    }
+
+    public void setConfirmation(boolean confirmation) {
+        this.confirmation = confirmation;
     }
 
     public boolean isConfirmed() {

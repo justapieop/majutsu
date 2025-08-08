@@ -138,7 +138,7 @@ public class DashboardController extends BaseController implements Initializable
         FXMLLoader loader = SceneManager.getLoader(path);
         try {
             Scene scene = new Scene(loader.load());
-            BorrowBox controller = loader.getController();
+            BoxInteractive controller = loader.getController();
             controller.createNewStage();
             controller.setSelectionSection(source);
             controller.show(scene);

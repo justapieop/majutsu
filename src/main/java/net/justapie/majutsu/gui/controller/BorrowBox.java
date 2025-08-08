@@ -7,7 +7,7 @@ import net.justapie.majutsu.db.schema.book.Book;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BorrowBox extends BookModificationBase {
+public class BorrowBox extends BookModificationBase implements BoxInteractive {
     @Override
     public void setSelectionSection(List<Book> source) {
         selectedOptions = new ArrayList<>();
