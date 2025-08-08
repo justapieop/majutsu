@@ -16,6 +16,8 @@ public abstract class BookModificationBase {
 
     protected ArrayList<Integer> selectedOptions;
 
+    private boolean confirmation;
+
     @FXML
     public VBox selectionSection;
 
@@ -25,6 +27,7 @@ public abstract class BookModificationBase {
         this.stage.centerOnScreen();
         this.stage.sizeToScene();
         this.stage.setResizable(false);
+        this.confirmation = false;
     }
 
     public abstract void setSelectionSection(List<Book> source);
@@ -42,5 +45,14 @@ public abstract class BookModificationBase {
     @FXML
     protected void setOnConfirmButton(ActionEvent event) {
         terminateWindow();
+    }
+
+    @FXML
+    protected void setOnCancelButton(ActionEvent event) {
+        terminateWindow();
+    }
+
+    public boolean isConfirmed() {
+        return this.confirmation;
     }
 }

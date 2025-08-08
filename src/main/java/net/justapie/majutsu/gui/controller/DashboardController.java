@@ -134,34 +134,30 @@ public class DashboardController extends BaseController implements Initializable
         return unavailableBooks;
     }
 
-    @FXML
-    private void onBorrowBookClick(ActionEvent event) {
-        FXMLLoader loader = SceneManager.getLoader(SceneType.BORROW);
+    private boolean activateSubWindow(String path, List<Book> source) {
+        FXMLLoader loader = SceneManager.getLoader(path);
         try {
             Scene scene = new Scene(loader.load());
             BorrowBox controller = loader.getController();
             controller.createNewStage();
-            controller.setSelectionSection(availableBooks);
+            controller.setSelectionSection(source);
             controller.show(scene);
+            return controller.isConfirmed();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
+    }
+
+    @FXML
+    private void onBorrowBookClick(ActionEvent event) {
+        activateSubWindow(SceneType.BORROW, availableBooks);
     }
 
     @FXML
     private void onReturnBookClick(ActionEvent event) {
-        FXMLLoader loader = SceneManager.getLoader(SceneType.RETURN);
-        try {
-            Scene scene = new Scene(loader.load());
-            ReturnBox controller = loader.getController();
-            controller.createNewStage();
-            controller.setSelectionSection(unavailableBooks);
-            controller.show(scene);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        activateSubWindow(SceneType.RETURN, unavailableBooks);
     }
 
     private boolean isExpired(Book book) {
