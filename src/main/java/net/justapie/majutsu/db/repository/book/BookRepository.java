@@ -1,4 +1,4 @@
-package net.justapie.majutsu.db.repository.document;
+package net.justapie.majutsu.db.repository.book;
 
 import ch.qos.logback.classic.Logger;
 import net.justapie.majutsu.cache.Cache;
@@ -18,6 +18,9 @@ import java.util.Objects;
 public class BookRepository {
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(BookRepository.class);
     private static final Connection CONNECTION = DbClient.getInstance().getConnection();
+
+    BookRepository() {
+    }
 
     public List<Book> getAllBooks() {
         LOGGER.debug("Preparing fetch all books in db");

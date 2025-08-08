@@ -70,6 +70,11 @@ public class AdminController extends BaseController implements Initializable {
     }
 
     @FXML
+    private void onAdminBookAdd() {
+        this.switchToScene(SceneType.ADMIN_BOOK_SEARCH);
+    }
+
+    @FXML
     private void onBookSearchCommit() {
 
     }
