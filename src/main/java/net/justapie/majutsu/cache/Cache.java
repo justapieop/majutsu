@@ -35,4 +35,8 @@ public class Cache {
         }
         return cacheObject;
     }
+
+    public void remove(String key) {
+        this.cacheMap.remove(key);
+    }
 }
