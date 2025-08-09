@@ -4,6 +4,8 @@ import javafx.scene.control.CheckBox;
 import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.gbook.model.Volume;
 
+import java.util.Objects;
+
 public class DisplayableBook extends Book {
     private final CheckBox checkBox;
 
@@ -18,23 +20,25 @@ public class DisplayableBook extends Book {
 
         displayableBook.id = book.getId();
         displayableBook.volumeInfo = book.getVolumeInfo();
-        displayableBook.borrowed = book.isBorrowed();
-        displayableBook.borrowedAt = book.getBorrowedAt();
-        displayableBook.borrowedBy = book.getBorrowedBy();
-        displayableBook.returnDate = book.getReturnDate();
-        displayableBook.expectedReturn = book.expectedReturn();
         displayableBook.available = book.isAvailable();
         displayableBook.createdAt = book.getCreatedAt();
+        displayableBook.copies = book.getCopies();
 
         return displayableBook;
     }
 
     public static DisplayableBook fromVolume(Volume volume) {
-        Book book = Book.fromVolume(volume);
-        return DisplayableBook.fromBook(book);
+        return DisplayableBook.fromBook(Book.fromVolume(volume));
     }
 
     public CheckBox getCheckBox() {
         return this.checkBox;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        DisplayableBook that = (DisplayableBook) o;
+        return Objects.equals(this.id, that.getId());
     }
 }

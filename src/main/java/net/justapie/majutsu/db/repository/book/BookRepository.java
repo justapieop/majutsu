@@ -2,9 +2,9 @@ package net.justapie.majutsu.db.repository.book;
 
 import ch.qos.logback.classic.Logger;
 import net.justapie.majutsu.cache.Cache;
-import net.justapie.majutsu.cache.CacheObject;
 import net.justapie.majutsu.db.DbClient;
 import net.justapie.majutsu.db.schema.book.Book;
+import net.justapie.majutsu.gui.model.DisplayableBook;
 import net.justapie.majutsu.utils.Utils;
 
 import java.sql.Connection;
@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class BookRepository {
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(BookRepository.class);
@@ -26,12 +25,6 @@ public class BookRepository {
     public List<Book> getAllBooks() {
         LOGGER.debug("Preparing fetch all books in db");
         try {
-            CacheObject<ArrayList<Book>> cachedBooks = Cache.getInstance().get("books");
-
-            if (!Objects.isNull(cachedBooks)) {
-                return Collections.unmodifiableList(cachedBooks.getData());
-            }
-
             ResultSet rs = CONNECTION.createStatement()
                     .executeQuery(
                             "SELECT * FROM books;"
@@ -54,6 +47,23 @@ public class BookRepository {
         return Collections.emptyList();
     }
 
+    public void addBook(List<DisplayableBook> book) {
+        LOGGER.debug("Preparing to add books to db");
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "INSERT INTO books (id) VALUES (?);"
+        )) {
+
+            for (final Book b : book) {
+                stmt.setString(1, b.getId());
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            LOGGER.error("Failed to insert books to db");
+            LOGGER.error(e.getMessage());
+        }
+    }
+
     public void setBookAvailability(String bookId, boolean available) {
         LOGGER.debug("Setting book availability for id: {} to {}", bookId, available);
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
@@ -61,7 +71,6 @@ public class BookRepository {
             stmt.setBoolean(1, available);
             stmt.setString(2, bookId);
             stmt.executeUpdate();
-            
 
             Cache.getInstance().remove("books");
             

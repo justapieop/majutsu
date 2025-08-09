@@ -21,20 +21,17 @@ public class HistoryRepositoryFactory extends RepositoryFactoryProvider<HistoryR
         try {
             connection.createStatement().execute(
                     "CREATE TABLE IF NOT EXISTS history (" +
-                            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            "id INTEGER PRIMARY KEY UNIQUE NOT NULL," +
                             "user_id INTEGER NOT NULL," +
                             "book_id TEXT NOT NULL," +
-                            "action TEXT NOT NULL," +
-                            "action_time INTEGER DEFAULT (strftime('%s', 'now'))," +
+                            "action TEXT NOT NULL CHECK (action in ('BORROW', 'RETURN'))," +
+                            "created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))," +
                             "FOREIGN KEY (user_id) REFERENCES users(id)," +
                             "FOREIGN KEY (book_id) REFERENCES books(id)" +
                             ");"
             );
 
-            connection.createStatement().execute("CREATE INDEX IF NOT EXISTS idx_history_user_id ON history(user_id);");
-            connection.createStatement().execute("CREATE INDEX IF NOT EXISTS idx_history_book_id ON history(book_id);");
-            connection.createStatement().execute("CREATE INDEX IF NOT EXISTS idx_history_action_time ON history(action_time);");
-
+            connection.createStatement().execute("CREATE UNIQUE INDEX IF NOT EXISTS user_idx ON history (id);");
         } catch (SQLException e) {
             LOGGER.error("Failed while creating history repository");
             LOGGER.error(e.getMessage());
