@@ -20,7 +20,9 @@ module net.justapie.majutsu {
 
     opens net.justapie.majutsu.gbook.model to com.google.gson;
     opens net.justapie.majutsu.gui.controller to javafx.fxml;
+    exports net.justapie.majutsu.gbook.model;
     exports net.justapie.majutsu.db.schema.book;
     exports net.justapie.majutsu.db.schema.user;
     exports net.justapie.majutsu.gui;
+    opens net.justapie.majutsu.gui.component to javafx.fxml;
 }
