@@ -110,27 +110,27 @@ public class AdminController extends BaseController implements Initializable {
         );
         this.borrowedAtCol.setCellValueFactory(
                 c -> new SimpleStringProperty(
-                        c.getValue().getBorrowedAt().toString()
+                        ""
                 )
         );
         this.borrowedCol.setCellValueFactory(
                 c -> new SimpleStringProperty(
-                        c.getValue().isBorrowed() ? "Yes" : "No"
+
                 )
         );
         this.expectedReturnCol.setCellValueFactory(
                 c -> new SimpleStringProperty(
-                        c.getValue().expectedReturn().toString()
+
                 )
         );
         this.returnDateCol.setCellValueFactory(
                 c -> new SimpleStringProperty(
-                        c.getValue().getReturnDate().toString()
+
                 )
         );
         this.borrowedByCol.setCellValueFactory(
                 c -> new SimpleStringProperty(
-                        String.valueOf(c.getValue().getBorrowedBy())
+
                 )
         );
     }

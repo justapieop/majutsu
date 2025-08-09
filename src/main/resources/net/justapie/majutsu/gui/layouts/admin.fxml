@@ -82,7 +82,8 @@
                                        GridPane.halignment="CENTER"/>
                                <Button mnemonicParsing="false" text="Block" GridPane.columnIndex="1"
                                        GridPane.halignment="CENTER"/>
-                              <Button mnemonicParsing="false" text="Add" GridPane.halignment="CENTER" />
+                               <Button mnemonicParsing="false" onAction="#onAdminBookAdd" text="Add"
+                                       GridPane.halignment="CENTER"/>
                            </children>
                         </GridPane>
                      </children>
