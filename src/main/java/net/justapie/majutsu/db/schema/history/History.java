@@ -17,6 +17,9 @@ public class History {
     private ActionType action;
     private Date createdAt;
 
+    private History() {
+    }
+
     public static History fromResultSet(ResultSet rs) {
         History history = new History();
 
