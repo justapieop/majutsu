@@ -8,6 +8,7 @@ import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.utils.Utils;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -51,5 +52,22 @@ public class BookRepository {
             LOGGER.error("Failed while fetching all books");
         }
         return Collections.emptyList();
+    }
+
+    public void setBookAvailability(String bookId, boolean available) {
+        LOGGER.debug("Setting book availability for id: {} to {}", bookId, available);
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "UPDATE books SET available = ? WHERE id = ?;")) {
+            stmt.setBoolean(1, available);
+            stmt.setString(2, bookId);
+            stmt.executeUpdate();
+            
+
+            Cache.getInstance().remove("books");
+            
+        } catch (SQLException e) {
+            LOGGER.error("Failed to update book availability for id: {}", bookId);
+            LOGGER.error(e.getMessage());
+        }
     }
 }
