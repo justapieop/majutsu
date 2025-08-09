@@ -64,6 +64,23 @@ public class BookRepository {
         }
     }
 
+    public Book getBookById(String id) {
+        LOGGER.debug("Preparing to get book {}", id);
+
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "SELECT * FROM users WHERE id = ?"
+        )) {
+            stmt.setString(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            return Book.fromResultSet(rs);
+        } catch (SQLException e) {
+            LOGGER.error("Failed to get book {}", id);
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
     public void setBookAvailability(String bookId, boolean available) {
         LOGGER.debug("Setting book availability for id: {} to {}", bookId, available);
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
