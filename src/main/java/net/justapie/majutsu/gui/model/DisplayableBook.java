@@ -2,6 +2,7 @@ package net.justapie.majutsu.gui.model;
 
 import javafx.scene.control.CheckBox;
 import net.justapie.majutsu.db.schema.book.Book;
+import net.justapie.majutsu.gbook.model.Volume;
 
 public class DisplayableBook extends Book {
     private final CheckBox checkBox;
@@ -9,6 +10,7 @@ public class DisplayableBook extends Book {
     protected DisplayableBook() {
         super();
         this.checkBox = new CheckBox();
+        this.checkBox.setText("");
     }
 
     public static DisplayableBook fromBook(Book book) {
@@ -25,6 +27,11 @@ public class DisplayableBook extends Book {
         displayableBook.createdAt = book.getCreatedAt();
 
         return displayableBook;
+    }
+
+    public static DisplayableBook fromVolume(Volume volume) {
+        Book book = Book.fromVolume(volume);
+        return DisplayableBook.fromBook(book);
     }
 
     public CheckBox getCheckBox() {
