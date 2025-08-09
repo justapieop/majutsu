@@ -18,9 +18,13 @@ import net.justapie.majutsu.db.schema.user.UserRole;
 import net.justapie.majutsu.gui.SceneManager;
 import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
+import net.justapie.majutsu.gui.component.BorrowBox;
+import net.justapie.majutsu.gui.component.ReturnBox;
 
 import java.net.URL;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class DashboardController extends BaseController implements Initializable {
     @FXML
@@ -92,7 +96,7 @@ public class DashboardController extends BaseController implements Initializable
 //        book.getId()
 
         List<Book> borrowedBooks = bookList.stream().filter((b) -> {
-            return b.isBorrowed() && !isExpired(b);
+            return true;
         }).toList();
 
         List<Book> availableBooks = bookList.stream().filter((b) -> {
@@ -100,7 +104,7 @@ public class DashboardController extends BaseController implements Initializable
         }).toList();
 
         List<Book> expiredBooks = bookList.stream().filter((b) -> {
-            return b.isBorrowed() && isExpired(b);
+            return true;
         }).toList();
 
         // Insert here init functions for numbers.
@@ -129,11 +133,11 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     private boolean isExpired(Book book) {
-        return new Date().compareTo(book.expectedReturn())  < 0;
+        return true;
     }
 
     private Label authorsLabel(Book book) {
-        String text = new String();
+        String text = "";
         for (final String author : book.getVolumeInfo().getAuthors()) {
             text += author + ", ";
         }
