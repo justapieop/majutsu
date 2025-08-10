@@ -19,29 +19,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class AdminController extends BaseController implements Initializable {
-    private final List<DisplayableBook> selectedBooks = new ArrayList<>();
+public class AdminBookController extends BaseController implements Initializable {
+    protected final List<DisplayableBook> selectedBooks = new ArrayList<>();
 
     @FXML
-    private TableView<DisplayableBook> bookTable;
+    protected TableView<DisplayableBook> bookTable;
 
     @FXML
-    private TableColumn<DisplayableBook, CheckBox> bookSelectCol;
+    protected TableColumn<DisplayableBook, CheckBox> bookSelectCol;
 
     @FXML
-    private TableColumn<DisplayableBook, String> idCol;
+    protected TableColumn<DisplayableBook, String> idCol;
 
     @FXML
-    private TableColumn<DisplayableBook, String> nameCol;
+    protected TableColumn<DisplayableBook, String> nameCol;
 
     @FXML
-    private TableColumn<DisplayableBook, String> createdAtCol;
+    protected TableColumn<DisplayableBook, String> createdAtCol;
 
     @FXML
-    private TableColumn<DisplayableBook, String> availableCol;
+    protected TableColumn<DisplayableBook, String> availableCol;
 
     @FXML
-    private TextField bookSearchTextField;
+    protected TextField bookSearchTextField;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -57,17 +57,17 @@ public class AdminController extends BaseController implements Initializable {
     }
 
     @FXML
-    private void onAdminBookAdd() {
+    protected void onAdminBookAdd() {
         this.switchToScene(SceneType.ADMIN_BOOK_SEARCH);
     }
 
     @FXML
-    private void onBookSearchCommit() {
+    protected void onBookSearchCommit() {
 
     }
 
     @FXML
-    private void onBlock() {
+    protected void onBlock() {
         BookRepositoryFactory.getInstance().create().setBookAvailability(
                 false, this.selectedBooks.stream().map(
                         v -> {
@@ -81,7 +81,7 @@ public class AdminController extends BaseController implements Initializable {
     }
 
     @FXML
-    private void onAllow() {
+    protected void onAllow() {
         BookRepositoryFactory.getInstance().create().setBookAvailability(
                 true, this.selectedBooks.stream().map(
                         v -> {
@@ -95,7 +95,7 @@ public class AdminController extends BaseController implements Initializable {
     }
 
     @FXML
-    private void onRemove() {
+    protected void onRemove() {
         BookRepositoryFactory.getInstance().create().remove(
                 this.selectedBooks.stream().map(Volume::getId).toList()
         );
@@ -109,11 +109,11 @@ public class AdminController extends BaseController implements Initializable {
     }
 
     @FXML
-    private void onBackClick() {
+    protected void onBackClick() {
         this.switchToScene(SceneType.DASHBOARD);
     }
 
-    protected void setupBookColumns() {
+    private void setupBookColumns() {
         this.bookSelectCol.setCellValueFactory(
                 c -> {
                     c.getValue().getCheckBox().setOnAction(e -> {
