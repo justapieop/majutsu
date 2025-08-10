@@ -24,8 +24,7 @@ public class BookRepositoryFactory extends RepositoryFactoryProvider<BookReposit
                     "CREATE TABLE IF NOT EXISTS books (" +
                             "id TEXT PRIMARY KEY NOT NULL UNIQUE," +
                             "created_at INTEGER DEFAULT (strftime('%s', 'now'))," +
-                            "available BOOLEAN NOT NULL DEFAULT true," +
-                            "max_copies INTEGER NOT NULL DEFAULT 0" +
+                            "available BOOLEAN NOT NULL DEFAULT true" +
                             ");"
             );
 
