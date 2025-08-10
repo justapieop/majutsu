@@ -2,6 +2,7 @@ package net.justapie.majutsu.db.repository.history;
 
 import ch.qos.logback.classic.Logger;
 import net.justapie.majutsu.db.DbClient;
+import net.justapie.majutsu.db.schema.history.ActionType;
 import net.justapie.majutsu.db.schema.history.History;
 import net.justapie.majutsu.utils.Utils;
 
@@ -93,20 +94,20 @@ public class HistoryRepository {
 
     public void recordBorrow(long userId, String bookId) {
         LOGGER.debug("Recording borrow action for user: {} and book: {}", userId, bookId);
-        recordAction(userId, bookId, "BORROW");
+        recordAction(userId, bookId, ActionType.BORROW);
     }
 
     public void recordReturn(long userId, String bookId) {
         LOGGER.debug("Recording return action for user: {} and book: {}", userId, bookId);
-        recordAction(userId, bookId, "RETURN");
+        recordAction(userId, bookId, ActionType.RETURN);
     }
 
-    private void recordAction(long userId, String bookId, String action) {
+    private void recordAction(long userId, String bookId, ActionType action) {
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
                 "INSERT INTO history (user_id, book_id, action) VALUES (?, ?, ?);")) {
             stmt.setLong(1, userId);
             stmt.setString(2, bookId);
-            stmt.setString(3, action);
+            stmt.setString(3, action.toString());
             stmt.executeUpdate();
             
             LOGGER.debug("Successfully recorded {} action for user: {} and book: {}", action, userId, bookId);

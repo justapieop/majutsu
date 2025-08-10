@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 
 public class AdminBookController extends BaseController implements Initializable {
     protected final List<DisplayableBook> selectedBooks = new ArrayList<>();
+    protected List<Book> books;
 
     @FXML
     protected TableView<DisplayableBook> bookTable;
@@ -41,19 +42,17 @@ public class AdminBookController extends BaseController implements Initializable
     protected TableColumn<DisplayableBook, String> availableCol;
 
     @FXML
-    protected TextField bookSearchTextField;
+    protected TextField bookSearchField;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.setupBookColumns();
 
-        List<Book> books = BookRepositoryFactory.getInstance().create().getAllBooks();
+        this.books = BookRepositoryFactory.getInstance().create().getAllBooks();
 
-        for (final Book book : books) {
-            this.bookTable.getItems().add(
-                    DisplayableBook.fromBook(book)
-            );
-        }
+        this.bookTable.getItems().addAll(this.books.stream().map(
+                DisplayableBook::fromBook
+        ).toList());
     }
 
     @FXML
@@ -63,7 +62,19 @@ public class AdminBookController extends BaseController implements Initializable
 
     @FXML
     protected void onBookSearchCommit() {
+        String query = this.bookSearchField.getText();
 
+        this.bookTable.getItems().clear();
+
+        if (query.isBlank()) {
+            this.bookTable.getItems().addAll(this.books.stream().map(
+                    DisplayableBook::fromBook
+            ).toList());
+            return;
+        }
+
+
+        List<Book> filtered = this.books.stream().toList();
     }
 
     @FXML
