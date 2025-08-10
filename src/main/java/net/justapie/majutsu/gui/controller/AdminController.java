@@ -8,17 +8,19 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import net.justapie.majutsu.cache.Cache;
+import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
 import net.justapie.majutsu.db.schema.book.Book;
+import net.justapie.majutsu.gbook.model.Volume;
 import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.model.DisplayableBook;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class AdminController extends BaseController implements Initializable {
-    private ArrayList<Book> books;
+    private final List<DisplayableBook> selectedBooks = new ArrayList<>();
 
     @FXML
     private TableView<DisplayableBook> bookTable;
@@ -39,30 +41,15 @@ public class AdminController extends BaseController implements Initializable {
     private TableColumn<DisplayableBook, String> availableCol;
 
     @FXML
-    private TableColumn<DisplayableBook, String> borrowedCol;
-
-    @FXML
-    private TableColumn<DisplayableBook, String> borrowedAtCol;
-
-    @FXML
-    private TableColumn<DisplayableBook, String> expectedReturnCol;
-
-    @FXML
-    private TableColumn<DisplayableBook, String> returnDateCol;
-
-    @FXML
-    private TableColumn<DisplayableBook, String> borrowedByCol;
-
-    @FXML
     private TextField bookSearchTextField;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.setupBookColumns();
 
-        this.books = Cache.getInstance().<ArrayList<Book>>get("books").getData();
+        List<Book> books = BookRepositoryFactory.getInstance().create().getAllBooks();
 
-        for (final Book book : this.books) {
+        for (final Book book : books) {
             this.bookTable.getItems().add(
                     DisplayableBook.fromBook(book)
             );
@@ -80,13 +67,45 @@ public class AdminController extends BaseController implements Initializable {
     }
 
     @FXML
+    private void onBlock() {
+        BookRepositoryFactory.getInstance().create().setBookAvailability(
+                true, this.selectedBooks.stream().map(Volume::getId).toList()
+        );
+    }
+
+    @FXML
+    private void onAllow() {
+        BookRepositoryFactory.getInstance().create().setBookAvailability(
+                true, this.selectedBooks.stream().map(Volume::getId).toList()
+        );
+    }
+
+    @FXML
+    private void onRemove() {
+        BookRepositoryFactory.getInstance().create().remove(
+                this.selectedBooks.stream().map(Volume::getId).toList()
+        );
+    }
+
+    @FXML
     private void onBackClick() {
         this.switchToScene(SceneType.DASHBOARD);
     }
 
     protected void setupBookColumns() {
         this.bookSelectCol.setCellValueFactory(
-                c -> new SimpleObjectProperty<>(c.getValue().getCheckBox())
+                c -> {
+                    c.getValue().getCheckBox().setOnAction(e -> {
+                        if (c.getValue().getCheckBox().isSelected()) {
+                            this.selectedBooks.add(c.getValue());
+                        }
+
+                        if (!c.getValue().getCheckBox().isSelected()) {
+                            this.selectedBooks.remove(c.getValue());
+                        }
+                    });
+                    return new SimpleObjectProperty<>(c.getValue().getCheckBox());
+                }
         );
         this.idCol.setCellValueFactory(
                 c -> new SimpleStringProperty(
@@ -106,31 +125,6 @@ public class AdminController extends BaseController implements Initializable {
         this.availableCol.setCellValueFactory(
                 c -> new SimpleStringProperty(
                         c.getValue().isAvailable() ? "Yes" : "No"
-                )
-        );
-        this.borrowedAtCol.setCellValueFactory(
-                c -> new SimpleStringProperty(
-                        ""
-                )
-        );
-        this.borrowedCol.setCellValueFactory(
-                c -> new SimpleStringProperty(
-
-                )
-        );
-        this.expectedReturnCol.setCellValueFactory(
-                c -> new SimpleStringProperty(
-
-                )
-        );
-        this.returnDateCol.setCellValueFactory(
-                c -> new SimpleStringProperty(
-
-                )
-        );
-        this.borrowedByCol.setCellValueFactory(
-                c -> new SimpleStringProperty(
-
                 )
         );
     }
