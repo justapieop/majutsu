@@ -12,7 +12,6 @@ import java.util.Date;
 public class Book extends Volume {
     protected Date createdAt;
     protected boolean available;
-    protected int copies;
 
     protected Book() {
         super();
@@ -33,7 +32,6 @@ public class Book extends Volume {
             Book gBook = Book.fromVolume(GBookClient.getInstance().getVolumeById(id).get());
 
             gBook.available = resultSet.getBoolean("available");
-            gBook.copies = resultSet.getInt("copies");
             gBook.createdAt = Date.from(Instant.ofEpochSecond(resultSet.getLong("created_at")));
 
             return gBook;
@@ -48,9 +46,5 @@ public class Book extends Volume {
 
     public boolean isAvailable() {
         return this.available;
-    }
-
-    public int getCopies() {
-        return this.copies;
     }
 }

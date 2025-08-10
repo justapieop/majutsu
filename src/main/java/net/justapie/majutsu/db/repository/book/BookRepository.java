@@ -81,18 +81,39 @@ public class BookRepository {
         }
     }
 
-    public void setBookAvailability(String bookId, boolean available) {
-        LOGGER.debug("Setting book availability for id: {} to {}", bookId, available);
+    public void setBookAvailability(boolean available, List<String> bookIds) {
+        LOGGER.debug("Setting book availability for id {} to {}", bookIds, available);
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
                 "UPDATE books SET available = ? WHERE id = ?;")) {
-            stmt.setBoolean(1, available);
-            stmt.setString(2, bookId);
-            stmt.executeUpdate();
+            for (final String id : bookIds) {
+                stmt.setBoolean(1, available);
+                stmt.setString(2, id);
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
 
             Cache.getInstance().remove("books");
-            
         } catch (SQLException e) {
-            LOGGER.error("Failed to update book availability for id: {}", bookId);
+            LOGGER.error("Failed to update book availability");
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+    public void remove(List<String> bookIds) {
+        LOGGER.debug("Removing books");
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "DELETE FROM books WHERE id = ?;")) {
+
+            for (final String id : bookIds) {
+                stmt.setString(1, id);
+                stmt.addBatch();
+            }
+
+            stmt.executeBatch();
+
+            Cache.getInstance().remove("books");
+        } catch (SQLException e) {
+            LOGGER.error("Failed to remove books");
             LOGGER.error(e.getMessage());
         }
     }

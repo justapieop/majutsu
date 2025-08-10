@@ -25,7 +25,7 @@ public class BookRepositoryFactory extends RepositoryFactoryProvider<BookReposit
                             "id TEXT PRIMARY KEY NOT NULL UNIQUE," +
                             "created_at INTEGER DEFAULT (strftime('%s', 'now'))," +
                             "available BOOLEAN NOT NULL DEFAULT true," +
-                            "copies INTEGER NOT NULL DEFAULT 0"+
+                            "max_copies INTEGER NOT NULL DEFAULT 0" +
                             ");"
             );
 

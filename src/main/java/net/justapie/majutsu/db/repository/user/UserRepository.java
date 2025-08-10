@@ -18,6 +18,7 @@ import java.util.List;
 public class UserRepository {
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(UserRepository.class);
     private static final Connection CONNECTION = DbClient.getInstance().getConnection();
+    
     UserRepository() {
     }
 
