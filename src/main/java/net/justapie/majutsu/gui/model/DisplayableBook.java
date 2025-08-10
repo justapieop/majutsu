@@ -22,7 +22,6 @@ public class DisplayableBook extends Book {
         displayableBook.volumeInfo = book.getVolumeInfo();
         displayableBook.available = book.isAvailable();
         displayableBook.createdAt = book.getCreatedAt();
-        displayableBook.copies = book.getCopies();
 
         return displayableBook;
     }
@@ -40,5 +39,9 @@ public class DisplayableBook extends Book {
         if (o == null || getClass() != o.getClass()) return false;
         DisplayableBook that = (DisplayableBook) o;
         return Objects.equals(this.id, that.getId());
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 }

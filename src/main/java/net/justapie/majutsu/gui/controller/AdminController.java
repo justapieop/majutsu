@@ -69,14 +69,28 @@ public class AdminController extends BaseController implements Initializable {
     @FXML
     private void onBlock() {
         BookRepositoryFactory.getInstance().create().setBookAvailability(
-                true, this.selectedBooks.stream().map(Volume::getId).toList()
+                false, this.selectedBooks.stream().map(
+                        v -> {
+                            this.bookTable.getItems().get(
+                                    this.bookTable.getItems().indexOf(v)
+                            ).setAvailable(false);
+                            return v.getId();
+                        }
+                ).toList()
         );
     }
 
     @FXML
     private void onAllow() {
         BookRepositoryFactory.getInstance().create().setBookAvailability(
-                true, this.selectedBooks.stream().map(Volume::getId).toList()
+                true, this.selectedBooks.stream().map(
+                        v -> {
+                            this.bookTable.getItems().get(
+                                    this.bookTable.getItems().indexOf(v)
+                            ).setAvailable(true);
+                            return v.getId();
+                        }
+                ).toList()
         );
     }
 
@@ -85,6 +99,13 @@ public class AdminController extends BaseController implements Initializable {
         BookRepositoryFactory.getInstance().create().remove(
                 this.selectedBooks.stream().map(Volume::getId).toList()
         );
+
+        this.selectedBooks.forEach(
+                v -> {
+                    this.bookTable.getItems().remove(v);
+                }
+        );
+        this.selectedBooks.clear();
     }
 
     @FXML
