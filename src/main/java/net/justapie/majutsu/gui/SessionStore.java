@@ -24,12 +24,7 @@ public class SessionStore {
     }
 
     public User getCurrentUser() {
-        CacheObject<User> user = Cache.getInstance().get("user");
-        if (Objects.isNull(user)) {
-            return UserRepositoryFactory.getInstance().create().getUserById(this.currentUserId);
-        }
-
-        return user.getData();
+        return UserRepositoryFactory.getInstance().create().getUserById(this.currentUserId);
     }
 
     public void clearSession() {
