@@ -1,4 +1,4 @@
-package net.justapie.majutsu.gui.component;
+package net.justapie.majutsu.gui.controller;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
@@ -7,7 +7,7 @@ import net.justapie.majutsu.db.schema.book.Book;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReturnBox extends BookModificationBase implements BoxInteractive {
+public class BorrowBox extends BookModificationBase implements BoxInteractive {
     @Override
     public void setSelectionSection(List<Book> source) {
         selectedOptions = new ArrayList<>();

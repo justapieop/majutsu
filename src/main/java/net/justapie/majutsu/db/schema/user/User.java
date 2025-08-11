@@ -1,56 +1,20 @@
 package net.justapie.majutsu.db.schema.user;
 
 import net.justapie.majutsu.db.DbClient;
-import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
-import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.utils.CryptoUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class User {
-    private long id;
-    private String name;
-    private String email;
-    private String hashedPassword;
-    private UserRole role;
-    private boolean active;
-    private List<Book> borrowedBooks;
-
-    public static User fromResultSet(ResultSet resultSet) {
-        final User user = new User();
-
-        try {
-            user.id = resultSet.getLong("id");
-            user.name = resultSet.getString("name");
-            user.email = resultSet.getString("email");
-            user.hashedPassword = resultSet.getString("password");
-            user.role = UserRole.valueOf(resultSet.getString("role"));
-            user.active = resultSet.getBoolean("active");
-
-            String rawBorrowedBooks = resultSet.getString("borrowed_books");
-            List<String> bookIds = Arrays.stream(rawBorrowedBooks.split(",")).toList();
-            List<Book> books = new ArrayList<>();
-
-            for (final String id : bookIds) {
-                Book book = BookRepositoryFactory.getInstance().create().getBookById(id);
-
-                books.add(book);
-            }
-
-            user.borrowedBooks = books;
-
-        } catch (SQLException e) {
-            return null;
-        }
-
-        return user;
-    }
+    protected long id;
+    protected String name;
+    protected String email;
+    protected String hashedPassword;
+    protected UserRole role;
+    protected boolean active;
 
     public long getId() {
         return this.id;
@@ -72,8 +36,21 @@ public class User {
         return this.role;
     }
 
-    public List<Book> getBorrowedBooks() {
-        return this.borrowedBooks;
+    public static User fromResultSet(ResultSet resultSet) {
+        final User user = new User();
+
+        try {
+            user.id = resultSet.getLong("id");
+            user.name = resultSet.getString("name");
+            user.email = resultSet.getString("email");
+            user.hashedPassword = resultSet.getString("password");
+            user.role = UserRole.valueOf(resultSet.getString("role"));
+            user.active = resultSet.getBoolean("active");
+        } catch (SQLException e) {
+            return null;
+        }
+
+        return user;
     }
 
     public boolean isActive() {
@@ -89,11 +66,10 @@ public class User {
 
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE users SET password = ? WHERE id = ?"
+                    "UPDATE users SET password = ?"
             );
 
             statement.setString(1, newHashedPassword);
-            statement.setLong(2, this.id);
 
             statement.executeUpdate();
         } catch (SQLException ignored) {
@@ -110,11 +86,10 @@ public class User {
 
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE users SET email = ? WHERE id = ?"
+                    "UPDATE users SET email = ?"
             );
 
             statement.setString(1, email);
-            statement.setLong(2, this.id);
 
             statement.executeUpdate();
         } catch (SQLException ignored) {
@@ -128,11 +103,10 @@ public class User {
 
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE users SET name = ? WHERE id = ?"
+                    "UPDATE users SET name = ?"
             );
 
             statement.setString(1, name);
-            statement.setLong(2, this.id);
 
             statement.executeUpdate();
         } catch (SQLException ignored) {
