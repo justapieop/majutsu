@@ -1,32 +1,30 @@
 package net.justapie.majutsu.gui.component;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.stage.Stage;
+import javafx.geometry.Pos;
+import javafx.scene.control.CheckBox;
+import net.justapie.majutsu.db.schema.book.Book;
 
-public class BorrowBox implements Selectable {
-    private static final BorrowBox INSTANCE = new BorrowBox();
-    private Stage currentStage;
+import java.util.ArrayList;
+import java.util.List;
 
-    public static BorrowBox getInstance() {
-        return INSTANCE;
-    }
-
-    public void setStage(Stage stage) {
-        this.currentStage = stage;
-    }
-
-    public void terminateWindow() {
-        currentStage.close();
-        currentStage = null;
-    }
-
-    public BorrowBox() {
-    }
-
-    @FXML
-    private void setOnConfirmButton(ActionEvent event) {
-
-        getInstance().terminateWindow();
+public class BorrowBox extends BookModificationBase implements BoxInteractive {
+    @Override
+    public void setSelectionSection(List<Book> source) {
+        selectedOptions = new ArrayList<>();
+        for (int i = 0; i < source.size(); i++) {
+            final Book book = source.get(i);
+            CheckBox box = new CheckBox(String.format("%s: %s.", book.getId(), book.getVolumeInfo().getTitle()));
+            box.setAlignment(Pos.CENTER_LEFT);
+            final int index = i;
+            box.setOnAction(e -> {
+                if (box.isSelected()) {
+                    selectedOptions.add(index);
+                }
+                else {
+                    selectedOptions.remove(index);
+                }
+            });
+            selectionSection.getChildren().add(box);
+        }
     }
 }
