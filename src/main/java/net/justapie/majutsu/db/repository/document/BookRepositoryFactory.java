@@ -1,4 +1,4 @@
-package net.justapie.majutsu.db.repository.book;
+package net.justapie.majutsu.db.repository.document;
 
 import ch.qos.logback.classic.Logger;
 import net.justapie.majutsu.db.DbClient;
@@ -23,8 +23,13 @@ public class BookRepositoryFactory extends RepositoryFactoryProvider<BookReposit
             connection.createStatement().execute(
                     "CREATE TABLE IF NOT EXISTS books (" +
                             "id TEXT PRIMARY KEY NOT NULL UNIQUE," +
+                            "borrowed_by INTEGER," +
+                            "borrowed_at INTEGER," +
+                            "expected_return INTEGER," +
+                            "returned_at INTEGER," +
+                            "borrowed BOOLEAN NOT NULL,"+
                             "created_at INTEGER DEFAULT (strftime('%s', 'now'))," +
-                            "available BOOLEAN NOT NULL DEFAULT true" +
+                            "available BOOLEAN NOT NULL DEFAULT true"+
                             ");"
             );
 

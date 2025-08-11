@@ -28,28 +28,11 @@ public class Cache {
         }, this.ttl);
     }
 
-    public <T> void put(String key, T data, long ttl) {
-        this.cacheMap.put(key, new CacheObject<>(data, ttl));
-
-        if (ttl != 0) {
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    cacheMap.remove(key);
-                }
-            }, this.ttl);
-        }
-    }
-
     public <T> CacheObject<T> get(String key) {
         CacheObject<T> cacheObject = this.cacheMap.get(key);
         if (Objects.isNull(cacheObject) || new Date().getTime() > (cacheObject.getCreatedAt() + this.ttl)) {
             return null;
         }
         return cacheObject;
-    }
-
-    public void remove(String key) {
-        this.cacheMap.remove(key);
     }
 }

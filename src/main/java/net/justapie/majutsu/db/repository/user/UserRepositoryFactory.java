@@ -23,7 +23,6 @@ public class UserRepositoryFactory extends RepositoryFactoryProvider<UserReposit
                     "email TEXT UNIQUE NOT NULL," +
                     "role TEXT NOT NULL CHECK (role IN ('ADMIN', 'USER')) DEFAULT 'USER'," +
                     "created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))," +
-                    "borrowed_books TEXT NOT NULL DEFAULT ''," +
                     "active BOOLEAN NOT NULL DEFAULT true" +
                     ");");
 
