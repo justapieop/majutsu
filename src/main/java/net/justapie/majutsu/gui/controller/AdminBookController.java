@@ -82,9 +82,9 @@ public class AdminBookController extends BaseController implements Initializable
         BookRepositoryFactory.getInstance().create().setBookAvailability(
                 false, this.selectedBooks.stream().map(
                         v -> {
-                            this.bookTable.getItems().get(
-                                    this.bookTable.getItems().indexOf(v)
-                            ).setAvailable(false);
+                            int idx = this.bookTable.getItems().indexOf(v);
+                            v.setAvailable(false);
+                            this.bookTable.getItems().set(idx, v);
                             return v.getId();
                         }
                 ).toList()
@@ -96,9 +96,9 @@ public class AdminBookController extends BaseController implements Initializable
         BookRepositoryFactory.getInstance().create().setBookAvailability(
                 true, this.selectedBooks.stream().map(
                         v -> {
-                            this.bookTable.getItems().get(
-                                    this.bookTable.getItems().indexOf(v)
-                            ).setAvailable(true);
+                            int idx = this.bookTable.getItems().indexOf(v);
+                            v.setAvailable(true);
+                            this.bookTable.getItems().set(idx, v);
                             return v.getId();
                         }
                 ).toList()
