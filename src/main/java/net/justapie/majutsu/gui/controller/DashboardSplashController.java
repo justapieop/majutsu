@@ -13,8 +13,7 @@ public class DashboardSplashController extends BaseSplashController {
     public void process() {
         new Thread(() -> {
             BookRepositoryFactory.getInstance().create().getAllBooks();
-
-            Platform.runLater(() -> this.switchToScene(this.getNextScene()));
+            this.nextScene();
         }).start();
     }
 }

@@ -2,6 +2,7 @@ package net.justapie.majutsu.db.repository.book;
 
 import ch.qos.logback.classic.Logger;
 import net.justapie.majutsu.cache.Cache;
+import net.justapie.majutsu.cache.CacheObject;
 import net.justapie.majutsu.db.DbClient;
 import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.gui.model.DisplayableBook;

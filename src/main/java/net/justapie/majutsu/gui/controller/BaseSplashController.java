@@ -11,8 +11,8 @@ public abstract class BaseSplashController extends BaseController {
         Platform.runLater(() -> this.switchToScene(SceneType.SPLASH));
     }
 
-    public String getNextScene() {
-        return this.nextScene;
+    public final void nextScene() {
+        Platform.runLater(() -> this.switchToScene(this.nextScene));
     }
 
     public abstract void process();
