@@ -1,22 +1,11 @@
 package net.justapie.majutsu.gbook.model;
 
-import com.google.gson.annotations.Expose;
-
 public class ImageLinks {
-    @Expose
-    private String small;
-
-    @Expose
-    private String thumbnail;
-
-    @Expose
-    private String medium;
-
-    @Expose
-    private String large;
-
-    @Expose
-    private String extraLarge;
+    public String small;
+    public String thumbnail;
+    public String medium;
+    public String large;
+    public String extraLarge;
 
     public String getSmall() {
         return this.small;
