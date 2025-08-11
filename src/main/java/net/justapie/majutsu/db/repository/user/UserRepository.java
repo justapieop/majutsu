@@ -30,6 +30,41 @@ public class UserRepository {
     UserRepository() {
     }
 
+    public void setActive(boolean active, List<Long> ids) {
+        LOGGER.debug("Setting users {} activation mode to {}", ids, active);
+
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "UPDATE users SET active = ? WHERE id = ?"
+        )) {
+            for (final Long id : ids) {
+                stmt.setBoolean(1, active);
+                stmt.setLong(2, id);
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            LOGGER.error("Failed to set users {} activation mode to {}", ids, active);
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+    public void deleteUser(List<Long> ids) {
+        LOGGER.debug("Deleting users {}", ids);
+
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "DELETE FROM users WHERE id = ?"
+        )) {
+            for (final Long id : ids) {
+                stmt.setLong(1, id);
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            LOGGER.error("Failed to delete users {}", ids);
+            LOGGER.error(e.getMessage());
+        }
+    }
+
     public Book borrowBook(long userId, String bookId) {
         LOGGER.debug("Borrowing book {} for user {}", bookId, userId);
         User user = this.getUserById(userId);
