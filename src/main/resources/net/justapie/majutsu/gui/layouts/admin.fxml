@@ -102,32 +102,24 @@
                         <GridPane>
                           <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Button mnemonicParsing="false" text="Add" GridPane.halignment="CENTER" />
-                               <Button mnemonicParsing="false" text="Allow" GridPane.columnIndex="2"
-                                       GridPane.halignment="CENTER"/>
-                               <Button mnemonicParsing="false" text="Remove" GridPane.columnIndex="3"
-                                       GridPane.halignment="CENTER"/>
-                               <Button mnemonicParsing="false" text="Block" GridPane.columnIndex="1"
-                                       GridPane.halignment="CENTER"/>
+                              <Button mnemonicParsing="false" text="Remove" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                              <Button mnemonicParsing="false" text="Edit" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
                            </children>
                         </GridPane>
-                         <TableView fx:id="userTable" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                        <TableView prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                           <columns>
-                              <TableColumn fx:id="selectCol" prefWidth="75.0" text="Select"/>
-                              <TableColumn fx:id="uidCol" prefWidth="155.0" text="ID"/>
-                              <TableColumn fx:id="uNameCol" prefWidth="256.0" text="Name"/>
-                              <TableColumn fx:id="uEmailCol" prefWidth="250.0" text="Email"/>
-                              <TableColumn fx:id="uRoleCol" prefWidth="213.0" text="Role"/>
-                              <TableColumn fx:id="uCreatedAtCol" prefWidth="312.0" text="Created at"/>
-                              <TableColumn fx:id="uActiveCol" prefWidth="104.0" text="Active"/>
+                            <TableColumn prefWidth="75.0" text="Select" />
+                            <TableColumn prefWidth="75.0" text="ID" />
+                              <TableColumn prefWidth="75.0" text="Name" />
+                              <TableColumn prefWidth="75.0" text="Name" />
                           </columns>
                         </TableView>
                      </children>
