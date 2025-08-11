@@ -9,8 +9,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class User {
@@ -21,6 +23,7 @@ public class User {
     private UserRole role;
     private boolean active;
     private List<Book> borrowedBooks;
+    private Date createdAt;
 
     public static User fromResultSet(ResultSet resultSet) {
         final User user = new User();
@@ -32,6 +35,7 @@ public class User {
             user.hashedPassword = resultSet.getString("password");
             user.role = UserRole.valueOf(resultSet.getString("role"));
             user.active = resultSet.getBoolean("active");
+            user.createdAt = Date.from(Instant.ofEpochSecond(resultSet.getLong("created_at")));
 
             String rawBorrowedBooks = resultSet.getString("borrowed_books");
             List<String> bookIds = Arrays.stream(rawBorrowedBooks.split(",")).toList();
@@ -78,6 +82,10 @@ public class User {
 
     public boolean isActive() {
         return this.active;
+    }
+
+    public Date getCreatedAt() {
+        return this.createdAt;
     }
 
     public void changePassword(String currentPassword, String newPassword) {
