@@ -2,6 +2,8 @@ package net.justapie.majutsu.gui;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.stage.Stage;
+import net.justapie.majutsu.gui.component.Selectable;
 
 import java.io.IOException;
 
@@ -16,7 +18,13 @@ public class SceneManager {
         }
     }
 
-    public static FXMLLoader getLoader(String path) {
-        return new FXMLLoader(SceneManager.class.getResource(path));
+    public static void triggerSubWindow(Scene scene, Selectable subWindowInterface) {
+        Stage stage = new Stage();
+        subWindowInterface.setStage(stage);
+        stage.setScene(scene);
+        stage.centerOnScreen();
+        stage.sizeToScene();
+        stage.setResizable(false);
+        stage.show();
     }
 }

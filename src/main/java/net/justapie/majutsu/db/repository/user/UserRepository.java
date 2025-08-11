@@ -2,8 +2,12 @@ package net.justapie.majutsu.db.repository.user;
 
 import ch.qos.logback.classic.Logger;
 import net.justapie.majutsu.db.DbClient;
+import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
+import net.justapie.majutsu.db.repository.history.HistoryRepositoryFactory;
+import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.db.schema.user.User;
 import net.justapie.majutsu.db.schema.user.UserRole;
+import net.justapie.majutsu.gbook.model.Volume;
 import net.justapie.majutsu.utils.CryptoUtils;
 import net.justapie.majutsu.utils.Utils;
 
@@ -14,12 +18,90 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class UserRepository {
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(UserRepository.class);
     private static final Connection CONNECTION = DbClient.getInstance().getConnection();
-    public UserRepository() {
-        super();
+
+    UserRepository() {
+    }
+
+    public Book borrowBook(long userId, String bookId) {
+        LOGGER.debug("Borrowing book {} for user {}", bookId, userId);
+        User user = this.getUserById(userId);
+        if (Objects.isNull(user)) {
+            LOGGER.debug("Nonexistent user");
+            return null;
+        }
+
+        Book book = BookRepositoryFactory.getInstance().create().getBookById(bookId);
+
+        if (Objects.isNull(book)) {
+            LOGGER.debug("Nonexistent book");
+            return null;
+        }
+
+        if (user.getBorrowedBooks().contains(book)) {
+            LOGGER.debug("User {} already borrowed book {}", user, bookId);
+            return null;
+        }
+
+        user.getBorrowedBooks().add(book);
+
+        String newBookIdStr = user.getBorrowedBooks().stream().map(
+                Volume::getId
+        ).collect(Collectors.joining(","));
+
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "UPDATE users SET borrowed_books = ? WHERE id = ?"
+        )) {
+            stmt.setString(1, newBookIdStr);
+            stmt.setLong(2, userId);
+            stmt.executeUpdate();
+
+            HistoryRepositoryFactory.getInstance().create().recordBorrow(userId, bookId);
+
+            return book;
+        } catch (SQLException e) {
+            LOGGER.error("Failed while borrowing book {} for user {}", bookId, userId);
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public void returnBook(long userId, String bookId) {
+        LOGGER.debug("Returning book {} for user {}", bookId, userId);
+        User user = this.getUserById(userId);
+        if (Objects.isNull(user)) {
+            LOGGER.debug("Nonexistent user");
+            return;
+        }
+
+        if (!user.getBorrowedBooks().stream().map(Book::getId).toList().contains(bookId)) {
+            LOGGER.debug("User {} did not borrowed book {}", user, bookId);
+            return;
+        }
+
+        user.getBorrowedBooks().removeIf(b -> b.getId().equals(bookId));
+
+        String newBookIdStr = user.getBorrowedBooks().stream().map(
+                Volume::getId
+        ).collect(Collectors.joining(","));
+
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "UPDATE users SET borrowed_books = ? WHERE id = ?"
+        )) {
+            stmt.setString(1, newBookIdStr);
+            stmt.setLong(2, userId);
+            stmt.executeUpdate();
+
+            HistoryRepositoryFactory.getInstance().create().recordReturn(userId, bookId);
+        } catch (SQLException e) {
+            LOGGER.error("Failed while returning book {} for user {}", bookId, userId);
+            LOGGER.error(e.getMessage());
+        }
     }
 
     public List<User> getAllUsers() {

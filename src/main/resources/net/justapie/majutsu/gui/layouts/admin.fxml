@@ -4,7 +4,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.justapie.majutsu.gui.controller.AdminController">
+<GridPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/24.0.1"
+          fx:controller="net.justapie.majutsu.gui.controller.AdminUserController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
   </columnConstraints>
@@ -51,21 +53,16 @@
                      <children>
                          <TableView fx:id="bookTable" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                              <columns>
-                                 <TableColumn fx:id="bookSelectCol" prefWidth="61.0" text="Select"/>
-                                 <TableColumn fx:id="idCol" prefWidth="100.0" text="ID"/>
-                                 <TableColumn fx:id="nameCol" prefWidth="170.0" text="Name"/>
-                                 <TableColumn fx:id="createdAtCol" prefWidth="112.0" text="Added date"/>
-                                 <TableColumn fx:id="availableCol" prefWidth="130.0" text="Available"/>
-                                 <TableColumn fx:id="borrowedCol" prefWidth="117.0" text="Borrowed"/>
-                                 <TableColumn fx:id="borrowedByCol" prefWidth="147.0" text="Borrowed by"/>
-                                 <TableColumn fx:id="borrowedAtCol" minWidth="8.0" prefWidth="157.0"
-                                              text="Borrow date"/>
-                                 <TableColumn fx:id="expectedReturnCol" prefWidth="219.0" text="Expected return date"/>
-                                 <TableColumn fx:id="returnDateCol" prefWidth="152.0" text="Return date"/>
+                                 <TableColumn fx:id="bookSelectCol" prefWidth="78.0" text="Select"/>
+                                 <TableColumn fx:id="idCol" prefWidth="153.0" text="ID"/>
+                                 <TableColumn fx:id="nameCol" prefWidth="544.0" text="Name"/>
+                                 <TableColumn fx:id="createdAtCol" prefWidth="270.0" text="Added date"/>
+                                 <TableColumn fx:id="availableCol" prefWidth="320.0" text="Available"/>
                              </columns>
                          </TableView>
                          <GridPane>
                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
@@ -75,14 +72,18 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                               <TextField fx:id="bookSearchTextField" maxHeight="-Infinity" maxWidth="-Infinity"
-                                          onKeyTyped="#onBookSearchCommit" prefWidth="300.0" promptText="Search"
-                                          GridPane.columnIndex="3" GridPane.halignment="CENTER"/>
-                               <Button mnemonicParsing="false" text="Remove" GridPane.columnIndex="2"
+                               <TextField fx:id="bookSearchField" maxHeight="-Infinity" maxWidth="-Infinity"
+                                          onAction="#onBookSearchCommit" onKeyTyped="#onBookSearchCommit"
+                                          prefHeight="26.0" prefWidth="239.0" promptText="Search"
+                                          GridPane.columnIndex="4" GridPane.halignment="CENTER"/>
+                               <Button mnemonicParsing="false" onAction="#onRemove" text="Remove"
+                                       GridPane.columnIndex="3" GridPane.halignment="CENTER"/>
+                               <Button mnemonicParsing="false" onAction="#onBlock" text="Block" GridPane.columnIndex="1"
                                        GridPane.halignment="CENTER"/>
-                               <Button mnemonicParsing="false" text="Block" GridPane.columnIndex="1"
+                               <Button mnemonicParsing="false" onAction="#onAdminBookAdd" text="Add"
                                        GridPane.halignment="CENTER"/>
-                              <Button mnemonicParsing="false" text="Add" GridPane.halignment="CENTER" />
+                               <Button mnemonicParsing="false" onAction="#onAllow" text="Allow" GridPane.columnIndex="2"
+                                       GridPane.halignment="CENTER"/>
                            </children>
                         </GridPane>
                      </children>
@@ -95,8 +96,8 @@
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints maxHeight="304.0" minHeight="10.0" prefHeight="77.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="541.0" minHeight="10.0" prefHeight="541.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="304.0" minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES"/>
+                        <RowConstraints maxHeight="585.0" minHeight="10.0" prefHeight="585.0" vgrow="SOMETIMES"/>
                     </rowConstraints>
                      <children>
                         <GridPane>

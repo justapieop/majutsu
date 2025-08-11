@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class VolumeInfo {
     @Expose
@@ -73,6 +74,9 @@ public class VolumeInfo {
     }
 
     public List<String> getAuthors() {
+        if (Objects.isNull(this.authors)) {
+            return Collections.emptyList();
+        }
         return Collections.unmodifiableList(this.authors);
     }
 
