@@ -3,7 +3,7 @@ package net.justapie.majutsu.gui;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import net.justapie.majutsu.gui.controller.Selectable;
+import net.justapie.majutsu.gui.component.Selectable;
 
 import java.io.IOException;
 

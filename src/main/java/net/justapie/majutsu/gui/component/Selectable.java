@@ -1,4 +1,4 @@
-package net.justapie.majutsu.gui.controller;
+package net.justapie.majutsu.gui.component;
 
 import javafx.stage.Stage;
 
