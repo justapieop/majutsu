@@ -20,7 +20,6 @@ import java.util.ResourceBundle;
 
 public final class AdminUserController extends AdminBookController implements Initializable {
     private final List<DisplayableUser> selectedUsers = new ArrayList<>();
-    private List<DisplayableUser> users;
     @FXML
     private TableView<DisplayableUser> userTable;
 
@@ -48,10 +47,10 @@ public final class AdminUserController extends AdminBookController implements In
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-        this.users = UserRepositoryFactory.getInstance().create().getAllUsers().stream().map(
+        List<DisplayableUser> users = UserRepositoryFactory.getInstance().create().getAllUsers().stream().map(
                 DisplayableUser::fromUser
         ).toList();
-        this.userTable.getItems().addAll(this.users);
+        this.userTable.getItems().addAll(users);
         this.setupUserColumns();
     }
 
