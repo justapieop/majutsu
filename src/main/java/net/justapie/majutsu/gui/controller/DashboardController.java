@@ -2,9 +2,11 @@ package net.justapie.majutsu.gui.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -19,9 +21,12 @@ import net.justapie.majutsu.gui.SceneManager;
 import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 import net.justapie.majutsu.gui.component.BorrowBox;
+import net.justapie.majutsu.gui.component.BoxInteractive;
 import net.justapie.majutsu.gui.component.ReturnBox;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -50,6 +55,11 @@ public class DashboardController extends BaseController implements Initializable
 
     @FXML
     private VBox availableBookContainer;
+
+    private static List<Book> borrowedBooks;
+    private static List<Book> availableBooks;
+    private static List<Book> expiredBooks;
+    private static List<Book> unavailableBooks;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -91,20 +101,23 @@ public class DashboardController extends BaseController implements Initializable
 
         List<Book> bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
 
-//        Book book = bookList.getFirst();
-//        book.getVolumeInfo().getTitle();
-//        book.getId()
-
-        List<Book> borrowedBooks = bookList.stream().filter((b) -> {
+        borrowedBooks = bookList.stream().filter((b) -> {
+//            return b.isBorrowed() && !isExpired(b);
             return true;
         }).toList();
 
-        List<Book> availableBooks = bookList.stream().filter((b) -> {
-            return b.isAvailable();
+        availableBooks = bookList.stream().filter((b) -> {
+//            return b.isAvailable();
+            return true;
         }).toList();
 
-        List<Book> expiredBooks = bookList.stream().filter((b) -> {
+        expiredBooks = bookList.stream().filter((b) -> {
+//            return b.isBorrowed() && isExpired(b);
             return true;
+        }).toList();
+
+        unavailableBooks = bookList.stream().filter((b) -> {
+            return !b.isAvailable();
         }).toList();
 
         // Insert here init functions for numbers.
@@ -122,22 +135,47 @@ public class DashboardController extends BaseController implements Initializable
 //        availableBookContainer.getChildren().add(createRow());
 //    }
 
+    public static List<Book> getAvailableBooks() {
+        return availableBooks;
+    }
+
+    public static List<Book> getUnavailableBooks() {
+        return unavailableBooks;
+    }
+
+    private boolean activateSubWindow(String path, List<Book> source) {
+        FXMLLoader loader = SceneManager.getLoader(path);
+        try {
+            Scene scene = new Scene(loader.load());
+            BoxInteractive controller = loader.getController();
+            controller.createNewStage();
+            controller.setSelectionSection(source);
+            controller.show(scene);
+            return controller.isConfirmed();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     @FXML
     private void onBorrowBookClick(ActionEvent event) {
-        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.BORROW), BorrowBox.getInstance());
+        activateSubWindow(SceneType.BORROW, availableBooks);
     }
 
     @FXML
     private void onReturnBookClick(ActionEvent event) {
-        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.RETURN), ReturnBox.getInstance());
+        activateSubWindow(SceneType.RETURN, unavailableBooks);
     }
 
     private boolean isExpired(Book book) {
-        return true;
+//        return new Date().compareTo(book.expectedReturn()) < 0;
+        return false;
     }
 
     private Label authorsLabel(Book book) {
-        String text = "";
+        String text = new String();
         for (final String author : book.getVolumeInfo().getAuthors()) {
             text += author + ", ";
         }
@@ -145,7 +183,18 @@ public class DashboardController extends BaseController implements Initializable
         if (!text.isBlank() && text.length() > 1) {
             result.setText(text.substring(0, text.length() - 2) + ".");
         }
-        result.setWrapText(true);
+        return result;
+    }
+
+    private Label categoriesLabel(Book book) {
+        String text = new String();
+        for (final String category : book.getVolumeInfo().getCategories()) {
+            text += category + ", ";
+        }
+        Label result = new Label();
+        if (!text.isBlank() && text.length() > 1) {
+            result.setText(text.substring(0, text.length() - 2) + ".");
+        }
         return result;
     }
 

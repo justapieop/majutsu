@@ -1,9 +1,0 @@
-package net.justapie.majutsu.gui.component;
-
-import javafx.stage.Stage;
-
-public interface Selectable {
-
-    void setStage(Stage stage);
-    void terminateWindow();
-}
