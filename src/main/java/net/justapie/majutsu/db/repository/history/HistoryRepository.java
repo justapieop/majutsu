@@ -54,7 +54,7 @@ public class HistoryRepository {
         }
     }
 
-    public History getLatestRecordByBookId(String bookId) {
+    public List<History> getLatestRecordByBookId(String bookId) {
         LOGGER.debug("Getting latest record for book {}", bookId);
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
                 "SELECT * FROM history WHERE book_id = ? ORDER BY created_at DESC LIMIT 1"
@@ -65,11 +65,19 @@ public class HistoryRepository {
                 return null;
             }
 
-            return History.fromResultSet(rs);
+            List<History> histories = new ArrayList<>();
+
+            while (rs.next()) {
+                histories.add(
+                        History.fromResultSet(rs)
+                );
+            }
+
+            return histories;
         } catch (SQLException e) {
             LOGGER.error("Failed to get latest record for book {}", bookId);
             LOGGER.error(e.getMessage());
-            return null;
+            return Collections.emptyList();
         }
     }
 
