@@ -101,23 +101,24 @@ public class DashboardController extends BaseController implements Initializable
 
         List<Book> bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
 
-        borrowedBooks = bookList.stream().filter((b) -> {
-//            return b.isBorrowed() && !isExpired(b);
-            return true;
+        for (Book book : bookList) {
+            availableBookContainer.getChildren().add(createRow(book));
+        }
+
+        borrowedBooks = bookList.stream().filter((book) -> {
+            return !book.isAvailable() && !isExpired(book);
         }).toList();
 
-        availableBooks = bookList.stream().filter((b) -> {
-//            return b.isAvailable();
-            return true;
+        availableBooks = bookList.stream().filter((book) -> {
+            return book.isAvailable();
         }).toList();
 
-        expiredBooks = bookList.stream().filter((b) -> {
-//            return b.isBorrowed() && isExpired(b);
-            return true;
+        expiredBooks = bookList.stream().filter((book) -> {
+            return !book.isAvailable() && isExpired(book);
         }).toList();
 
-        unavailableBooks = bookList.stream().filter((b) -> {
-            return !b.isAvailable();
+        unavailableBooks = bookList.stream().filter((book) -> {
+            return !book.isAvailable();
         }).toList();
 
         // Insert here init functions for numbers.
@@ -218,10 +219,14 @@ public class DashboardController extends BaseController implements Initializable
         Label bookAuthors = authorsLabel(book);
         bookAuthors.setPrefWidth(200);
 
+        Label categories = categoriesLabel(book);
+        categories.setPrefWidth(200);
+
         row.getChildren().addAll(
                 idLabel,
                 nameLabel,
                 bookAuthors,
+                categories,
                 statusLabel
         );
 
