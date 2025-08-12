@@ -2,9 +2,11 @@ package net.justapie.majutsu.gui.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -19,12 +21,12 @@ import net.justapie.majutsu.gui.SceneManager;
 import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 import net.justapie.majutsu.gui.component.BorrowBox;
+import net.justapie.majutsu.gui.component.BoxInteractive;
 import net.justapie.majutsu.gui.component.ReturnBox;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class DashboardController extends BaseController implements Initializable {
     @FXML
@@ -43,13 +45,15 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private Label expiredBooksPrompt;
 
-    @FXML
-    private Button adminSwitchBtn;
-
     private Integer numberOfExpiredBooks;
 
     @FXML
     private VBox availableBookContainer;
+
+    private static List<Book> borrowedBooks;
+    private static List<Book> availableBooks;
+    private static List<Book> expiredBooks;
+    private static List<Book> unavailableBooks;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -91,21 +95,21 @@ public class DashboardController extends BaseController implements Initializable
 
         List<Book> bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
 
-//        Book book = bookList.getFirst();
-//        book.getVolumeInfo().getTitle();
-//        book.getId()
+        borrowedBooks = new ArrayList<>(bookList.stream().filter((book) -> {
+            return !book.isAvailable() && !isExpired(book);
+        }).toList());
 
-        List<Book> borrowedBooks = bookList.stream().filter((b) -> {
-            return true;
-        }).toList();
+        availableBooks = new ArrayList<>(bookList.stream().filter((book) -> {
+            return book.isAvailable();
+        }).toList());
 
-        List<Book> availableBooks = bookList.stream().filter((b) -> {
-            return b.isAvailable();
-        }).toList();
+        expiredBooks = new ArrayList<>(bookList.stream().filter((book) -> {
+            return !book.isAvailable() && isExpired(book);
+        }).toList());
 
-        List<Book> expiredBooks = bookList.stream().filter((b) -> {
-            return true;
-        }).toList();
+        unavailableBooks = new ArrayList<>(bookList.stream().filter((book) -> {
+            return !book.isAvailable();
+        }).toList());
 
         // Insert here init functions for numbers.
         this.numberOfBorrowedBooks = borrowedBooks.size();
@@ -115,29 +119,76 @@ public class DashboardController extends BaseController implements Initializable
         this.borrowedBooksPrompt.setText(String.format("Number of borrowed books: %d.", numberOfBorrowedBooks));
         this.availableBooksPrompt.setText(String.format("Number of available books: %d.", numberOfAvailableBooks));
         this.expiredBooksPrompt.setText(String.format("Number of expired books: %d.", numberOfExpiredBooks));
+
+        for (Book book : availableBooks) {
+            availableBookContainer.getChildren().add(createRow(book));
+        }
+        availableBookContainer.setPadding(new Insets(5, 5, 5, 5));
+        availableBookContainer.setSpacing(5);
     }
 
-//    @FXML
-//    private void onAddBookClick(ActionEvent event) {
-//        availableBookContainer.getChildren().add(createRow());
-//    }
+    public static List<Book> getAvailableBooks() {
+        return availableBooks;
+    }
+
+    public static List<Book> getUnavailableBooks() {
+        return unavailableBooks;
+    }
+
+    private List<Integer> activateSubWindow(String path, List<Book> source) {
+        FXMLLoader loader = SceneManager.getLoader(path);
+        try {
+            Scene scene = new Scene(loader.load());
+            BoxInteractive controller = loader.getController();
+            controller.createNewStage();
+            controller.setSelectionSection(source);
+            controller.show(scene);
+            if (controller.isConfirmed()) {
+                return controller.getSelectedOption();
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
 
     @FXML
     private void onBorrowBookClick(ActionEvent event) {
-        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.BORROW), BorrowBox.getInstance());
+        List<Integer> modification = activateSubWindow(SceneType.BORROW, availableBooks);
+        for (int i = modification.size() - 1; i >= 0; i--) {
+            int index = modification.get(i);
+            Book book = availableBooks.get(index);
+            borrowedBooks.add(book);
+            unavailableBooks.add(book);
+            availableBooks.remove(index);
+        }
     }
 
     @FXML
     private void onReturnBookClick(ActionEvent event) {
-        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.RETURN), ReturnBox.getInstance());
+        List<Integer> modification = activateSubWindow(SceneType.RETURN, unavailableBooks);
+        for (int i = modification.size() - 1; i >= 0; i--) {
+            int index = modification.get(i);
+            Book book = unavailableBooks.get(index);
+            availableBooks.add(book);
+            if (borrowedBooks.contains(book)) {
+                borrowedBooks.remove(book);
+            }
+            if (expiredBooks.contains(book)) {
+                expiredBooks.remove(book);
+            }
+            unavailableBooks.remove(index);
+        }
     }
 
     private boolean isExpired(Book book) {
-        return true;
+//        return new Date().compareTo(book.expectedReturn()) < 0;
+        return false;
     }
 
     private Label authorsLabel(Book book) {
-        String text = "";
+        String text = new String();
         for (final String author : book.getVolumeInfo().getAuthors()) {
             text += author + ", ";
         }
@@ -145,34 +196,62 @@ public class DashboardController extends BaseController implements Initializable
         if (!text.isBlank() && text.length() > 1) {
             result.setText(text.substring(0, text.length() - 2) + ".");
         }
-        result.setWrapText(true);
+        return result;
+    }
+
+    private Label categoriesLabel(Book book) {
+        String text = new String();
+        for (final String category : book.getVolumeInfo().getCategories()) {
+            text += category + ", ";
+        }
+        Label result = new Label();
+        if (!text.isBlank() && text.length() > 1) {
+            result.setText(text.substring(0, text.length() - 2) + ".");
+        }
         return result;
     }
 
     private HBox createRow(Book book) {
         HBox row = new HBox();
 
-        row.setAlignment(Pos.CENTER);
-        row.setPadding(new Insets(5, 10, 5, 10));
-
-        Label idLabel = new Label(book.getId());
-        idLabel.setPrefWidth(64);
-
         Label nameLabel = new Label(book.getVolumeInfo().getTitle());
-        nameLabel.setPrefWidth(200);
+        nameLabel.setPrefWidth(300);
         nameLabel.setWrapText(true);
+        nameLabel.setAlignment(Pos.CENTER);
+//        nameLabel.setStyle("""
+//                -fx-border-color: #d0d0d0;
+//                -fx-border-width: 1;
+//        """);
 
         String currentStatus = (book.isAvailable() ? "Available" : (isExpired(book) ? "Expired" : "Borrowed"));
         Label statusLabel = new Label(currentStatus);
         statusLabel.setPrefWidth(100);
+        statusLabel.setAlignment(Pos.CENTER);
+//        statusLabel.setStyle("""
+//                -fx-border-color: #d0d0d0;
+//                -fx-border-width: 1;
+//        """);
 
         Label bookAuthors = authorsLabel(book);
         bookAuthors.setPrefWidth(200);
+        bookAuthors.setAlignment(Pos.CENTER);
+//        bookAuthors.setStyle("""
+//                -fx-border-color: #d0d0d0;
+//                -fx-border-width: 1;
+//        """);
+
+        Label categories = categoriesLabel(book);
+        categories.setPrefWidth(200);
+        categories.setAlignment(Pos.CENTER);
+//        categories.setStyle("""
+//                -fx-border-color: #d0d0d0;
+//                -fx-border-width: 1;
+//        """);
 
         row.getChildren().addAll(
-                idLabel,
                 nameLabel,
                 bookAuthors,
+                categories,
                 statusLabel
         );
 
@@ -180,6 +259,11 @@ public class DashboardController extends BaseController implements Initializable
                 -fx-border-color: #d0d0d0;
                 -fx-border-width: 1;
         """);
+
+        row.setPrefHeight(36);
+        row.setSpacing(18);
+        row.setAlignment(Pos.CENTER);
+        row.setPadding(new Insets(3, 5, 3, 5));
 
         return row;
     }
