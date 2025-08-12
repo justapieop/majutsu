@@ -160,7 +160,7 @@ public class DashboardController extends BaseController implements Initializable
             int index = modification.get(i);
             Book book = availableBooks.get(index);
             borrowedBooks.add(book);
-            unavailableBooks.add(availableBooks.get(index));
+            unavailableBooks.add(book);
             availableBooks.remove(index);
         }
     }
@@ -168,18 +168,18 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private void onReturnBookClick(ActionEvent event) {
         List<Integer> modification = activateSubWindow(SceneType.RETURN, unavailableBooks);
-//        for (int i = modification.size() - 1; i >= 0; i--) {
-//            int index = modification.get(i);
-//            Book book = unavailableBooks.get(index);
-//            availableBooks.add(book);
-//            if (borrowedBooks.contains(book)) {
-//                borrowedBooks.remove(book);
-//            }
-//            if (expiredBooks.contains(book)) {
-//                expiredBooks.remove(book);
-//            }
-//            unavailableBooks.remove(i);
-//        }
+        for (int i = modification.size() - 1; i >= 0; i--) {
+            int index = modification.get(i);
+            Book book = unavailableBooks.get(index);
+            availableBooks.add(book);
+            if (borrowedBooks.contains(book)) {
+                borrowedBooks.remove(book);
+            }
+            if (expiredBooks.contains(book)) {
+                expiredBooks.remove(book);
+            }
+            unavailableBooks.remove(index);
+        }
     }
 
     private boolean isExpired(Book book) {
