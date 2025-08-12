@@ -10,4 +10,5 @@ public interface BoxInteractive {
     void show(Scene scene);
     boolean isConfirmed();
     void setSelectionSection(List<Book> source);
+    List<Integer> getSelectedOption();
 }

@@ -26,10 +26,7 @@ import net.justapie.majutsu.gui.component.ReturnBox;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class DashboardController extends BaseController implements Initializable {
     @FXML
@@ -47,9 +44,6 @@ public class DashboardController extends BaseController implements Initializable
 
     @FXML
     private Label expiredBooksPrompt;
-
-    @FXML
-    private Button adminSwitchBtn;
 
     private Integer numberOfExpiredBooks;
 
@@ -101,21 +95,21 @@ public class DashboardController extends BaseController implements Initializable
 
         List<Book> bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
 
-        borrowedBooks = bookList.stream().filter((book) -> {
+        borrowedBooks = new ArrayList<>(bookList.stream().filter((book) -> {
             return !book.isAvailable() && !isExpired(book);
-        }).toList();
+        }).toList());
 
-        availableBooks = bookList.stream().filter((book) -> {
+        availableBooks = new ArrayList<>(bookList.stream().filter((book) -> {
             return book.isAvailable();
-        }).toList();
+        }).toList());
 
-        expiredBooks = bookList.stream().filter((book) -> {
+        expiredBooks = new ArrayList<>(bookList.stream().filter((book) -> {
             return !book.isAvailable() && isExpired(book);
-        }).toList();
+        }).toList());
 
-        unavailableBooks = bookList.stream().filter((book) -> {
+        unavailableBooks = new ArrayList<>(bookList.stream().filter((book) -> {
             return !book.isAvailable();
-        }).toList();
+        }).toList());
 
         // Insert here init functions for numbers.
         this.numberOfBorrowedBooks = borrowedBooks.size();
@@ -133,11 +127,6 @@ public class DashboardController extends BaseController implements Initializable
         availableBookContainer.setSpacing(5);
     }
 
-//    @FXML
-//    private void onAddBookClick(ActionEvent event) {
-//        availableBookContainer.getChildren().add(createRow());
-//    }
-
     public static List<Book> getAvailableBooks() {
         return availableBooks;
     }
@@ -146,7 +135,7 @@ public class DashboardController extends BaseController implements Initializable
         return unavailableBooks;
     }
 
-    private boolean activateSubWindow(String path, List<Book> source) {
+    private List<Integer> activateSubWindow(String path, List<Book> source) {
         FXMLLoader loader = SceneManager.getLoader(path);
         try {
             Scene scene = new Scene(loader.load());
@@ -154,22 +143,43 @@ public class DashboardController extends BaseController implements Initializable
             controller.createNewStage();
             controller.setSelectionSection(source);
             controller.show(scene);
-            return controller.isConfirmed();
+            if (controller.isConfirmed()) {
+                return controller.getSelectedOption();
+            }
         }
         catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return new ArrayList<>();
     }
 
     @FXML
     private void onBorrowBookClick(ActionEvent event) {
-        activateSubWindow(SceneType.BORROW, availableBooks);
+        List<Integer> modification = activateSubWindow(SceneType.BORROW, availableBooks);
+        for (int i = modification.size() - 1; i >= 0; i--) {
+            int index = modification.get(i);
+            Book book = availableBooks.get(index);
+            borrowedBooks.add(book);
+            unavailableBooks.add(availableBooks.get(index));
+            availableBooks.remove(index);
+        }
     }
 
     @FXML
     private void onReturnBookClick(ActionEvent event) {
-        activateSubWindow(SceneType.RETURN, unavailableBooks);
+        List<Integer> modification = activateSubWindow(SceneType.RETURN, unavailableBooks);
+//        for (int i = modification.size() - 1; i >= 0; i--) {
+//            int index = modification.get(i);
+//            Book book = unavailableBooks.get(index);
+//            availableBooks.add(book);
+//            if (borrowedBooks.contains(book)) {
+//                borrowedBooks.remove(book);
+//            }
+//            if (expiredBooks.contains(book)) {
+//                expiredBooks.remove(book);
+//            }
+//            unavailableBooks.remove(i);
+//        }
     }
 
     private boolean isExpired(Book book) {

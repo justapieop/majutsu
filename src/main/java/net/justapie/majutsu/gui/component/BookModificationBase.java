@@ -14,7 +14,7 @@ import java.util.List;
 public abstract class BookModificationBase {
     protected Stage stage;
 
-    protected ArrayList<Integer> selectedOptions;
+    protected List<Integer> selectedOptions;
 
     private boolean confirmation;
 
@@ -34,7 +34,7 @@ public abstract class BookModificationBase {
 
     public void show(Scene scene) {
         this.stage.setScene(scene);
-        this.stage.show();
+        this.stage.showAndWait();
     }
 
     public void terminateWindow() {
@@ -60,5 +60,10 @@ public abstract class BookModificationBase {
 
     public boolean isConfirmed() {
         return this.confirmation;
+    }
+
+    public List<Integer> getSelectedOption() {
+        selectedOptions.sort(Integer::compareTo);
+        return selectedOptions;
     }
 }
