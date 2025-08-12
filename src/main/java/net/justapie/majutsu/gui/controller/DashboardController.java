@@ -101,12 +101,6 @@ public class DashboardController extends BaseController implements Initializable
 
         List<Book> bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
 
-        for (Book book : bookList) {
-            availableBookContainer.getChildren().add(createRow(book));
-        }
-        availableBookContainer.setPadding(new Insets(5, 5, 5, 5));
-        availableBookContainer.setSpacing(5);
-
         borrowedBooks = bookList.stream().filter((book) -> {
             return !book.isAvailable() && !isExpired(book);
         }).toList();
@@ -131,6 +125,12 @@ public class DashboardController extends BaseController implements Initializable
         this.borrowedBooksPrompt.setText(String.format("Number of borrowed books: %d.", numberOfBorrowedBooks));
         this.availableBooksPrompt.setText(String.format("Number of available books: %d.", numberOfAvailableBooks));
         this.expiredBooksPrompt.setText(String.format("Number of expired books: %d.", numberOfExpiredBooks));
+
+        for (Book book : availableBooks) {
+            availableBookContainer.getChildren().add(createRow(book));
+        }
+        availableBookContainer.setPadding(new Insets(5, 5, 5, 5));
+        availableBookContainer.setSpacing(5);
     }
 
 //    @FXML
