@@ -17,6 +17,7 @@ module net.justapie.majutsu {
     requires java.net.http;
     requires com.google.gson;
     requires java.desktop;
+    requires net.justapie.majutsu;
 
     opens net.justapie.majutsu.gbook.model to com.google.gson;
     opens net.justapie.majutsu.gui.controller to javafx.fxml;

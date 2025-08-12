@@ -7,46 +7,50 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
 import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
 import net.justapie.majutsu.db.schema.user.User;
+import net.justapie.majutsu.gbook.model.Volume;
+import net.justapie.majutsu.gui.model.DisplayableUser;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class AdminUserController extends AdminBookController implements Initializable {
-    private final List<User> selectedUsers = new ArrayList<>();
-    private List<User> users;
+public final class AdminUserController extends AdminBookController implements Initializable {
+    private final List<DisplayableUser> selectedUsers = new ArrayList<>();
     @FXML
-    private TableView<User> userTable;
+    private TableView<DisplayableUser> userTable;
 
     @FXML
-    private TableColumn<User, CheckBox> selectCol;
+    private TableColumn<DisplayableUser, CheckBox> selectCol;
 
     @FXML
-    private TableColumn<User, Long> uidCol;
+    private TableColumn<DisplayableUser, Long> uidCol;
 
     @FXML
-    private TableColumn<User, String> uNameCol;
+    private TableColumn<DisplayableUser, String> uNameCol;
 
     @FXML
-    private TableColumn<User, String> uEmailCol;
+    private TableColumn<DisplayableUser, String> uEmailCol;
 
     @FXML
-    private TableColumn<User, String> uRoleCol;
+    private TableColumn<DisplayableUser, String> uRoleCol;
 
     @FXML
-    private TableColumn<User, String> uCreatedAtCol;
+    private TableColumn<DisplayableUser, String> uCreatedAtCol;
 
     @FXML
-    private TableColumn<User, String> uActiveCol;
+    private TableColumn<DisplayableUser, String> uActiveCol;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-        this.users = UserRepositoryFactory.getInstance().create().getAllUsers();
-        this.userTable.getItems().addAll(this.users);
+        List<DisplayableUser> users = UserRepositoryFactory.getInstance().create().getAllUsers().stream().map(
+                DisplayableUser::fromUser
+        ).toList();
+        this.userTable.getItems().addAll(users);
         this.setupUserColumns();
     }
 
@@ -93,5 +97,47 @@ public class AdminUserController extends AdminBookController implements Initiali
                         c.getValue().isActive() ? "Yes" : "No"
                 )
         );
+    }
+
+    @FXML
+    private void onUserBlock() {
+        UserRepositoryFactory.getInstance().create().setActive(
+                false, this.selectedUsers.stream().map(
+                        c -> {
+                            int idx = this.userTable.getItems().indexOf(c);
+                            c.setActive(true);
+                            this.userTable.getItems().set(idx, c);
+                            return c.getId();
+                        }
+                ).toList()
+        );
+    }
+
+    @FXML
+    private void onUserAllow() {
+        UserRepositoryFactory.getInstance().create().setActive(
+                true, this.selectedUsers.stream().map(
+                        c -> {
+                            int idx = this.userTable.getItems().indexOf(c);
+                            c.setActive(true);
+                            this.userTable.getItems().set(idx, c);
+                            return c.getId();
+                        }
+                ).toList()
+        );
+    }
+
+    @FXML
+    private void onUserRemove() {
+        UserRepositoryFactory.getInstance().create().deleteUser(
+                this.selectedUsers.stream().map(DisplayableUser::getId).toList()
+        );
+
+        this.selectedUsers.forEach(
+                v -> {
+                    this.userTable.getItems().remove(v);
+                }
+        );
+        this.selectedUsers.clear();
     }
 }

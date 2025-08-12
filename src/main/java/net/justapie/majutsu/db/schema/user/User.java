@@ -16,14 +16,14 @@ import java.util.Date;
 import java.util.List;
 
 public class User {
-    private long id;
-    private String name;
-    private String email;
-    private String hashedPassword;
-    private UserRole role;
-    private boolean active;
-    private List<Book> borrowedBooks;
-    private Date createdAt;
+    protected long id;
+    protected String name;
+    protected String email;
+    protected String hashedPassword;
+    protected UserRole role;
+    protected boolean active;
+    protected List<Book> borrowedBooks;
+    protected Date createdAt;
 
     public static User fromResultSet(ResultSet resultSet) {
         final User user = new User();
