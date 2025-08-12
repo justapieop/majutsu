@@ -104,6 +104,8 @@ public class DashboardController extends BaseController implements Initializable
         for (Book book : bookList) {
             availableBookContainer.getChildren().add(createRow(book));
         }
+        availableBookContainer.setPadding(new Insets(5, 5, 5, 5));
+        availableBookContainer.setSpacing(5);
 
         borrowedBooks = bookList.stream().filter((book) -> {
             return !book.isAvailable() && !isExpired(book);
@@ -202,28 +204,41 @@ public class DashboardController extends BaseController implements Initializable
     private HBox createRow(Book book) {
         HBox row = new HBox();
 
-        row.setAlignment(Pos.CENTER);
-        row.setPadding(new Insets(5, 10, 5, 10));
-
-        Label idLabel = new Label(book.getId());
-        idLabel.setPrefWidth(64);
-
         Label nameLabel = new Label(book.getVolumeInfo().getTitle());
-        nameLabel.setPrefWidth(200);
+        nameLabel.setPrefWidth(300);
         nameLabel.setWrapText(true);
+        nameLabel.setAlignment(Pos.CENTER);
+//        nameLabel.setStyle("""
+//                -fx-border-color: #d0d0d0;
+//                -fx-border-width: 1;
+//        """);
 
         String currentStatus = (book.isAvailable() ? "Available" : (isExpired(book) ? "Expired" : "Borrowed"));
         Label statusLabel = new Label(currentStatus);
         statusLabel.setPrefWidth(100);
+        statusLabel.setAlignment(Pos.CENTER);
+//        statusLabel.setStyle("""
+//                -fx-border-color: #d0d0d0;
+//                -fx-border-width: 1;
+//        """);
 
         Label bookAuthors = authorsLabel(book);
         bookAuthors.setPrefWidth(200);
+        bookAuthors.setAlignment(Pos.CENTER);
+//        bookAuthors.setStyle("""
+//                -fx-border-color: #d0d0d0;
+//                -fx-border-width: 1;
+//        """);
 
         Label categories = categoriesLabel(book);
         categories.setPrefWidth(200);
+        categories.setAlignment(Pos.CENTER);
+//        categories.setStyle("""
+//                -fx-border-color: #d0d0d0;
+//                -fx-border-width: 1;
+//        """);
 
         row.getChildren().addAll(
-                idLabel,
                 nameLabel,
                 bookAuthors,
                 categories,
@@ -234,6 +249,11 @@ public class DashboardController extends BaseController implements Initializable
                 -fx-border-color: #d0d0d0;
                 -fx-border-width: 1;
         """);
+
+        row.setPrefHeight(36);
+        row.setSpacing(18);
+        row.setAlignment(Pos.CENTER);
+        row.setPadding(new Insets(3, 5, 3, 5));
 
         return row;
     }
