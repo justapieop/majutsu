@@ -22,6 +22,7 @@ import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 import net.justapie.majutsu.gui.component.BorrowBox;
 import net.justapie.majutsu.gui.component.BoxInteractive;
+import net.justapie.majutsu.gui.component.GUIComponent;
 import net.justapie.majutsu.gui.component.ReturnBox;
 
 import java.io.IOException;
@@ -134,12 +135,12 @@ public class DashboardController extends BaseController implements Initializable
 
         availableBookContainer.getChildren().clear();
         for (Book book : availableBooks) {
-            availableBookContainer.getChildren().add(createRow(book));
+            availableBookContainer.getChildren().add(GUIComponent.createRow(book));
         }
 
         unavailableBookContainer.getChildren().clear();
         for (Book book : unavailableBooks) {
-            unavailableBookContainer.getChildren().add(createRow(book));
+            unavailableBookContainer.getChildren().add(GUIComponent.createRow(book));
         }
     }
 
@@ -200,90 +201,9 @@ public class DashboardController extends BaseController implements Initializable
         refresh();
     }
 
-    private boolean isExpired(Book book) {
+    public static boolean isExpired(Book book) {
 //        return new Date().compareTo(book.expectedReturn()) < 0;
         return false;
-    }
-
-    private Label authorsLabel(Book book) {
-        String text = new String();
-        for (final String author : book.getVolumeInfo().getAuthors()) {
-            text += author + ", ";
-        }
-        Label result = new Label();
-        if (!text.isBlank() && text.length() > 1) {
-            result.setText(text.substring(0, text.length() - 2) + ".");
-        }
-        return result;
-    }
-
-    private Label categoriesLabel(Book book) {
-        String text = new String();
-        for (final String category : book.getVolumeInfo().getCategories()) {
-            text += category + ", ";
-        }
-        Label result = new Label();
-        if (!text.isBlank() && text.length() > 1) {
-            result.setText(text.substring(0, text.length() - 2) + ".");
-        }
-        return result;
-    }
-
-    private HBox createRow(Book book) {
-        HBox row = new HBox();
-
-        Label nameLabel = new Label(book.getVolumeInfo().getTitle());
-        nameLabel.setPrefWidth(300);
-        nameLabel.setWrapText(true);
-        nameLabel.setAlignment(Pos.CENTER);
-//        nameLabel.setStyle("""
-//                -fx-border-color: #d0d0d0;
-//                -fx-border-width: 1;
-//        """);
-
-        String currentStatus = (book.isAvailable() ? "Available" : (isExpired(book) ? "Expired" : "Borrowed"));
-        Label statusLabel = new Label(currentStatus);
-        statusLabel.setPrefWidth(100);
-        statusLabel.setAlignment(Pos.CENTER);
-//        statusLabel.setStyle("""
-//                -fx-border-color: #d0d0d0;
-//                -fx-border-width: 1;
-//        """);
-
-        Label bookAuthors = authorsLabel(book);
-        bookAuthors.setPrefWidth(200);
-        bookAuthors.setAlignment(Pos.CENTER);
-//        bookAuthors.setStyle("""
-//                -fx-border-color: #d0d0d0;
-//                -fx-border-width: 1;
-//        """);
-
-        Label categories = categoriesLabel(book);
-        categories.setPrefWidth(200);
-        categories.setAlignment(Pos.CENTER);
-//        categories.setStyle("""
-//                -fx-border-color: #d0d0d0;
-//                -fx-border-width: 1;
-//        """);
-
-        row.getChildren().addAll(
-                nameLabel,
-                bookAuthors,
-                categories,
-                statusLabel
-        );
-
-        row.setStyle("""
-                -fx-border-color: #d0d0d0;
-                -fx-border-width: 1;
-        """);
-
-        row.setPrefHeight(36);
-        row.setSpacing(18);
-        row.setAlignment(Pos.CENTER);
-        row.setPadding(new Insets(3, 5, 3, 5));
-
-        return row;
     }
 
     private void onAdminSwitchClick() {
