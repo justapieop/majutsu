@@ -5,13 +5,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
 import net.justapie.majutsu.db.schema.book.Book;
@@ -20,9 +17,9 @@ import net.justapie.majutsu.db.schema.user.UserRole;
 import net.justapie.majutsu.gui.SceneManager;
 import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
-import net.justapie.majutsu.gui.component.BorrowBox;
 import net.justapie.majutsu.gui.component.BoxInteractive;
-import net.justapie.majutsu.gui.component.ReturnBox;
+import net.justapie.majutsu.gui.component.GUIComponent;
+import net.justapie.majutsu.gui.controller.prep.DataPreprocessing;
 
 import java.io.IOException;
 import java.net.URL;
@@ -50,10 +47,14 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private VBox availableBookContainer;
 
-    private static List<Book> borrowedBooks;
-    private static List<Book> availableBooks;
-    private static List<Book> expiredBooks;
-    private static List<Book> unavailableBooks;
+    @FXML
+    private VBox unavailableBookContainer;
+
+    private List<Book> bookList;
+    private List<Book> borrowedBooks;
+    private List<Book> availableBooks;
+    private List<Book> expiredBooks;
+    private List<Book> unavailableBooks;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -93,10 +94,10 @@ public class DashboardController extends BaseController implements Initializable
             }
         });
 
-        List<Book> bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
+        bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
 
         borrowedBooks = new ArrayList<>(bookList.stream().filter((book) -> {
-            return !book.isAvailable() && !isExpired(book);
+            return !book.isAvailable() && !DataPreprocessing.isExpired(book);
         }).toList());
 
         availableBooks = new ArrayList<>(bookList.stream().filter((book) -> {
@@ -104,12 +105,20 @@ public class DashboardController extends BaseController implements Initializable
         }).toList());
 
         expiredBooks = new ArrayList<>(bookList.stream().filter((book) -> {
-            return !book.isAvailable() && isExpired(book);
+            return !book.isAvailable() && DataPreprocessing.isExpired(book);
         }).toList());
 
         unavailableBooks = new ArrayList<>(bookList.stream().filter((book) -> {
             return !book.isAvailable();
         }).toList());
+
+        availableBookContainer.setPadding(new Insets(5, 5, 5, 5));
+        availableBookContainer.setSpacing(5);
+
+        refresh();
+    }
+
+    private void refresh() {
 
         // Insert here init functions for numbers.
         this.numberOfBorrowedBooks = borrowedBooks.size();
@@ -120,18 +129,22 @@ public class DashboardController extends BaseController implements Initializable
         this.availableBooksPrompt.setText(String.format("Number of available books: %d.", numberOfAvailableBooks));
         this.expiredBooksPrompt.setText(String.format("Number of expired books: %d.", numberOfExpiredBooks));
 
+        availableBookContainer.getChildren().clear();
         for (Book book : availableBooks) {
-            availableBookContainer.getChildren().add(createRow(book));
+            availableBookContainer.getChildren().add(GUIComponent.createRow(book));
         }
-        availableBookContainer.setPadding(new Insets(5, 5, 5, 5));
-        availableBookContainer.setSpacing(5);
+
+        unavailableBookContainer.getChildren().clear();
+        for (Book book : unavailableBooks) {
+            unavailableBookContainer.getChildren().add(GUIComponent.createRow(book));
+        }
     }
 
-    public static List<Book> getAvailableBooks() {
+    public List<Book> getAvailableBooks() {
         return availableBooks;
     }
 
-    public static List<Book> getUnavailableBooks() {
+    public List<Book> getUnavailableBooks() {
         return unavailableBooks;
     }
 
@@ -163,6 +176,7 @@ public class DashboardController extends BaseController implements Initializable
             unavailableBooks.add(book);
             availableBooks.remove(index);
         }
+        refresh();
     }
 
     @FXML
@@ -180,92 +194,7 @@ public class DashboardController extends BaseController implements Initializable
             }
             unavailableBooks.remove(index);
         }
-    }
-
-    private boolean isExpired(Book book) {
-//        return new Date().compareTo(book.expectedReturn()) < 0;
-        return false;
-    }
-
-    private Label authorsLabel(Book book) {
-        String text = new String();
-        for (final String author : book.getVolumeInfo().getAuthors()) {
-            text += author + ", ";
-        }
-        Label result = new Label();
-        if (!text.isBlank() && text.length() > 1) {
-            result.setText(text.substring(0, text.length() - 2) + ".");
-        }
-        return result;
-    }
-
-    private Label categoriesLabel(Book book) {
-        String text = new String();
-        for (final String category : book.getVolumeInfo().getCategories()) {
-            text += category + ", ";
-        }
-        Label result = new Label();
-        if (!text.isBlank() && text.length() > 1) {
-            result.setText(text.substring(0, text.length() - 2) + ".");
-        }
-        return result;
-    }
-
-    private HBox createRow(Book book) {
-        HBox row = new HBox();
-
-        Label nameLabel = new Label(book.getVolumeInfo().getTitle());
-        nameLabel.setPrefWidth(300);
-        nameLabel.setWrapText(true);
-        nameLabel.setAlignment(Pos.CENTER);
-//        nameLabel.setStyle("""
-//                -fx-border-color: #d0d0d0;
-//                -fx-border-width: 1;
-//        """);
-
-        String currentStatus = (book.isAvailable() ? "Available" : (isExpired(book) ? "Expired" : "Borrowed"));
-        Label statusLabel = new Label(currentStatus);
-        statusLabel.setPrefWidth(100);
-        statusLabel.setAlignment(Pos.CENTER);
-//        statusLabel.setStyle("""
-//                -fx-border-color: #d0d0d0;
-//                -fx-border-width: 1;
-//        """);
-
-        Label bookAuthors = authorsLabel(book);
-        bookAuthors.setPrefWidth(200);
-        bookAuthors.setAlignment(Pos.CENTER);
-//        bookAuthors.setStyle("""
-//                -fx-border-color: #d0d0d0;
-//                -fx-border-width: 1;
-//        """);
-
-        Label categories = categoriesLabel(book);
-        categories.setPrefWidth(200);
-        categories.setAlignment(Pos.CENTER);
-//        categories.setStyle("""
-//                -fx-border-color: #d0d0d0;
-//                -fx-border-width: 1;
-//        """);
-
-        row.getChildren().addAll(
-                nameLabel,
-                bookAuthors,
-                categories,
-                statusLabel
-        );
-
-        row.setStyle("""
-                -fx-border-color: #d0d0d0;
-                -fx-border-width: 1;
-        """);
-
-        row.setPrefHeight(36);
-        row.setSpacing(18);
-        row.setAlignment(Pos.CENTER);
-        row.setPadding(new Insets(3, 5, 3, 5));
-
-        return row;
+        refresh();
     }
 
     private void onAdminSwitchClick() {
