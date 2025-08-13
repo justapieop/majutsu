@@ -50,10 +50,11 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private VBox availableBookContainer;
 
-    private static List<Book> borrowedBooks;
-    private static List<Book> availableBooks;
-    private static List<Book> expiredBooks;
-    private static List<Book> unavailableBooks;
+    private List<Book> bookList;
+    private List<Book> borrowedBooks;
+    private List<Book> availableBooks;
+    private List<Book> expiredBooks;
+    private List<Book> unavailableBooks;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -93,7 +94,7 @@ public class DashboardController extends BaseController implements Initializable
             }
         });
 
-        List<Book> bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
+        bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
 
         borrowedBooks = new ArrayList<>(bookList.stream().filter((book) -> {
             return !book.isAvailable() && !isExpired(book);
@@ -111,6 +112,14 @@ public class DashboardController extends BaseController implements Initializable
             return !book.isAvailable();
         }).toList());
 
+        availableBookContainer.setPadding(new Insets(5, 5, 5, 5));
+        availableBookContainer.setSpacing(5);
+
+        refresh();
+    }
+
+    private void refresh() {
+
         // Insert here init functions for numbers.
         this.numberOfBorrowedBooks = borrowedBooks.size();
         this.numberOfAvailableBooks = availableBooks.size();
@@ -120,18 +129,17 @@ public class DashboardController extends BaseController implements Initializable
         this.availableBooksPrompt.setText(String.format("Number of available books: %d.", numberOfAvailableBooks));
         this.expiredBooksPrompt.setText(String.format("Number of expired books: %d.", numberOfExpiredBooks));
 
+        availableBookContainer.getChildren().clear();
         for (Book book : availableBooks) {
             availableBookContainer.getChildren().add(createRow(book));
         }
-        availableBookContainer.setPadding(new Insets(5, 5, 5, 5));
-        availableBookContainer.setSpacing(5);
     }
 
-    public static List<Book> getAvailableBooks() {
+    public List<Book> getAvailableBooks() {
         return availableBooks;
     }
 
-    public static List<Book> getUnavailableBooks() {
+    public List<Book> getUnavailableBooks() {
         return unavailableBooks;
     }
 
@@ -163,6 +171,7 @@ public class DashboardController extends BaseController implements Initializable
             unavailableBooks.add(book);
             availableBooks.remove(index);
         }
+        refresh();
     }
 
     @FXML
@@ -180,6 +189,7 @@ public class DashboardController extends BaseController implements Initializable
             }
             unavailableBooks.remove(index);
         }
+        refresh();
     }
 
     private boolean isExpired(Book book) {
