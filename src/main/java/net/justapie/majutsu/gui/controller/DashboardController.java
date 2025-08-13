@@ -50,6 +50,9 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private VBox availableBookContainer;
 
+    @FXML
+    private VBox unavailableBookContainer;
+
     private List<Book> bookList;
     private List<Book> borrowedBooks;
     private List<Book> availableBooks;
@@ -132,6 +135,11 @@ public class DashboardController extends BaseController implements Initializable
         availableBookContainer.getChildren().clear();
         for (Book book : availableBooks) {
             availableBookContainer.getChildren().add(createRow(book));
+        }
+
+        unavailableBookContainer.getChildren().clear();
+        for (Book book : unavailableBooks) {
+            unavailableBookContainer.getChildren().add(createRow(book));
         }
     }
 
