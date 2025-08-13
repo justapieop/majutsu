@@ -81,13 +81,13 @@ public class HistoryRepository {
         }
     }
 
-    public List<History> getLatestRecordByBookIdAndUserId(String bookId, String userId) {
+    public List<History> getLatestRecordByBookIdAndUserId(String bookId, long userId) {
         LOGGER.debug("Getting latest record for book {}", bookId);
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
                 "SELECT * FROM history WHERE book_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT 1"
         )) {
             stmt.setString(1, bookId);
-            stmt.setString(2, userId);
+            stmt.setLong(2, userId);
             ResultSet rs = stmt.executeQuery();
             if (rs.isBeforeFirst()) {
                 return null;
