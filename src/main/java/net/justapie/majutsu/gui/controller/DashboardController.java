@@ -24,6 +24,7 @@ import net.justapie.majutsu.gui.component.BorrowBox;
 import net.justapie.majutsu.gui.component.BoxInteractive;
 import net.justapie.majutsu.gui.component.GUIComponent;
 import net.justapie.majutsu.gui.component.ReturnBox;
+import net.justapie.majutsu.gui.controller.prep.DataPreprocessing;
 
 import java.io.IOException;
 import java.net.URL;
@@ -101,7 +102,7 @@ public class DashboardController extends BaseController implements Initializable
         bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
 
         borrowedBooks = new ArrayList<>(bookList.stream().filter((book) -> {
-            return !book.isAvailable() && !isExpired(book);
+            return !book.isAvailable() && !DataPreprocessing.isExpired(book);
         }).toList());
 
         availableBooks = new ArrayList<>(bookList.stream().filter((book) -> {
@@ -109,7 +110,7 @@ public class DashboardController extends BaseController implements Initializable
         }).toList());
 
         expiredBooks = new ArrayList<>(bookList.stream().filter((book) -> {
-            return !book.isAvailable() && isExpired(book);
+            return !book.isAvailable() && DataPreprocessing.isExpired(book);
         }).toList());
 
         unavailableBooks = new ArrayList<>(bookList.stream().filter((book) -> {
@@ -199,11 +200,6 @@ public class DashboardController extends BaseController implements Initializable
             unavailableBooks.remove(index);
         }
         refresh();
-    }
-
-    public static boolean isExpired(Book book) {
-//        return new Date().compareTo(book.expectedReturn()) < 0;
-        return false;
     }
 
     private void onAdminSwitchClick() {
