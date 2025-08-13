@@ -7,131 +7,125 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.justapie.majutsu.gui.controller.AdminUserController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-  </columnConstraints>
-  <rowConstraints>
-      <RowConstraints maxHeight="379.0" minHeight="10.0" prefHeight="98.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="670.0" minHeight="10.0" prefHeight="670.0" vgrow="SOMETIMES" />
-  </rowConstraints>
-   <children>
-      <GridPane>
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0"
+          prefWidth="1366.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="net.justapie.majutsu.gui.controller.AdminUserController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="379.0" minHeight="10.0" prefHeight="98.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="670.0" minHeight="10.0" prefHeight="670.0" vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <GridPane>
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="678.0" minWidth="10.0" prefWidth="593.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="773.0" minWidth="10.0" prefWidth="773.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="678.0" minWidth="10.0" prefWidth="593.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="773.0" minWidth="10.0" prefWidth="773.0"/>
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
         </rowConstraints>
-         <children>
-            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Admin panel">
-               <padding>
-                  <Insets left="20.0" />
-               </padding>
-               <font>
-                  <Font size="21.0" />
-               </font>
-            </Label>
-            <Button mnemonicParsing="false" onAction="#onBackClick" text="Back" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
-               <GridPane.margin>
-                  <Insets right="20.0" />
-               </GridPane.margin></Button>
-         </children>
-      </GridPane>
-      <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.rowIndex="1">
-        <tabs>
-          <Tab text="Book management">
-               <content>
-                  <GridPane>
+        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Admin panel">
+            <padding>
+                <Insets left="20.0"/>
+            </padding>
+            <font>
+                <Font size="21.0"/>
+            </font>
+        </Label>
+        <Button mnemonicParsing="false" onAction="#onBackClick" text="Back" GridPane.columnIndex="1"
+                GridPane.halignment="RIGHT">
+            <GridPane.margin>
+                <Insets right="20.0"/>
+            </GridPane.margin>
+        </Button>
+    </GridPane>
+    <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0"
+             tabClosingPolicy="UNAVAILABLE" GridPane.rowIndex="1">
+        <Tab text="Book management">
+            <GridPane>
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints maxHeight="304.0" minHeight="10.0" prefHeight="65.0" vgrow="SOMETIMES"/>
+                    <RowConstraints maxHeight="576.0" minHeight="10.0" prefHeight="576.0" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <TableView fx:id="bookTable" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                    <columns>
+                        <TableColumn fx:id="bookSelectCol" prefWidth="78.0" text="Select"/>
+                        <TableColumn fx:id="idCol" prefWidth="153.0" text="ID"/>
+                        <TableColumn fx:id="nameCol" prefWidth="544.0" text="Name"/>
+                        <TableColumn fx:id="createdAtCol" prefWidth="270.0" text="Added date"/>
+                        <TableColumn fx:id="availableCol" prefWidth="320.0" text="Available"/>
+                    </columns>
+                </TableView>
+                <GridPane>
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints maxHeight="304.0" minHeight="10.0" prefHeight="65.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="576.0" minHeight="10.0" prefHeight="576.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                     </rowConstraints>
-                     <children>
-                         <TableView fx:id="bookTable" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
-                             <columns>
-                                 <TableColumn fx:id="bookSelectCol" prefWidth="78.0" text="Select" />
-                                 <TableColumn fx:id="idCol" prefWidth="153.0" text="ID" />
-                                 <TableColumn fx:id="nameCol" prefWidth="544.0" text="Name" />
-                                 <TableColumn fx:id="createdAtCol" prefWidth="270.0" text="Added date" />
-                                 <TableColumn fx:id="availableCol" prefWidth="320.0" text="Available" />
-                             </columns>
-                         </TableView>
-                         <GridPane>
-                          <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                               <TextField fx:id="bookSearchField" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#onBookSearchCommit" onKeyTyped="#onBookSearchCommit" prefHeight="26.0" prefWidth="239.0" promptText="Search" GridPane.columnIndex="4" GridPane.halignment="CENTER" />
-                               <Button mnemonicParsing="false" onAction="#onRemove" text="Remove" GridPane.columnIndex="3" GridPane.halignment="CENTER" />
-                               <Button mnemonicParsing="false" onAction="#onBlock" text="Block" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-                               <Button mnemonicParsing="false" onAction="#onAdminBookAdd" text="Add" GridPane.halignment="CENTER" />
-                               <Button mnemonicParsing="false" onAction="#onAllow" text="Allow" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
-                           </children>
-                        </GridPane>
-                     </children>
-                  </GridPane>
-               </content></Tab>
-          <Tab text="User management">
-               <content>
-                  <GridPane>
+                    <Button mnemonicParsing="false" onAction="#onRemove" text="Remove" GridPane.columnIndex="3"
+                            GridPane.halignment="CENTER"/>
+                    <Button mnemonicParsing="false" onAction="#onBlock" text="Block" GridPane.columnIndex="1"
+                            GridPane.halignment="CENTER"/>
+                    <Button mnemonicParsing="false" onAction="#onAdminBookAdd" text="Add"
+                            GridPane.halignment="CENTER"/>
+                    <Button mnemonicParsing="false" onAction="#onAllow" text="Allow" GridPane.columnIndex="2"
+                            GridPane.halignment="CENTER"/>
+                </GridPane>
+            </GridPane>
+        </Tab>
+        <Tab text="User management">
+            <GridPane>
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints maxHeight="304.0" minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES"/>
+                    <RowConstraints maxHeight="585.0" minHeight="10.0" prefHeight="585.0" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <GridPane>
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints maxHeight="304.0" minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="585.0" minHeight="10.0" prefHeight="585.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                     </rowConstraints>
-                     <children>
-                        <GridPane>
-                          <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <Button mnemonicParsing="false" text="Add" GridPane.halignment="CENTER" />
-                               <Button mnemonicParsing="false" onAction="#onUserAllow" text="Allow" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
-                               <Button mnemonicParsing="false" onAction="#onUserRemove" text="Remove" GridPane.columnIndex="3" GridPane.halignment="CENTER" />
-                               <Button mnemonicParsing="false" onAction="#onUserBlock" text="Block" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-                           </children>
-                        </GridPane>
-                         <TableView fx:id="userTable" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
-                          <columns>
-                              <TableColumn fx:id="selectCol" prefWidth="75.0" text="Select" />
-                              <TableColumn fx:id="uidCol" prefWidth="155.0" text="ID" />
-                              <TableColumn fx:id="uNameCol" prefWidth="256.0" text="Name" />
-                              <TableColumn fx:id="uEmailCol" prefWidth="250.0" text="Email" />
-                              <TableColumn fx:id="uRoleCol" prefWidth="213.0" text="Role" />
-                              <TableColumn fx:id="uCreatedAtCol" prefWidth="312.0" text="Created at" />
-                              <TableColumn fx:id="uActiveCol" prefWidth="104.0" text="Active" />
-                          </columns>
-                        </TableView>
-                     </children>
-                  </GridPane>
-               </content></Tab>
-        </tabs>
-      </TabPane>
-   </children>
+                    <Button mnemonicParsing="false" onAction="#onUserAdd" text="Add"
+                            GridPane.halignment="CENTER"/>
+                    <Button mnemonicParsing="false" onAction="#onUserAllow" text="Allow"
+                            GridPane.columnIndex="2" GridPane.halignment="CENTER"/>
+                    <Button mnemonicParsing="false" onAction="#onUserRemove" text="Remove"
+                            GridPane.columnIndex="3" GridPane.halignment="CENTER"/>
+                    <Button mnemonicParsing="false" onAction="#onUserBlock" text="Block"
+                            GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
+                </GridPane>
+                <TableView fx:id="userTable" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                    <columns>
+                        <TableColumn fx:id="selectCol" prefWidth="75.0" text="Select"/>
+                        <TableColumn fx:id="uidCol" prefWidth="155.0" text="ID"/>
+                        <TableColumn fx:id="uNameCol" prefWidth="256.0" text="Name"/>
+                        <TableColumn fx:id="uEmailCol" prefWidth="250.0" text="Email"/>
+                        <TableColumn fx:id="uRoleCol" prefWidth="213.0" text="Role"/>
+                        <TableColumn fx:id="uCreatedAtCol" prefWidth="312.0" text="Created at"/>
+                        <TableColumn fx:id="uActiveCol" prefWidth="104.0" text="Active"/>
+                    </columns>
+                </TableView>
+            </GridPane>
+        </Tab>
+    </TabPane>
 </GridPane>

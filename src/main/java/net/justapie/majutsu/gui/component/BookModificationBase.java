@@ -1,14 +1,11 @@
 package net.justapie.majutsu.gui.component;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import net.justapie.majutsu.db.schema.book.Book;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BookModificationBase {
@@ -30,8 +27,6 @@ public abstract class BookModificationBase {
         this.confirmation = false;
     }
 
-    public abstract void setSelectionSection(List<Book> source);
-
     public void show(Scene scene) {
         this.stage.setScene(scene);
         this.stage.showAndWait();
@@ -43,13 +38,13 @@ public abstract class BookModificationBase {
     }
 
     @FXML
-    protected void setOnConfirmButton(ActionEvent event) {
+    protected void setOnConfirmButton() {
         setConfirmation(true);
         terminateWindow();
     }
 
     @FXML
-    protected void setOnCancelButton(ActionEvent event) {
+    protected void setOnCancelButton() {
         setConfirmation(false);
         terminateWindow();
     }

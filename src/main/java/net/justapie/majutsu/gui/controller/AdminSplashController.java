@@ -1,6 +1,5 @@
 package net.justapie.majutsu.gui.controller;
 
-import javafx.application.Platform;
 import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
 import net.justapie.majutsu.gui.SceneType;
 

@@ -18,7 +18,7 @@ public class Cache {
     }
 
     public <T> void put(String key, T data) {
-        this.cacheMap.put(key, new CacheObject<T>(data, this.ttl));
+        this.cacheMap.put(key, new CacheObject(data, this.ttl));
 
         new Timer().schedule(new TimerTask() {
             @Override
@@ -28,21 +28,8 @@ public class Cache {
         }, this.ttl);
     }
 
-    public <T> void put(String key, T data, long ttl) {
-        this.cacheMap.put(key, new CacheObject<>(data, ttl));
-
-        if (ttl != 0) {
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    cacheMap.remove(key);
-                }
-            }, this.ttl);
-        }
-    }
-
-    public <T> CacheObject<T> get(String key) {
-        CacheObject<T> cacheObject = this.cacheMap.get(key);
+    public CacheObject get(String key) {
+        CacheObject cacheObject = this.cacheMap.get(key);
         if (Objects.isNull(cacheObject) || new Date().getTime() > (cacheObject.getCreatedAt() + this.ttl)) {
             return null;
         }

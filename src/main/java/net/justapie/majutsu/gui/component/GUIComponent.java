@@ -5,29 +5,28 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import net.justapie.majutsu.db.schema.book.Book;
-import net.justapie.majutsu.gui.controller.DashboardController;
 import net.justapie.majutsu.gui.controller.prep.DataPreprocessing;
 
 public class GUIComponent {
     private static Label authorsLabel(Book book) {
-        String text = new String();
+        StringBuilder text = new StringBuilder();
         for (final String author : book.getVolumeInfo().getAuthors()) {
-            text += author + ", ";
+            text.append(author).append(", ");
         }
         Label result = new Label();
-        if (!text.isBlank() && text.length() > 1) {
+        if (!text.toString().isBlank() && text.length() > 1) {
             result.setText(text.substring(0, text.length() - 2) + ".");
         }
         return result;
     }
 
     private static Label categoriesLabel(Book book) {
-        String text = new String();
+        StringBuilder text = new StringBuilder();
         for (final String category : book.getVolumeInfo().getCategories()) {
-            text += category + ", ";
+            text.append(category).append(", ");
         }
         Label result = new Label();
-        if (!text.isBlank() && text.length() > 1) {
+        if (!text.toString().isBlank() && text.length() > 1) {
             result.setText(text.substring(0, text.length() - 2) + ".");
         }
         return result;
@@ -40,35 +39,19 @@ public class GUIComponent {
         nameLabel.setPrefWidth(300);
         nameLabel.setWrapText(true);
         nameLabel.setAlignment(Pos.CENTER);
-//        nameLabel.setStyle("""
-//                -fx-border-color: #d0d0d0;
-//                -fx-border-width: 1;
-//        """);
 
         String currentStatus = (book.isAvailable() ? "Available" : (DataPreprocessing.isExpired(book) ? "Expired" : "Borrowed"));
         Label statusLabel = new Label(currentStatus);
         statusLabel.setPrefWidth(100);
         statusLabel.setAlignment(Pos.CENTER);
-//        statusLabel.setStyle("""
-//                -fx-border-color: #d0d0d0;
-//                -fx-border-width: 1;
-//        """);
 
         Label bookAuthors = authorsLabel(book);
         bookAuthors.setPrefWidth(200);
         bookAuthors.setAlignment(Pos.CENTER);
-//        bookAuthors.setStyle("""
-//                -fx-border-color: #d0d0d0;
-//                -fx-border-width: 1;
-//        """);
 
         Label categories = categoriesLabel(book);
         categories.setPrefWidth(200);
         categories.setAlignment(Pos.CENTER);
-//        categories.setStyle("""
-//                -fx-border-color: #d0d0d0;
-//                -fx-border-width: 1;
-//        """);
 
         row.getChildren().addAll(
                 nameLabel,
