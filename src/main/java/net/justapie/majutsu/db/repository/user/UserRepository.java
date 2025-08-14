@@ -66,31 +66,45 @@ public class UserRepository {
         }
     }
 
-    public Book borrowBook(long userId, String bookId) {
+    public void borrowBook(long userId, String bookId) {
         LOGGER.debug("Borrowing book {} for user {}", bookId, userId);
         User user = this.getUserById(userId);
         if (Objects.isNull(user)) {
             LOGGER.debug("Nonexistent user of {} borrowing book", userId);
-            return null;
+            return;
         }
+
+        List<Book> modifiableBookList = new ArrayList<>(user.getBorrowedBooks());
 
         Book book = BookRepositoryFactory.getInstance().create().getBookById(bookId);
 
         if (Objects.isNull(book)) {
-            LOGGER.debug("Nonexistent book");
-            return null;
+            LOGGER.debug("Nonexistent book {}", bookId);
+            return;
         }
 
-        if (user.getBorrowedBooks().contains(book)) {
-            LOGGER.debug("User {} already borrowed book {}", user, bookId);
-            return null;
+        if (
+                user.getBorrowedBooks()
+                        .stream()
+                        .map(Volume::getId)
+                        .toList()
+                        .contains(bookId)
+        ) {
+            LOGGER.debug("User {} already borrowed book {}", userId, bookId);
+            return;
         }
 
-        user.getBorrowedBooks().add(book);
+        LOGGER.debug("Previous number of book user {} borrowed: {}", userId, modifiableBookList.size());
 
-        String newBookIdStr = user.getBorrowedBooks().stream().map(
+        modifiableBookList.add(book);
+
+        LOGGER.debug("Final number of book user {} borrowed: {}", userId, modifiableBookList.size());
+
+        String newBookIdStr = modifiableBookList.stream().map(
                 Volume::getId
         ).collect(Collectors.joining(","));
+
+        LOGGER.debug("New borrowed bookId string {}", newBookIdStr);
 
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
                 "UPDATE users SET borrowed_books = ? WHERE id = ?"
@@ -101,11 +115,9 @@ public class UserRepository {
 
             HistoryRepositoryFactory.getInstance().create().recordBorrow(userId, bookId);
 
-            return book;
         } catch (SQLException e) {
             LOGGER.error("Failed while borrowing book {} for user {}", bookId, userId);
             LOGGER.error(e.getMessage());
-            return null;
         }
     }
 
@@ -117,14 +129,16 @@ public class UserRepository {
             return;
         }
 
-        if (!user.getBorrowedBooks().stream().map(Book::getId).toList().contains(bookId)) {
+        List<Book> modifiableBookList = new ArrayList<>(user.getBorrowedBooks());
+
+        if (!modifiableBookList.stream().map(Book::getId).toList().contains(bookId)) {
             LOGGER.debug("User {} did not borrowed book {}", user, bookId);
             return;
         }
 
-        user.getBorrowedBooks().removeIf(b -> b.getId().equals(bookId));
+        modifiableBookList.removeIf(b -> b.getId().equals(bookId));
 
-        String newBookIdStr = user.getBorrowedBooks().stream().map(
+        String newBookIdStr = modifiableBookList.stream().map(
                 Volume::getId
         ).collect(Collectors.joining(","));
 

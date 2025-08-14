@@ -6,7 +6,6 @@ import net.justapie.majutsu.db.schema.book.Book;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -35,15 +34,8 @@ public class User {
 
             String rawBorrowedBooks = resultSet.getString("borrowed_books");
             List<String> bookIds = Arrays.stream(rawBorrowedBooks.split(",")).toList();
-            List<Book> books = new ArrayList<>();
 
-            for (final String id : bookIds) {
-                Book book = BookRepositoryFactory.getInstance().create().getBookById(id);
-
-                books.add(book);
-            }
-
-            user.borrowedBooks = books;
+            user.borrowedBooks = BookRepositoryFactory.getInstance().create().batchBookFetch(bookIds);
 
         } catch (SQLException e) {
             return null;

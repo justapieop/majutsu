@@ -2,6 +2,7 @@ package net.justapie.majutsu.db.repository.book;
 
 import ch.qos.logback.classic.Logger;
 import net.justapie.majutsu.cache.Cache;
+import net.justapie.majutsu.cache.CacheObject;
 import net.justapie.majutsu.db.DbClient;
 import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.gui.model.DisplayableBook;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class BookRepository {
     private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(BookRepository.class);
@@ -64,11 +66,48 @@ public class BookRepository {
         }
     }
 
+    public List<Book> batchBookFetch(List<String> ids) {
+        LOGGER.debug("Preparing to get books {}", ids);
+
+        String idQuery = String.join(", ", ids);
+
+        LOGGER.debug("Checking cached books {}", ids);
+        CacheObject cachedBooks = Cache.getInstance().get("book:" + idQuery);
+
+        if (!Objects.isNull(cachedBooks) && !cachedBooks.isExpired()) {
+            LOGGER.debug("Cached books {} hit", ids);
+            return (List<Book>) cachedBooks.getData();
+        }
+
+        LOGGER.debug("Cached book {} missed. Fetching", ids);
+
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "SELECT * FROM books WHERE id IN (?)"
+        )) {
+            stmt.setString(1, idQuery);
+            ResultSet rs = stmt.executeQuery();
+
+            List<Book> books = new ArrayList<>();
+
+            while (rs.next()) {
+                books.add(Book.fromResultSet(rs));
+            }
+
+            Cache.getInstance().put("book:" + idQuery, books, Cache.INDEFINITE_TTL);
+
+            return books;
+        } catch (SQLException e) {
+            LOGGER.debug("Failed while getting books {}", ids);
+            LOGGER.debug(e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
     public Book getBookById(String id) {
         LOGGER.debug("Preparing to get book {}", id);
 
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
-                "SELECT * FROM users WHERE id = ?"
+                "SELECT * FROM books WHERE id = ?"
         )) {
             stmt.setString(1, id);
             ResultSet rs = stmt.executeQuery();
