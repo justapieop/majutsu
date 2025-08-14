@@ -2,8 +2,6 @@ package net.justapie.majutsu.gui;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
-import net.justapie.majutsu.gui.component.BoxInteractive;
 
 import java.io.IOException;
 

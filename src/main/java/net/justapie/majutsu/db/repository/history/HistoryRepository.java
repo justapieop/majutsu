@@ -140,10 +140,11 @@ public class HistoryRepository {
 
     private void recordAction(long userId, String bookId, ActionType action) {
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
-                "INSERT INTO history (user_id, book_id, action) VALUES (?, ?, ?);")) {
-            stmt.setLong(1, userId);
-            stmt.setString(2, bookId);
-            stmt.setString(3, action.toString());
+                "INSERT INTO history (id, user_id, book_id, action) VALUES (?, ?, ?, ?);")) {
+            stmt.setLong(1, Utils.getInstance().generateSnowflakeId());
+            stmt.setLong(2, userId);
+            stmt.setString(3, bookId);
+            stmt.setString(4, action.toString());
             stmt.executeUpdate();
             
             LOGGER.debug("Successfully recorded {} action for user: {} and book: {}", action, userId, bookId);

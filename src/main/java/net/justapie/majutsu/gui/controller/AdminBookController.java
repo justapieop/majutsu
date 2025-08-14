@@ -7,7 +7,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
 import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.gbook.model.Volume;
@@ -41,9 +40,6 @@ public class AdminBookController extends BaseController implements Initializable
     @FXML
     protected TableColumn<DisplayableBook, String> availableCol;
 
-    @FXML
-    protected TextField bookSearchField;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.setupBookColumns();
@@ -58,23 +54,6 @@ public class AdminBookController extends BaseController implements Initializable
     @FXML
     protected void onAdminBookAdd() {
         this.switchToScene(SceneType.ADMIN_BOOK_SEARCH);
-    }
-
-    @FXML
-    protected void onBookSearchCommit() {
-        String query = this.bookSearchField.getText();
-
-        this.bookTable.getItems().clear();
-
-        if (query.isBlank()) {
-            this.bookTable.getItems().addAll(this.books.stream().map(
-                    DisplayableBook::fromBook
-            ).toList());
-            return;
-        }
-
-
-        List<Book> filtered = this.books.stream().toList();
     }
 
     @FXML
@@ -112,9 +91,7 @@ public class AdminBookController extends BaseController implements Initializable
         );
 
         this.selectedBooks.forEach(
-                v -> {
-                    this.bookTable.getItems().remove(v);
-                }
+                v -> this.bookTable.getItems().remove(v)
         );
         this.selectedBooks.clear();
     }

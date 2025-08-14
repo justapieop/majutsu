@@ -7,10 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
 import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
-import net.justapie.majutsu.db.schema.user.User;
-import net.justapie.majutsu.gbook.model.Volume;
 import net.justapie.majutsu.gui.model.DisplayableUser;
 
 import java.net.URL;
@@ -134,10 +131,13 @@ public final class AdminUserController extends AdminBookController implements In
         );
 
         this.selectedUsers.forEach(
-                v -> {
-                    this.userTable.getItems().remove(v);
-                }
+                v -> this.userTable.getItems().remove(v)
         );
         this.selectedUsers.clear();
+    }
+
+    @FXML
+    private void onUserAdd() {
+        this.switchToScene("");
     }
 }
