@@ -22,17 +22,17 @@ public class SearchVolumeFetcher extends BaseFetcher<SearchItems, SearchVolumeHa
 
     @Override
     public SearchItems get() {
-        CacheObject<SearchItems> itemsCacheObject = Cache.getInstance().get("search:" + this.extractId());
+        CacheObject itemsCacheObject = Cache.getInstance().get("search:" + this.extractId());
 
         if (!Objects.isNull(itemsCacheObject)) {
-            return itemsCacheObject.getData();
+            return (SearchItems) itemsCacheObject.getData();
         }
 
         this.start();
 
         SearchItems items = this.getHttpResponse().body();
 
-        Cache.getInstance().put("search:" + this.extractId(), items);
+        Cache.getInstance().put("search:" + this.extractId(), items, Cache.INDEFINITE_TTL);
         return items;
     }
 }

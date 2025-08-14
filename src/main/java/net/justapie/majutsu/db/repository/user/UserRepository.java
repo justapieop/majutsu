@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class UserRepository {
@@ -146,11 +147,15 @@ public class UserRepository {
         LOGGER.debug("Preparing to fetch all users");
         LOGGER.debug("Checking cached users");
 
-        CacheObject<List<User>> cachedUsers = Cache.getInstance().get("users");
+        CacheObject cachedUsers = Cache.getInstance().get("users");
 
-        if (!Objects.isNull(cachedUsers) && !cachedUsers.isExpired()) {
+        if (
+                !Objects.isNull(cachedUsers)
+                && !cachedUsers.isExpired()
+                && cachedUsers.getData() instanceof List<?>
+        ) {
             LOGGER.debug("Cached users hit");
-            return cachedUsers.getData();
+            return (List<User>) cachedUsers.getData();
         }
 
         LOGGER.debug("Cached users miss. Fetching");
@@ -208,11 +213,11 @@ public class UserRepository {
         ResultSet result;
         LOGGER.debug("Preparing to fetch user of id {}", id);
         LOGGER.debug("Checking cache for user of id {}", id);
-        CacheObject<User> cachedUser = Cache.getInstance().get("user:" + id);
+        CacheObject cachedUser = Cache.getInstance().get("user:" + id);
 
         if (!Objects.isNull(cachedUser) && !cachedUser.isExpired()) {
             LOGGER.debug("Cached user of id {} hit", id);
-            return cachedUser.getData();
+            return (User) cachedUser.getData();
         }
 
         LOGGER.debug("Cached user of id {} miss. Fetching", id);
@@ -229,7 +234,7 @@ public class UserRepository {
         }
 
         User user = User.fromResultSet(result);
-        Cache.getInstance().put("user:" + id, user);
+        Cache.getInstance().put("user:" + id, user, Cache.createTtl(TimeUnit.HOURS, 1));
 
         return user;
     }
@@ -238,11 +243,11 @@ public class UserRepository {
         LOGGER.debug("Preparing to fetch user of email {}", email);
         LOGGER.debug("Checking cached user {}", email);
 
-        CacheObject<User> cachedUser = Cache.getInstance().get("user:" + email);
+        CacheObject cachedUser = Cache.getInstance().get("user:" + email);
 
         if (!Objects.isNull(cachedUser) && !cachedUser.isExpired()) {
             LOGGER.debug("Cached user of email {} hit", email);
-            return cachedUser.getData();
+            return (User) cachedUser.getData();
         }
 
         LOGGER.debug("Cached user of email {} miss. Fetching", email);
@@ -261,7 +266,7 @@ public class UserRepository {
 
         User user = User.fromResultSet(result);
 
-        Cache.getInstance().put("user:" + email, user);
+        Cache.getInstance().put("user:" + email, user, Cache.createTtl(TimeUnit.HOURS, 1));
 
         return user;
     }
