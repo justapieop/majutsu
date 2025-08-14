@@ -1,15 +1,14 @@
 package net.justapie.majutsu.gui.controller;
 
-import javafx.event.ActionEvent;
+import ch.qos.logback.classic.Logger;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
 import net.justapie.majutsu.db.schema.book.Book;
@@ -18,38 +17,40 @@ import net.justapie.majutsu.db.schema.user.UserRole;
 import net.justapie.majutsu.gui.SceneManager;
 import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
-import net.justapie.majutsu.gui.component.BorrowBox;
-import net.justapie.majutsu.gui.component.ReturnBox;
+import net.justapie.majutsu.gui.component.BoxInteractive;
+import net.justapie.majutsu.gui.component.GUIComponent;
+import net.justapie.majutsu.gui.controller.prep.DataPreprocessing;
+import net.justapie.majutsu.utils.Utils;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class DashboardController extends BaseController implements Initializable {
+    private static final Logger LOGGER = Utils.getInstance().getRootLogger().getLoggerContext().getLogger(DashboardController.class);
+
     @FXML
     private ComboBox<String> comboBox;
 
     @FXML
-    private Label borrowedBooksPrompt;
-
-    private Integer numberOfBorrowedBooks;
+    private Button borrowedBooksPrompt;
 
     @FXML
-    private Label availableBooksPrompt;
-
-    private Integer numberOfAvailableBooks;
+    private Button availableBooksPrompt;
 
     @FXML
-    private Label expiredBooksPrompt;
-
-    @FXML
-    private Button adminSwitchBtn;
-
-    private Integer numberOfExpiredBooks;
+    private Button expiredBooksPrompt;
 
     @FXML
     private VBox availableBookContainer;
+
+    @FXML
+    private VBox unavailableBookContainer;
+
+    private List<Book> borrowedBooks;
+    private List<Book> availableBooks;
+    private List<Book> expiredBooks;
+    private List<Book> unavailableBooks;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -91,97 +92,94 @@ public class DashboardController extends BaseController implements Initializable
 
         List<Book> bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
 
-//        Book book = bookList.getFirst();
-//        book.getVolumeInfo().getTitle();
-//        book.getId()
-
-        List<Book> borrowedBooks = bookList.stream().filter((b) -> {
-            return true;
-        }).toList();
-
-        List<Book> availableBooks = bookList.stream().filter((b) -> {
-            return b.isAvailable();
-        }).toList();
-
-        List<Book> expiredBooks = bookList.stream().filter((b) -> {
-            return true;
-        }).toList();
-
-        // Insert here init functions for numbers.
-        this.numberOfBorrowedBooks = borrowedBooks.size();
-        this.numberOfAvailableBooks = availableBooks.size();
-        this.numberOfExpiredBooks = expiredBooks.size();
-
-        this.borrowedBooksPrompt.setText(String.format("Number of borrowed books: %d.", numberOfBorrowedBooks));
-        this.availableBooksPrompt.setText(String.format("Number of available books: %d.", numberOfAvailableBooks));
-        this.expiredBooksPrompt.setText(String.format("Number of expired books: %d.", numberOfExpiredBooks));
-    }
-
-//    @FXML
-//    private void onAddBookClick(ActionEvent event) {
-//        availableBookContainer.getChildren().add(createRow());
-//    }
-
-    @FXML
-    private void onBorrowBookClick(ActionEvent event) {
-        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.BORROW), BorrowBox.getInstance());
-    }
-
-    @FXML
-    private void onReturnBookClick(ActionEvent event) {
-        SceneManager.triggerSubWindow(SceneManager.loadScene(SceneType.RETURN), ReturnBox.getInstance());
-    }
-
-    private boolean isExpired(Book book) {
-        return true;
-    }
-
-    private Label authorsLabel(Book book) {
-        String text = "";
-        for (final String author : book.getVolumeInfo().getAuthors()) {
-            text += author + ", ";
-        }
-        Label result = new Label();
-        if (!text.isBlank() && text.length() > 1) {
-            result.setText(text.substring(0, text.length() - 2) + ".");
-        }
-        result.setWrapText(true);
-        return result;
-    }
-
-    private HBox createRow(Book book) {
-        HBox row = new HBox();
-
-        row.setAlignment(Pos.CENTER);
-        row.setPadding(new Insets(5, 10, 5, 10));
-
-        Label idLabel = new Label(book.getId());
-        idLabel.setPrefWidth(64);
-
-        Label nameLabel = new Label(book.getVolumeInfo().getTitle());
-        nameLabel.setPrefWidth(200);
-        nameLabel.setWrapText(true);
-
-        String currentStatus = (book.isAvailable() ? "Available" : (isExpired(book) ? "Expired" : "Borrowed"));
-        Label statusLabel = new Label(currentStatus);
-        statusLabel.setPrefWidth(100);
-
-        Label bookAuthors = authorsLabel(book);
-        bookAuthors.setPrefWidth(200);
-
-        row.getChildren().addAll(
-                idLabel,
-                nameLabel,
-                bookAuthors,
-                statusLabel
+        borrowedBooks = new ArrayList<>(bookList.stream().filter(
+                (book) -> !book.isAvailable() && !DataPreprocessing.isExpired(book)).toList()
         );
 
-        row.setStyle("""
-                -fx-border-color: #d0d0d0;
-                -fx-border-width: 1;
-        """);
+        availableBooks = new ArrayList<>(bookList.stream().filter(Book::isAvailable).toList());
 
-        return row;
+        expiredBooks = new ArrayList<>(bookList.stream().filter(
+                (book) -> !book.isAvailable() && DataPreprocessing.isExpired(book)).toList())
+        ;
+
+        unavailableBooks = new ArrayList<>(bookList.stream().filter(
+                (book) -> !book.isAvailable()).toList()
+        );
+
+        availableBookContainer.setPadding(new Insets(5, 5, 5, 5));
+        availableBookContainer.setSpacing(5);
+
+        refresh();
+    }
+
+    private void refresh() {
+
+        // Insert here init functions for numbers.
+        Integer numberOfBorrowedBooks = borrowedBooks.size();
+        Integer numberOfAvailableBooks = availableBooks.size();
+        Integer numberOfExpiredBooks = expiredBooks.size();
+
+        this.borrowedBooksPrompt.setText(String.format("Number of borrowed books: %d", numberOfBorrowedBooks));
+        this.borrowedBooksPrompt.setStyle("");
+
+        this.availableBooksPrompt.setText(String.format("Number of available books: %d", numberOfAvailableBooks));
+        this.expiredBooksPrompt.setText(String.format("Number of expired books: %d", numberOfExpiredBooks));
+
+        availableBookContainer.getChildren().clear();
+        for (Book book : availableBooks) {
+            availableBookContainer.getChildren().add(GUIComponent.createRow(book));
+        }
+
+        unavailableBookContainer.getChildren().clear();
+        for (Book book : unavailableBooks) {
+            unavailableBookContainer.getChildren().add(GUIComponent.createRow(book));
+        }
+    }
+
+    private List<Integer> activateSubWindow(String path, List<Book> source) {
+        FXMLLoader loader = SceneManager.getLoader(path);
+        try {
+            Scene scene = new Scene(loader.load());
+            BoxInteractive controller = loader.getController();
+            controller.createNewStage();
+            controller.setSelectionSection(source);
+            controller.show(scene);
+            if (controller.isConfirmed()) {
+                return controller.getSelectedOption();
+            }
+        }
+        catch (IOException e) {
+            LOGGER.error("Failed while getting active subwindow");
+            LOGGER.error(e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    @FXML
+    private void onBorrowBookClick() {
+        List<Integer> modification = activateSubWindow(SceneType.BORROW, availableBooks);
+        for (int i = modification.size() - 1; i >= 0; i--) {
+            int index = modification.get(i);
+            Book book = availableBooks.get(index);
+            borrowedBooks.add(book);
+            unavailableBooks.add(book);
+            availableBooks.remove(index);
+        }
+        refresh();
+    }
+
+    @FXML
+    private void onReturnBookClick() {
+        List<Integer> modification = activateSubWindow(SceneType.RETURN, unavailableBooks);
+        for (int i = modification.size() - 1; i >= 0; i--) {
+            int index = modification.get(i);
+            Book book = unavailableBooks.get(index);
+            availableBooks.add(book);
+            borrowedBooks.remove(book);
+            expiredBooks.remove(book);
+            unavailableBooks.remove(index);
+        }
+        refresh();
     }
 
     private void onAdminSwitchClick() {
@@ -194,6 +192,7 @@ public class DashboardController extends BaseController implements Initializable
         } else {
             new AdminSplashController().process();
         }
+
     }
 
 }

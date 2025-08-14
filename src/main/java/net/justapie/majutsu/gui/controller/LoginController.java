@@ -25,7 +25,7 @@ public class LoginController extends BaseController {
 
     @FXML
     private void onRegisterButtonClick() {
-        if (!this.validateInput()) {
+        if (this.isWrongPassword()) {
             this.authPrompt.setText("Invalid email or password");
             return;
         }
@@ -48,7 +48,7 @@ public class LoginController extends BaseController {
 
     @FXML
     private void onLoginButtonClick() {
-        if (!this.validateInput()) {
+        if (this.isWrongPassword()) {
             this.authPrompt.setText("Invalid email or password");
             return;
         }
@@ -69,7 +69,7 @@ public class LoginController extends BaseController {
         new DashboardSplashController().process();
     }
 
-    private boolean validateInput() {
+    private boolean isWrongPassword() {
         Validator validator = new Validator();
         validator.createCheck()
                 .dependsOn("emailField", this.emailField.textProperty())
@@ -79,7 +79,6 @@ public class LoginController extends BaseController {
 
                     if (email.isEmpty() || !Utils.getInstance().checkValidEmail(email)) {
                         c.error("Invalid email");
-                        return;
                     }
                 })
                 .dependsOn("passwordField", this.passwordField.textProperty())
@@ -91,6 +90,6 @@ public class LoginController extends BaseController {
                     }
                 });
 
-        return validator.validate();
+        return !validator.validate();
     }
 }

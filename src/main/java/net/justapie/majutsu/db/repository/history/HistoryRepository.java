@@ -54,7 +54,7 @@ public class HistoryRepository {
         }
     }
 
-    public History getLatestRecordByBookId(String bookId) {
+    public List<History> getLatestRecordByBookId(String bookId) {
         LOGGER.debug("Getting latest record for book {}", bookId);
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
                 "SELECT * FROM history WHERE book_id = ? ORDER BY created_at DESC LIMIT 1"
@@ -65,11 +65,47 @@ public class HistoryRepository {
                 return null;
             }
 
-            return History.fromResultSet(rs);
+            List<History> histories = new ArrayList<>();
+
+            while (rs.next()) {
+                histories.add(
+                        History.fromResultSet(rs)
+                );
+            }
+
+            return histories;
         } catch (SQLException e) {
             LOGGER.error("Failed to get latest record for book {}", bookId);
             LOGGER.error(e.getMessage());
-            return null;
+            return Collections.emptyList();
+        }
+    }
+
+    public List<History> getLatestRecordByBookIdAndUserId(String bookId, long userId) {
+        LOGGER.debug("Getting latest record for book {}", bookId);
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "SELECT * FROM history WHERE book_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT 1"
+        )) {
+            stmt.setString(1, bookId);
+            stmt.setLong(2, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.isBeforeFirst()) {
+                return null;
+            }
+
+            List<History> histories = new ArrayList<>();
+
+            while (rs.next()) {
+                histories.add(
+                        History.fromResultSet(rs)
+                );
+            }
+
+            return histories;
+        } catch (SQLException e) {
+            LOGGER.error("Failed to get latest record for book {}", bookId);
+            LOGGER.error(e.getMessage());
+            return Collections.emptyList();
         }
     }
 
@@ -104,10 +140,11 @@ public class HistoryRepository {
 
     private void recordAction(long userId, String bookId, ActionType action) {
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
-                "INSERT INTO history (user_id, book_id, action) VALUES (?, ?, ?);")) {
-            stmt.setLong(1, userId);
-            stmt.setString(2, bookId);
-            stmt.setString(3, action.toString());
+                "INSERT INTO history (id, user_id, book_id, action) VALUES (?, ?, ?, ?);")) {
+            stmt.setLong(1, Utils.getInstance().generateSnowflakeId());
+            stmt.setLong(2, userId);
+            stmt.setString(3, bookId);
+            stmt.setString(4, action.toString());
             stmt.executeUpdate();
             
             LOGGER.debug("Successfully recorded {} action for user: {} and book: {}", action, userId, bookId);

@@ -1,6 +1,8 @@
 package net.justapie.majutsu.db.repository.user;
 
 import ch.qos.logback.classic.Logger;
+import net.justapie.majutsu.cache.Cache;
+import net.justapie.majutsu.cache.CacheObject;
 import net.justapie.majutsu.db.DbClient;
 import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
 import net.justapie.majutsu.db.repository.history.HistoryRepositoryFactory;
@@ -28,11 +30,46 @@ public class UserRepository {
     UserRepository() {
     }
 
+    public void setActive(boolean active, List<Long> ids) {
+        LOGGER.debug("Setting users {} activation mode to {}", ids, active);
+
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "UPDATE users SET active = ? WHERE id = ?"
+        )) {
+            for (final Long id : ids) {
+                stmt.setBoolean(1, active);
+                stmt.setLong(2, id);
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            LOGGER.error("Failed to set users {} activation mode to {}", ids, active);
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+    public void deleteUser(List<Long> ids) {
+        LOGGER.debug("Deleting users {}", ids);
+
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "DELETE FROM users WHERE id = ?"
+        )) {
+            for (final Long id : ids) {
+                stmt.setLong(1, id);
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            LOGGER.error("Failed to delete users {}", ids);
+            LOGGER.error(e.getMessage());
+        }
+    }
+
     public Book borrowBook(long userId, String bookId) {
         LOGGER.debug("Borrowing book {} for user {}", bookId, userId);
         User user = this.getUserById(userId);
         if (Objects.isNull(user)) {
-            LOGGER.debug("Nonexistent user");
+            LOGGER.debug("Nonexistent user of {} borrowing book", userId);
             return null;
         }
 
@@ -75,7 +112,7 @@ public class UserRepository {
         LOGGER.debug("Returning book {} for user {}", bookId, userId);
         User user = this.getUserById(userId);
         if (Objects.isNull(user)) {
-            LOGGER.debug("Nonexistent user");
+            LOGGER.debug("Nonexistent user of id {} returning book", userId);
             return;
         }
 
@@ -107,6 +144,16 @@ public class UserRepository {
     public List<User> getAllUsers() {
         ArrayList<User> users = new ArrayList<>();
         LOGGER.debug("Preparing to fetch all users");
+        LOGGER.debug("Checking cached users");
+
+        CacheObject<List<User>> cachedUsers = Cache.getInstance().get("users");
+
+        if (!Objects.isNull(cachedUsers) && !cachedUsers.isExpired()) {
+            LOGGER.debug("Cached users hit");
+            return cachedUsers.getData();
+        }
+
+        LOGGER.debug("Cached users miss. Fetching");
 
         try {
             PreparedStatement statement = CONNECTION.prepareStatement(
@@ -159,7 +206,17 @@ public class UserRepository {
 
     public User getUserById(long id) {
         ResultSet result;
-        LOGGER.debug("Preparing to fetch user by id");
+        LOGGER.debug("Preparing to fetch user of id {}", id);
+        LOGGER.debug("Checking cache for user of id {}", id);
+        CacheObject<User> cachedUser = Cache.getInstance().get("user:" + id);
+
+        if (!Objects.isNull(cachedUser) && !cachedUser.isExpired()) {
+            LOGGER.debug("Cached user of id {} hit", id);
+            return cachedUser.getData();
+        }
+
+        LOGGER.debug("Cached user of id {} miss. Fetching", id);
+
         try {
             PreparedStatement statement = CONNECTION.prepareStatement("SELECT * FROM users WHERE id = ?");
             statement.setLong(1, id);
@@ -171,11 +228,25 @@ public class UserRepository {
             return null;
         }
 
-        return User.fromResultSet(result);
+        User user = User.fromResultSet(result);
+        Cache.getInstance().put("user:" + id, user);
+
+        return user;
     }
 
     public User getUserByEmail(String email) {
-        LOGGER.debug("Preparing to fetch user by email");
+        LOGGER.debug("Preparing to fetch user of email {}", email);
+        LOGGER.debug("Checking cached user {}", email);
+
+        CacheObject<User> cachedUser = Cache.getInstance().get("user:" + email);
+
+        if (!Objects.isNull(cachedUser) && !cachedUser.isExpired()) {
+            LOGGER.debug("Cached user of email {} hit", email);
+            return cachedUser.getData();
+        }
+
+        LOGGER.debug("Cached user of email {} miss. Fetching", email);
+
         ResultSet result;
         try {
             PreparedStatement statement = CONNECTION.prepareStatement("SELECT * FROM users WHERE email = ?");
@@ -188,7 +259,11 @@ public class UserRepository {
             return null;
         }
 
-        return User.fromResultSet(result);
+        User user = User.fromResultSet(result);
+
+        Cache.getInstance().put("user:" + email, user);
+
+        return user;
     }
 
     public void changePassword(long id, String password) {

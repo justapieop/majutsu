@@ -29,10 +29,6 @@ public class Utils {
             .build();
     private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-    public String getEnv(String key) {
-        return DOTENV.get(key);
-    }
-
     public String getEnv(String key, String s) {
         return DOTENV.get(key, s);
     }
