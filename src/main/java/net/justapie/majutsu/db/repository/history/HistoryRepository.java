@@ -60,20 +60,7 @@ public class HistoryRepository {
                 "SELECT * FROM history WHERE book_id = ? ORDER BY created_at DESC LIMIT 1"
         )) {
             stmt.setString(1, bookId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.isBeforeFirst()) {
-                return null;
-            }
-
-            List<History> histories = new ArrayList<>();
-
-            while (rs.next()) {
-                histories.add(
-                        History.fromResultSet(rs)
-                );
-            }
-
-            return histories;
+            return parseHistoryList(stmt);
         } catch (SQLException e) {
             LOGGER.error("Failed to get latest record for book {}", bookId);
             LOGGER.error(e.getMessage());
@@ -82,15 +69,27 @@ public class HistoryRepository {
     }
 
     public List<History> getLatestRecordByBookIdAndUserId(String bookId, long userId) {
-        LOGGER.debug("Getting latest record for book {}", bookId);
+        LOGGER.debug("Getting latest record for book {} and user {}", bookId, userId);
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
                 "SELECT * FROM history WHERE book_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT 1"
         )) {
             stmt.setString(1, bookId);
             stmt.setLong(2, userId);
-            ResultSet rs = stmt.executeQuery();
+            return parseHistoryList(stmt);
+        } catch (SQLException e) {
+            LOGGER.error("Failed to get latest record for book {} and user {}", bookId, userId);
+            LOGGER.error(e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+    private List<History> parseHistoryList(PreparedStatement stmt) {
+        LOGGER.debug("Parsing history list for statement {}", stmt);
+        ResultSet rs;
+        try {
+            rs = stmt.executeQuery();
             if (rs.isBeforeFirst()) {
-                return null;
+                return Collections.emptyList();
             }
 
             List<History> histories = new ArrayList<>();
@@ -103,7 +102,7 @@ public class HistoryRepository {
 
             return histories;
         } catch (SQLException e) {
-            LOGGER.error("Failed to get latest record for book {}", bookId);
+            LOGGER.error("Failed while parsing history list for statement {}", stmt);
             LOGGER.error(e.getMessage());
             return Collections.emptyList();
         }

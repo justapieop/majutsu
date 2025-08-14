@@ -14,6 +14,7 @@ public class CacheObject {
     }
 
     public boolean isExpired() {
+        if (this.ttl == 0) return false;
         return new Date().getTime() > this.createdAt + this.ttl;
     }
 
@@ -22,10 +23,6 @@ public class CacheObject {
     }
 
     public Object getData() {
-        if (this.data != null) {
-            return this.data;
-        }
-
-        return null;
+        return this.data;
     }
 }

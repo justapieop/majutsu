@@ -38,7 +38,7 @@ public class BookRepository {
                 );
             }
 
-            Cache.getInstance().put("books", books);
+            Cache.getInstance().put("books", books, Cache.DEFAULT_TTL);
 
             return Collections.unmodifiableList(books);
         } catch (SQLException e) {
@@ -102,7 +102,8 @@ public class BookRepository {
     public void remove(List<String> bookIds) {
         LOGGER.debug("Removing books");
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
-                "DELETE FROM books WHERE id = ?;")) {
+                "DELETE FROM books WHERE id = ?;"
+        )) {
 
             for (final String id : bookIds) {
                 stmt.setString(1, id);
