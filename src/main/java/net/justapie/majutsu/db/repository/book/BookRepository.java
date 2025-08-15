@@ -69,31 +69,58 @@ public class BookRepository {
     public List<Book> batchBookFetch(List<String> ids) {
         LOGGER.debug("Preparing to get books {}", ids);
 
-        String idQuery = String.join(", ", ids);
-
         LOGGER.debug("Checking cached books {}", ids);
-        CacheObject cachedBooks = Cache.getInstance().get("book:" + idQuery);
 
-        if (!Objects.isNull(cachedBooks) && !cachedBooks.isExpired()) {
-            LOGGER.debug("Cached books {} hit", ids);
-            return (List<Book>) cachedBooks.getData();
+        List<Book> result = new ArrayList<>();
+        for (int i = ids.size() - 1; i >= 0; i--) {
+            String bookId = ids.get(i);
+            CacheObject cacheData = Cache.getInstance().get("book:" + bookId);
+            if (!Objects.isNull(cacheData) && !cacheData.isExpired()) {
+                LOGGER.debug("Book: {} hit cache", bookId);
+                result.add((Book) cacheData.getData());
+                ids.remove(i);
+            }
         }
+        if (ids.isEmpty()) {
+            LOGGER.debug("All books hit cache, don't need to fetch");
+        }
+        else {
+            LOGGER.debug("Preparing to fetch missing books");
+            result.addAll(forceBookFetch(ids));
+        }
+        return result;
+    }
 
-        LOGGER.debug("Cached book {} missed. Fetching", ids);
+    private String createPlaceholder(int count) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            result.append("?");
+            if (i + 1 < count) {
+                result.append(", ");
+            }
+        }
+        return result.toString();
+    }
+
+    public List<Book> forceBookFetch(List<String> ids) {
+        LOGGER.debug("Fetching books {}", ids);
 
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
-                "SELECT * FROM books WHERE id IN (?)"
+                "SELECT * FROM books WHERE id IN (" + createPlaceholder(ids.size()) + ")"
         )) {
-            stmt.setString(1, idQuery);
+            for (int i = 0; i < ids.size(); i++) {
+                stmt.setString(i + 1, ids.get(i));
+            }
             ResultSet rs = stmt.executeQuery();
 
             List<Book> books = new ArrayList<>();
 
             while (rs.next()) {
-                books.add(Book.fromResultSet(rs));
+                Book currentBook = Book.fromResultSet(rs);
+                assert currentBook != null;
+                books.add(currentBook);
+                Cache.getInstance().put("book:" + currentBook.getId(), books, Cache.INDEFINITE_TTL);
             }
-
-            Cache.getInstance().put("book:" + idQuery, books, Cache.INDEFINITE_TTL);
 
             return books;
         } catch (SQLException e) {
