@@ -4,9 +4,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
 import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.gbook.model.Volume;
@@ -16,6 +14,7 @@ import net.justapie.majutsu.gui.model.DisplayableBook;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class AdminBookController extends BaseController implements Initializable {
@@ -86,19 +85,27 @@ public class AdminBookController extends BaseController implements Initializable
 
     @FXML
     protected void onRemove() {
-        BookRepositoryFactory.getInstance().create().remove(
-                this.selectedBooks.stream().map(Volume::getId).toList()
-        );
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setContentText("Are you sure you want to delete selected book(s)");
+        Optional<ButtonType> type = alert.showAndWait();
 
-        this.selectedBooks.forEach(
-                v -> this.bookTable.getItems().remove(v)
-        );
-        this.selectedBooks.clear();
+        type.ifPresent((b) -> {
+            if (b.equals(ButtonType.OK)) {
+                BookRepositoryFactory.getInstance().create().remove(
+                        this.selectedBooks.stream().map(Volume::getId).toList()
+                );
+
+                this.selectedBooks.forEach(
+                        v -> this.bookTable.getItems().remove(v)
+                );
+                this.selectedBooks.clear();
+            }
+        });
     }
 
     @FXML
     protected void onBackClick() {
-        this.switchToScene(SceneType.DASHBOARD);
+        new DashboardSplashController().process();
     }
 
     private void setupBookColumns() {

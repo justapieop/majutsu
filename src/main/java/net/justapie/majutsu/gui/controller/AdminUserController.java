@@ -4,15 +4,16 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
+import net.justapie.majutsu.gui.SceneType;
+import net.justapie.majutsu.gui.SessionStore;
 import net.justapie.majutsu.gui.model.DisplayableUser;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public final class AdminUserController extends AdminBookController implements Initializable {
@@ -54,6 +55,7 @@ public final class AdminUserController extends AdminBookController implements In
     private void setupUserColumns() {
         this.selectCol.setCellValueFactory(
                 c -> {
+
                     CheckBox cb = new CheckBox();
                     cb.setText("");
                     cb.setOnAction(e -> {
@@ -65,6 +67,9 @@ public final class AdminUserController extends AdminBookController implements In
                             this.selectedUsers.remove(c.getValue());
                         }
                     });
+                    if (c.getValue().getId() == SessionStore.getInstance().getCurrentUser().getId()) {
+                        cb.setDisable(true);
+                    }
                     return new SimpleObjectProperty<>(cb);
                 }
         );
@@ -126,18 +131,26 @@ public final class AdminUserController extends AdminBookController implements In
 
     @FXML
     private void onUserRemove() {
-        UserRepositoryFactory.getInstance().create().deleteUser(
-                this.selectedUsers.stream().map(DisplayableUser::getId).toList()
-        );
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setContentText("Are you sure you want to delete selected user(s)");
+        Optional<ButtonType> type = alert.showAndWait();
 
-        this.selectedUsers.forEach(
-                v -> this.userTable.getItems().remove(v)
-        );
-        this.selectedUsers.clear();
+        type.ifPresent((b) -> {
+            if (b.equals(ButtonType.OK)) {
+                UserRepositoryFactory.getInstance().create().deleteUser(
+                        this.selectedUsers.stream().map(DisplayableUser::getId).toList()
+                );
+
+                this.selectedUsers.forEach(
+                        v -> this.userTable.getItems().remove(v)
+                );
+                this.selectedUsers.clear();
+            }
+        });
     }
 
     @FXML
     private void onUserAdd() {
-        this.switchToScene("");
+        this.switchToScene(SceneType.ADMIN_USER_ADD);
     }
 }

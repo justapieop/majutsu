@@ -24,6 +24,7 @@ public class UserRepositoryFactory extends RepositoryFactoryProvider<UserReposit
                     "role TEXT NOT NULL CHECK (role IN ('ADMIN', 'USER')) DEFAULT 'USER'," +
                     "created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))," +
                     "borrowed_books TEXT," +
+                    "first_login BOOLEAN NOT NULL DEFAULT true," +
                     "active BOOLEAN NOT NULL DEFAULT true" +
                     ");");
 
