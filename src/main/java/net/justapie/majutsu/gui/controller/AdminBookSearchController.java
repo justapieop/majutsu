@@ -14,6 +14,8 @@ import net.justapie.majutsu.gui.component.BookSelect;
 import net.justapie.majutsu.gui.component.SelectedBook;
 import net.justapie.majutsu.gui.model.DisplayableBook;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,11 +47,14 @@ public class AdminBookSearchController extends BaseController {
             return;
         }
 
+        query = URLEncoder.encode(query, StandardCharsets.UTF_8);
+
         this.adminSearchButton.setDisable(true);
         this.prompt.setText("Please wait");
 
+        String finalQuery = query;
         Thread thread = new Thread(() -> {
-            List<Volume> volumes = GBookClient.getInstance().searchVolume(query).get().getItems();
+            List<Volume> volumes = GBookClient.getInstance().searchVolume(finalQuery).get().getItems();
             this.adminSearchButton.setDisable(false);
 
             Platform.runLater(
