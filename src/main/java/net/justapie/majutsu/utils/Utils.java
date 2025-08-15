@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.Objects;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 public class Utils {
@@ -28,6 +29,12 @@ public class Utils {
             .withCustomNtpServer("time.google.com")
             .build();
     private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+
+    public int rng(int start, int end) {
+        Random rng = new Random();
+
+        return rng.nextInt(start, end + 1);
+    }
 
     public String getEnv(String key, String s) {
         return DOTENV.get(key, s);
