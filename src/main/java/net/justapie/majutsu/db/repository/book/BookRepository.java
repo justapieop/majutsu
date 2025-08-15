@@ -124,7 +124,7 @@ public class BookRepository {
 
             return books;
         } catch (SQLException e) {
-            LOGGER.debug("Failed while getting books {}", ids);
+            LOGGER.debug("Failed while fetching books {}", ids);
             LOGGER.debug(e.getMessage());
             return Collections.emptyList();
         }
