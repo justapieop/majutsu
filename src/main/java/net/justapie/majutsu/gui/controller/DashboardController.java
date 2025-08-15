@@ -1,6 +1,7 @@
 package net.justapie.majutsu.gui.controller;
 
 import ch.qos.logback.classic.Logger;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -8,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
 import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
@@ -59,6 +61,19 @@ public class DashboardController extends BaseController implements Initializable
 
         if (Objects.isNull(user)) {
             return;
+        }
+
+        if (user.isFirstLogin()) {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setContentText("This is your first login with predefined password. Please change your password to continue");
+                Optional<ButtonType> type = alert.showAndWait();
+
+                type.ifPresentOrElse((t) ->
+                        Platform.runLater(() -> this.switchToScene(SceneType.ACCOUNT))
+                        , () -> Platform.runLater(() -> this.switchToScene(SceneType.ACCOUNT))
+                );
+            });
         }
 
         this.comboBox.setValue("Welcome, " + user.getName() + "!");
