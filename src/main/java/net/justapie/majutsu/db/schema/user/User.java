@@ -19,6 +19,7 @@ public class User {
     protected boolean active;
     protected List<Book> borrowedBooks;
     protected Date createdAt;
+    protected boolean firstLogin;
 
     public static User fromResultSet(ResultSet resultSet) {
         final User user = new User();
@@ -31,6 +32,7 @@ public class User {
             user.role = UserRole.valueOf(resultSet.getString("role"));
             user.active = resultSet.getBoolean("active");
             user.createdAt = Date.from(Instant.ofEpochSecond(resultSet.getLong("created_at")));
+            user.firstLogin = resultSet.getBoolean("first_login");
 
             String rawBorrowedBooks = resultSet.getString("borrowed_books");
             List<String> bookIds = Arrays.stream(rawBorrowedBooks.split(",")).toList();
@@ -74,5 +76,9 @@ public class User {
 
     public Date getCreatedAt() {
         return this.createdAt;
+    }
+
+    public boolean isFirstLogin() {
+        return this.firstLogin;
     }
 }

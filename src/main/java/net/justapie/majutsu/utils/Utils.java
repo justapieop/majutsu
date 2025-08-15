@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvBuilder;
+import javafx.scene.control.Alert;
 import me.fthomys.SnowflakeLib.SnowflakeFactory;
 import me.fthomys.SnowflakeLib.SnowflakeGenerator;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,12 @@ public class Utils {
     public boolean checkValidEmail(String email) {
         if (Objects.isNull(email)) return false;
         return EMAIL_REGEX.matcher(email).matches();
+    }
+
+    public void displayAlert(String msg, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 
     public Gson getGson() {
