@@ -31,6 +31,38 @@ public class UserRepository {
     UserRepository() {
     }
 
+    public boolean emailExists(String email) {
+        LOGGER.debug("Checking if {} is already in db", email);
+
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "SELECT EXISTS(SELECT 1 FROM users WHERE email = ?) AS exist;"
+        )) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+
+            return rs.getBoolean("exist");
+        } catch (SQLException e) {
+            LOGGER.error("Failed to check email {} existence", email);
+            LOGGER.error(e.getMessage());
+        }
+        return false;
+    }
+
+    public void setFirstLogin(long userId, boolean firstLogin) {
+        LOGGER.debug("Preparing to set user {} first login mode to {}", userId, firstLogin);
+
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "UPDATE users SET first_login = ? WHERE id = ?"
+        )) {
+            stmt.setBoolean(1, firstLogin);
+            stmt.setLong(2, userId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.error("Failed to set user {} first login mode to {}", userId, firstLogin);
+            LOGGER.error(e.getMessage());
+        }
+    }
+
     public void setActive(boolean active, List<Long> ids) {
         LOGGER.debug("Setting users {} activation mode to {}", ids, active);
 
@@ -316,11 +348,11 @@ public class UserRepository {
     /**
      * Due to driver limitation, there must be two queries to be executed
      */
-    public User createUser(String name, String email, String password) {
+    public User createUser(String name, String email, String password, boolean firstLogin) {
         LOGGER.debug("Preparing to create user");
         try {
             PreparedStatement statement = CONNECTION.prepareStatement(
-                            "INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?);"
+                            "INSERT INTO users (id, name, email, password, role, first_login, borrowed_books) VALUES (?, ?, ?, ?, ?, ?, ?);"
             );
 
             statement.setLong(1, Utils.getInstance().generateSnowflakeId());
@@ -328,6 +360,8 @@ public class UserRepository {
             statement.setString(3, email.toLowerCase());
             statement.setString(4, CryptoUtils.getInstance().hashPassword(password));
             statement.setString(5, UserRole.USER.toString());
+            statement.setBoolean(6, firstLogin);
+            statement.setString(7, "");
 
             statement.executeUpdate();
 
