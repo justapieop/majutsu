@@ -110,13 +110,12 @@ public class DashboardController extends BaseController implements Initializable
 
         this.borrowedBooks = user.getBorrowedBooks();
         this.availableBooks = new ArrayList<>(bookList.stream().filter(Book::isAvailable).toList());
+        for (Book book : borrowedBooks) {
+            this.availableBooks.remove(book);
+        }
 
-        this.expiredBooks = new ArrayList<>(bookList.stream().filter(
-                (book) -> !book.isAvailable() && DataPreprocessing.isExpired(book)).toList()
-        );
-
-        this.unavailableBooks = new ArrayList<>(bookList.stream().filter(
-                (book) -> !book.isAvailable()).toList()
+        this.expiredBooks = new ArrayList<>(this.borrowedBooks.stream().filter(
+                (book) -> DataPreprocessing.isExpired(book)).toList()
         );
 
         this.availableBookContainer.setPadding(new Insets(5, 5, 5, 5));
@@ -144,7 +143,7 @@ public class DashboardController extends BaseController implements Initializable
         }
 
         unavailableBookContainer.getChildren().clear();
-        for (Book book : this.unavailableBooks) {
+        for (Book book : this.borrowedBooks) {
             unavailableBookContainer.getChildren().add(GUIComponent.createRow(book));
         }
     }
@@ -174,15 +173,12 @@ public class DashboardController extends BaseController implements Initializable
         for (int i = modification.size() - 1; i >= 0; i--) {
             int index = modification.get(i);
             Book book = this.availableBooks.get(index);
-
             UserRepositoryFactory.getInstance().create()
                     .borrowBook(
                             SessionStore.getInstance().getCurrentUser().getId(),
                             book.getId()
                     );
-
             this.borrowedBooks.add(book);
-            this.unavailableBooks.add(book);
             this.availableBooks.remove(index);
         }
 
@@ -191,10 +187,10 @@ public class DashboardController extends BaseController implements Initializable
 
     @FXML
     private void onReturnBookClick() {
-        List<Integer> modification = activateSubWindow(SceneType.RETURN, this.unavailableBooks);
+        List<Integer> modification = activateSubWindow(SceneType.RETURN, this.borrowedBooks);
         for (int i = modification.size() - 1; i >= 0; i--) {
             int index = modification.get(i);
-            Book book = this.unavailableBooks.get(index);
+            Book book = this.borrowedBooks.get(index);
             UserRepositoryFactory.getInstance().create()
                     .returnBook(
                             SessionStore.getInstance().getCurrentUser().getId(),
@@ -203,7 +199,6 @@ public class DashboardController extends BaseController implements Initializable
             this.availableBooks.add(book);
             this.borrowedBooks.remove(book);
             this.expiredBooks.remove(book);
-            this.unavailableBooks.remove(index);
         }
         refresh();
     }
