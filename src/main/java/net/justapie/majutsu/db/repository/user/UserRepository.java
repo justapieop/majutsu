@@ -39,8 +39,9 @@ public class UserRepository {
         )) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
-
-            return rs.getBoolean("exist");
+            boolean result = rs.getBoolean("exist");
+            rs.close();
+            return result;
         } catch (SQLException e) {
             LOGGER.error("Failed to check email {} existence", email);
             LOGGER.error(e.getMessage());
@@ -216,6 +217,8 @@ public class UserRepository {
             while (result.next()) {
                 users.add(User.fromResultSet(result));
             }
+
+            result.close();
         } catch (SQLException e) {
             return users;
         }
@@ -230,8 +233,9 @@ public class UserRepository {
             statement.setString(1, email.toLowerCase());
 
             result = statement.executeQuery();
-
-            return result.getString("password");
+            String password = result.getString("password");
+            result.close();
+            return password;
         } catch (SQLException e) {
             LOGGER.error("Error occurred while getting user password");
             LOGGER.error(e.getMessage());
@@ -247,7 +251,9 @@ public class UserRepository {
             statement.setString(1, email);
 
             result = statement.executeQuery();
-            return result.getLong("id");
+            long userId = result.getLong("id");
+            result.close();
+            return userId;
         } catch (SQLException e) {
             LOGGER.error("Error occurred while getting user id by email");
             LOGGER.error(e.getMessage());
@@ -273,16 +279,15 @@ public class UserRepository {
             statement.setLong(1, id);
 
             result = statement.executeQuery();
+            User user = User.fromResultSet(result);
+            result.close();
+            Cache.getInstance().put("user:" + id, user, Cache.createTtl(TimeUnit.HOURS, 1));
+            return user;
         } catch (SQLException e) {
             LOGGER.error("Error occurred while getting user by id");
             LOGGER.error(e.getMessage());
             return null;
         }
-
-        User user = User.fromResultSet(result);
-        Cache.getInstance().put("user:" + id, user, Cache.createTtl(TimeUnit.HOURS, 1));
-
-        return user;
     }
 
     public User getUserByEmail(String email) {
@@ -304,17 +309,15 @@ public class UserRepository {
             statement.setString(1, email.toLowerCase());
 
             result = statement.executeQuery();
+            User user = User.fromResultSet(result);
+            result.close();
+            Cache.getInstance().put("user:" + email, user, Cache.createTtl(TimeUnit.HOURS, 1));
+            return user;
         } catch (SQLException e) {
             LOGGER.error("Error occurred while getting user by email");
             LOGGER.error(e.getMessage());
             return null;
         }
-
-        User user = User.fromResultSet(result);
-
-        Cache.getInstance().put("user:" + email, user, Cache.createTtl(TimeUnit.HOURS, 1));
-
-        return user;
     }
 
     public void changePassword(long id, String password) {
