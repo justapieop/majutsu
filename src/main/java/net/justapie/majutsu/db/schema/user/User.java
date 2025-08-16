@@ -50,6 +50,26 @@ public class User {
         return user;
     }
 
+    public static User fromLiteResultSet(ResultSet resultSet) {
+        final User user = new User();
+
+        try {
+            user.id = resultSet.getLong("id");
+            user.name = resultSet.getString("name");
+            user.email = resultSet.getString("email");
+            user.hashedPassword = resultSet.getString("password");
+            user.role = UserRole.valueOf(resultSet.getString("role"));
+            user.active = resultSet.getBoolean("active");
+            user.createdAt = Date.from(Instant.ofEpochSecond(resultSet.getLong("created_at")));
+            user.firstLogin = resultSet.getBoolean("first_login");
+
+        } catch (SQLException e) {
+            return null;
+        }
+
+        return user;
+    }
+
     public long getId() {
         return this.id;
     }

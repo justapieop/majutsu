@@ -215,7 +215,7 @@ public class UserRepository {
             ResultSet result = statement.executeQuery();
 
             while (result.next()) {
-                users.add(User.fromResultSet(result));
+                users.add(User.fromLiteResultSet(result));
             }
 
             result.close();
