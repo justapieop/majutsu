@@ -130,6 +130,34 @@ public class BookRepository {
         }
     }
 
+    public List<Book> fetchBooksExcept(List<String> ids) {
+        LOGGER.debug("Fetching books {}", ids);
+
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                "SELECT * FROM books WHERE id NOT IN (" + createPlaceholder(ids.size()) + ")"
+        )) {
+            for (int i = 0; i < ids.size(); i++) {
+                stmt.setString(i + 1, ids.get(i));
+            }
+            ResultSet rs = stmt.executeQuery();
+
+            List<Book> books = new ArrayList<>();
+
+            while (rs.next()) {
+                Book currentBook = Book.fromResultSet(rs);
+                assert currentBook != null;
+                books.add(currentBook);
+                Cache.getInstance().put("book:" + currentBook.getId(), books, Cache.INDEFINITE_TTL);
+            }
+
+            return books;
+        } catch (SQLException e) {
+            LOGGER.debug("Failed while fetching books {}", ids);
+            LOGGER.debug(e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
     public Book getBookById(String id) {
         LOGGER.debug("Preparing to get book {}", id);
 
