@@ -42,6 +42,8 @@ public class BookRepository {
                 );
             }
 
+            rs.close();
+
             Cache.getInstance().put("books", books, Cache.DEFAULT_TTL);
 
             return Collections.unmodifiableList(books);
@@ -174,8 +176,9 @@ public class BookRepository {
         )) {
             stmt.setString(1, id);
             ResultSet rs = stmt.executeQuery();
-
-            return Book.fromResultSet(rs);
+            Book book = Book.fromResultSet(rs);
+            rs.close();
+            return book;
         } catch (SQLException e) {
             LOGGER.error("Failed to get book {}", id);
             LOGGER.error(e.getMessage());

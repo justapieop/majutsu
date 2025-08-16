@@ -12,7 +12,6 @@ public class AdminSplashController extends BaseSplashController {
     public void process() {
         new Thread(() -> {
             BookRepositoryFactory.getInstance().create().getAllBooks();
-
             this.nextScene();
         }).start();
     }
