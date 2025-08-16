@@ -18,86 +18,78 @@
    <top>
        <GridPane prefHeight="51.0" prefWidth="1366.0" BorderPane.alignment="CENTER">
            <columnConstraints>
-               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1141.0" minWidth="10.0" prefWidth="1007.0"/>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="678.0" minWidth="10.0"
-                                  prefWidth="273.0"/>
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1141.0" minWidth="10.0" prefWidth="1007.0" />
+               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="678.0" minWidth="10.0" prefWidth="273.0" />
            </columnConstraints>
            <rowConstraints>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
            </rowConstraints>
-           <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0"
-                  prefWidth="460.0" text="Majutsu - Library Management System">
+           <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="460.0" text="Majutsu - Library Management System">
                <font>
-                   <Font size="21.0"/>
+                   <Font size="21.0" />
                </font>
                <opaqueInsets>
-                   <Insets/>
+                   <Insets />
                </opaqueInsets>
                <padding>
-                   <Insets left="10.0"/>
+                   <Insets left="10.0" />
                </padding>
            </Label>
-           <ComboBox fx:id="comboBox" prefWidth="150.0" GridPane.columnIndex="1"/>
+           <ComboBox fx:id="comboBox" prefWidth="150.0" GridPane.columnIndex="1" />
        </GridPane>
    </top>
    <center>
-       <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0"
-                   BorderPane.alignment="CENTER">
-           <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                 prefHeight="200.0" prefWidth="100.0" spacing="20.0">
+       <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+           <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
                <padding>
-                   <Insets left="80.0" right="80.0" top="56.0"/>
+                   <Insets left="80.0" right="80.0" top="56.0" />
                </padding>
                <VBox prefHeight="200.0" prefWidth="100.0">
-                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0"
-                         style="-fx-border-color: #555555; -fx-background-color: #1E1E1E; -fx-border-width: 3; -fx-background-radius: 8 8 0 0; -fx-border-radius: 8 8 0 0;">
+                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" style="-fx-border-color: #555555; -fx-background-color: #1E1E1E; -fx-border-width: 3; -fx-background-radius: 8 8 0 0; -fx-border-radius: 8 8 0 0;">
                        <padding>
-                           <Insets left="32.0" right="32.0"/>
+                           <Insets left="32.0" right="32.0" />
                        </padding>
                        <Label text="Available book list" textFill="#c12222">
                            <font>
-                               <Font size="14.0"/>
+                               <Font size="14.0" />
                            </font>
                        </Label>
-                       <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS"/>
+                       <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
                        <Button mnemonicParsing="false" onAction="#onBorrowBookClick" text="Borrow books">
                            <font>
-                               <Font size="14.0"/>
+                               <Font size="14.0" />
                            </font>
                        </Button>
                    </HBox>
                    <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-                       <VBox fx:id="availableBookContainer" prefHeight="200.0" prefWidth="100.0"
-                             style="-fx-background-color: #1E1E1E; -fx-border-color: #555555; -fx-background-radius: 0 0 8 8; -fx-border-radius: 0 0 8 8; -fx-border-width: 3;">
+                       <VBox fx:id="availableBookContainer" prefHeight="200.0" prefWidth="100.0" spacing="3.0" style="-fx-background-color: #1E1E1E; -fx-border-color: #555555; -fx-background-radius: 0 0 8 8; -fx-border-radius: 0 0 8 8; -fx-border-width: 3;">
                            <padding>
-                               <Insets left="20.0" right="20.0" top="12.0"/>
+                               <Insets left="20.0" right="20.0" top="12.0" />
                            </padding>
                        </VBox>
                    </ScrollPane>
                </VBox>
                <VBox prefHeight="200.0" prefWidth="100.0">
-                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0"
-                         style="-fx-border-color: #555555; -fx-background-color: #1E1E1E; -fx-border-width: 3; -fx-background-radius: 8 8 0 0; -fx-border-radius: 8 8 0 0;">
+                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" style="-fx-border-color: #555555; -fx-background-color: #1E1E1E; -fx-border-width: 3; -fx-background-radius: 8 8 0 0; -fx-border-radius: 8 8 0 0;">
                        <padding>
-                           <Insets left="32.0" right="32.0"/>
+                           <Insets left="32.0" right="32.0" />
                        </padding>
                        <Label text="Your books" textFill="#c12222">
                            <font>
-                               <Font size="14.0"/>
+                               <Font size="14.0" />
                            </font>
                        </Label>
-                       <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS"/>
+                       <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
                        <Button mnemonicParsing="false" onAction="#onReturnBookClick" text="Return books">
                            <font>
-                               <Font size="14.0"/>
+                               <Font size="14.0" />
                            </font>
                        </Button>
                    </HBox>
                    <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-                       <VBox fx:id="unavailableBookContainer" prefHeight="200.0" prefWidth="100.0"
-                             style="-fx-background-color: #1E1E1E; -fx-border-color: #555555; -fx-background-radius: 0 0 8 8; -fx-border-radius: 0 0 8 8; -fx-border-width: 3;">
+                       <VBox fx:id="borrowedBookContainer" prefHeight="200.0" prefWidth="100.0" spacing="3.0" style="-fx-background-color: #1E1E1E; -fx-border-color: #555555; -fx-background-radius: 0 0 8 8; -fx-border-radius: 0 0 8 8; -fx-border-width: 3;">
                            <padding>
-                               <Insets left="20.0" right="20.0" top="12.0"/>
+                               <Insets left="20.0" right="20.0" top="12.0" />
                            </padding>
                        </VBox>
                    </ScrollPane>
@@ -108,11 +100,11 @@
    <bottom>
        <HBox alignment="CENTER" prefHeight="79.0" prefWidth="1280.0" spacing="30.0" BorderPane.alignment="CENTER">
            <padding>
-               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
            </padding>
-           <Button fx:id="borrowedBooksPrompt" defaultButton="true" mnemonicParsing="false" text="Loading..."/>
-           <Button fx:id="availableBooksPrompt" defaultButton="true" mnemonicParsing="false" text="Loading..."/>
-           <Button fx:id="expiredBooksPrompt" defaultButton="true" mnemonicParsing="false" text="Loading..."/>
+           <Button fx:id="borrowedBooksPrompt" defaultButton="true" mnemonicParsing="false" text="Loading..." />
+           <Button fx:id="availableBooksPrompt" defaultButton="true" mnemonicParsing="false" text="Loading..." />
+           <Button fx:id="expiredBooksPrompt" defaultButton="true" mnemonicParsing="false" text="Loading..." />
        </HBox>
    </bottom>
 </BorderPane>

@@ -11,7 +11,7 @@ import java.util.List;
 public class DataPreprocessing {
     public static BookStatusType getBookStatus(Book book) {
         String bookId = book.getId();
-        long userId = SessionStore.getInstance().getCurrentUser().getId();
+        long userId = SessionStore.getInstance().getCurrentUserId();
 
         List<History> latestHistory = HistoryRepositoryFactory.getInstance().create().getLatestRecordByBookIdAndUserId(bookId, userId);
 
@@ -31,6 +31,6 @@ public class DataPreprocessing {
     }
 
     public static boolean isExpired(Book book) {
-        return (getBookStatus(book) == BookStatusType.EXPIRED);
+        return getBookStatus(book).equals(BookStatusType.EXPIRED);
     }
 }

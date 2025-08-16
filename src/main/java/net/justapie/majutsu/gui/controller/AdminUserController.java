@@ -67,7 +67,7 @@ public final class AdminUserController extends AdminBookController implements In
                             this.selectedUsers.remove(c.getValue());
                         }
                     });
-                    if (c.getValue().getId() == SessionStore.getInstance().getCurrentUser().getId()) {
+                    if (c.getValue().getId() == SessionStore.getInstance().fetchCurrentUser().getId()) {
                         cb.setDisable(true);
                     }
                     return new SimpleObjectProperty<>(cb);
