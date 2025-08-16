@@ -56,7 +56,7 @@ public class DashboardController extends BaseController implements Initializable
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        User user = SessionStore.getInstance().getCurrentUser();
+        User user = SessionStore.getInstance().fetchCurrentUser();
 
         if (Objects.isNull(user)) {
             return;
@@ -174,7 +174,7 @@ public class DashboardController extends BaseController implements Initializable
             Book book = this.availableBooks.get(index);
             UserRepositoryFactory.getInstance().create()
                     .borrowBook(
-                            SessionStore.getInstance().getCurrentUser().getId(),
+                            SessionStore.getInstance().fetchCurrentUser().getId(),
                             book.getId()
                     );
             this.borrowedBooks.add(book);
@@ -192,7 +192,7 @@ public class DashboardController extends BaseController implements Initializable
             Book book = this.borrowedBooks.get(index);
             UserRepositoryFactory.getInstance().create()
                     .returnBook(
-                            SessionStore.getInstance().getCurrentUser().getId(),
+                            SessionStore.getInstance().fetchCurrentUser().getId(),
                             book.getId()
                     );
             this.availableBooks.add(book);
@@ -203,7 +203,7 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     private void onAdminSwitchClick() {
-        User user = SessionStore.getInstance().getCurrentUser();
+        User user = SessionStore.getInstance().fetchCurrentUser();
 
         if (Objects.isNull(user) || !user.getRole().equals(UserRole.ADMIN)) {
             Alert alert = new Alert(Alert.AlertType.WARNING);

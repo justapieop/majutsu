@@ -38,7 +38,7 @@ public class AccountController extends BaseController implements Initializable {
             return;
         }
 
-        User user = SessionStore.getInstance().getCurrentUser();
+        User user = SessionStore.getInstance().fetchCurrentUser();
 
         if (Objects.isNull(user)) {
             return;
@@ -55,7 +55,7 @@ public class AccountController extends BaseController implements Initializable {
             return;
         }
 
-        User user = SessionStore.getInstance().getCurrentUser();
+        User user = SessionStore.getInstance().fetchCurrentUser();
 
         if (Objects.isNull(user)) {
             return;
@@ -73,7 +73,7 @@ public class AccountController extends BaseController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        User user = SessionStore.getInstance().getCurrentUser();
+        User user = SessionStore.getInstance().fetchCurrentUser();
 
         if (Objects.isNull(user)) {
             return;

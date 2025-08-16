@@ -8,6 +8,8 @@ public class SessionStore {
 
     private long currentUserId;
 
+    private User currentUser;
+
     public SessionStore() {
     }
 
@@ -19,8 +21,13 @@ public class SessionStore {
         this.currentUserId = userId;
     }
 
-    public User getCurrentUser() {
-        return UserRepositoryFactory.getInstance().create().getUserById(this.currentUserId);
+    public long getCurrentUserId() {
+        return currentUserId;
+    }
+
+    public User fetchCurrentUser() {
+        currentUser = UserRepositoryFactory.getInstance().create().getUserById(this.currentUserId);
+        return currentUser;
     }
 
     public void clearSession() {
