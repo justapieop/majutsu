@@ -1,5 +1,6 @@
 package net.justapie.majutsu.db.schema.user;
 
+import net.justapie.majutsu.db.repository.book.BookRepository;
 import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
 import net.justapie.majutsu.db.schema.book.Book;
 
@@ -18,6 +19,7 @@ public class User {
     protected UserRole role;
     protected boolean active;
     protected List<Book> borrowedBooks;
+    protected List<Book> availableBooks;
     protected Date createdAt;
     protected boolean firstLogin;
 
@@ -38,6 +40,8 @@ public class User {
             List<String> bookIds = Arrays.stream(rawBorrowedBooks.split(",")).toList();
 
             user.borrowedBooks = BookRepositoryFactory.getInstance().create().batchBookFetch(bookIds);
+
+            user.availableBooks = BookRepositoryFactory.getInstance().create().fetchBooksExcept(bookIds);
 
         } catch (SQLException e) {
             return null;
@@ -68,6 +72,10 @@ public class User {
 
     public List<Book> getBorrowedBooks() {
         return this.borrowedBooks;
+    }
+
+    public List<Book> getAvailableBooks() {
+        return this.availableBooks;
     }
 
     public boolean isActive() {

@@ -109,10 +109,7 @@ public class DashboardController extends BaseController implements Initializable
         List<Book> bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
 
         this.borrowedBooks = user.getBorrowedBooks();
-        this.availableBooks = new ArrayList<>(bookList.stream().filter(Book::isAvailable).toList());
-        for (Book book : borrowedBooks) {
-            this.availableBooks.remove(book);
-        }
+        this.availableBooks = user.getAvailableBooks();
 
         this.expiredBooks = new ArrayList<>(this.borrowedBooks.stream().filter(
                 (book) -> DataPreprocessing.isExpired(book)).toList()
