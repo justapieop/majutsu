@@ -5,6 +5,8 @@ import net.justapie.majutsu.cache.Cache;
 import net.justapie.majutsu.cache.CacheObject;
 import net.justapie.majutsu.db.DbClient;
 import net.justapie.majutsu.db.schema.book.Book;
+import net.justapie.majutsu.gui.controller.prep.BookCacheData;
+import net.justapie.majutsu.gui.controller.prep.DataPreprocessing;
 import net.justapie.majutsu.gui.model.DisplayableBook;
 import net.justapie.majutsu.utils.Utils;
 
@@ -77,7 +79,7 @@ public class BookRepository {
             CacheObject cacheData = Cache.getInstance().get("book:" + bookId);
             if (!Objects.isNull(cacheData) && !cacheData.isExpired()) {
                 LOGGER.debug("Book: {} hit cache", bookId);
-                result.add((Book) cacheData.getData());
+                result.add(((BookCacheData) cacheData.getData()).getBook());
                 ids.remove(i);
             }
         }
@@ -119,8 +121,11 @@ public class BookRepository {
                 Book currentBook = Book.fromResultSet(rs);
                 assert currentBook != null;
                 books.add(currentBook);
-                Cache.getInstance().put("book:" + currentBook.getId(), books, Cache.INDEFINITE_TTL);
+                BookCacheData currentBookData = new BookCacheData(currentBook, DataPreprocessing.getBookStatus(currentBook));
+                Cache.getInstance().put("book:" + currentBook.getId(), currentBookData, Cache.INDEFINITE_TTL);
             }
+
+            rs.close();
 
             return books;
         } catch (SQLException e) {
@@ -147,8 +152,11 @@ public class BookRepository {
                 Book currentBook = Book.fromResultSet(rs);
                 assert currentBook != null;
                 books.add(currentBook);
-                Cache.getInstance().put("book:" + currentBook.getId(), books, Cache.INDEFINITE_TTL);
+                BookCacheData currentBookData = new BookCacheData(currentBook, DataPreprocessing.getBookStatus(currentBook));
+                Cache.getInstance().put("book:" + currentBook.getId(), currentBookData, Cache.INDEFINITE_TTL);
             }
+
+            rs.close();
 
             return books;
         } catch (SQLException e) {
