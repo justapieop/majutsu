@@ -48,12 +48,11 @@ public class DashboardController extends BaseController implements Initializable
     private VBox availableBookContainer;
 
     @FXML
-    private VBox unavailableBookContainer;
+    private VBox borrowedBookContainer;
 
     private List<Book> borrowedBooks;
     private List<Book> availableBooks;
     private List<Book> expiredBooks;
-    private List<Book> unavailableBooks;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -111,12 +110,15 @@ public class DashboardController extends BaseController implements Initializable
         this.borrowedBooks = user.getBorrowedBooks();
         this.availableBooks = user.getAvailableBooks();
 
-        this.expiredBooks = new ArrayList<>(this.borrowedBooks.stream().filter(
-                (book) -> DataPreprocessing.isExpired(book)).toList()
-        );
+        this.expiredBooks = new ArrayList<>(this.borrowedBooks.stream().filter((book) -> {
+            return DataPreprocessing.isExpired(book);
+        }).toList());
 
-        this.availableBookContainer.setPadding(new Insets(5, 5, 5, 5));
+        this.availableBookContainer.setPadding(new Insets(5, 12, 0, 12));
         this.availableBookContainer.setSpacing(5);
+
+        this.borrowedBookContainer.setPadding(new Insets(5, 12, 0, 12));
+        this.borrowedBookContainer.setSpacing(5);
 
         refresh();
     }
@@ -139,9 +141,9 @@ public class DashboardController extends BaseController implements Initializable
             availableBookContainer.getChildren().add(GUIComponent.createRow(book));
         }
 
-        unavailableBookContainer.getChildren().clear();
+        borrowedBookContainer.getChildren().clear();
         for (Book book : this.borrowedBooks) {
-            unavailableBookContainer.getChildren().add(GUIComponent.createRow(book));
+            borrowedBookContainer.getChildren().add(GUIComponent.createRow(book));
         }
     }
 
