@@ -9,4 +9,5 @@ public class SceneType {
     public static final String BORROW = "layouts/borrow.fxml";
     public static final String RETURN = "layouts/return.fxml";
     public static final String ADMIN_BOOK_SEARCH = "layouts/admin_book_search.fxml";
+    public static final String ADMIN_USER_ADD = "layouts/admin_user_add.fxml";
 }

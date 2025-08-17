@@ -6,10 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import net.justapie.majutsu.cache.Cache;
-import net.justapie.majutsu.cache.CacheObject;
 import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
-import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.gbook.GBookClient;
 import net.justapie.majutsu.gbook.model.Volume;
 import net.justapie.majutsu.gui.SceneType;
@@ -17,7 +14,8 @@ import net.justapie.majutsu.gui.component.BookSelect;
 import net.justapie.majutsu.gui.component.SelectedBook;
 import net.justapie.majutsu.gui.model.DisplayableBook;
 
-import java.util.ArrayList;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,16 +47,19 @@ public class AdminBookSearchController extends BaseController {
             return;
         }
 
+        query = URLEncoder.encode(query, StandardCharsets.UTF_8);
+
         this.adminSearchButton.setDisable(true);
         this.prompt.setText("Please wait");
 
+        String finalQuery = query;
         Thread thread = new Thread(() -> {
-            List<Volume> volumes = GBookClient.getInstance().searchVolume(query).get().getItems();
+            List<Volume> volumes = GBookClient.getInstance().searchVolume(finalQuery).get().getItems();
             this.adminSearchButton.setDisable(false);
 
-            Platform.runLater(() -> {
-                this.prompt.setText(String.format("%d results found", volumes.size()));
-            });
+            Platform.runLater(
+                    () -> this.prompt.setText(String.format("%d results found", volumes.size()))
+            );
 
             for (final Volume vol : volumes) {
                 DisplayableBook displayable = DisplayableBook.fromVolume(vol);
@@ -115,14 +116,6 @@ public class AdminBookSearchController extends BaseController {
     private void onConfirm() {
         List<DisplayableBook> displayableBooks = this.selected.keySet().stream().toList();
         BookRepositoryFactory.getInstance().create().addBook(displayableBooks);
-
-        CacheObject<ArrayList<Book>> books = Cache.getInstance().get("books");
-
-        for (final DisplayableBook book : displayableBooks) {
-            if (!books.getData().contains(book)) {
-
-            }
-        }
 
         new AdminSplashController().process();
     }

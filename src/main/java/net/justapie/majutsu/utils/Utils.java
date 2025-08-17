@@ -6,12 +6,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvBuilder;
+import javafx.scene.control.Alert;
 import me.fthomys.SnowflakeLib.SnowflakeFactory;
 import me.fthomys.SnowflakeLib.SnowflakeGenerator;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.Objects;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 public class Utils {
@@ -29,8 +31,10 @@ public class Utils {
             .build();
     private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-    public String getEnv(String key) {
-        return DOTENV.get(key);
+    public int rng(int start, int end) {
+        Random rng = new Random();
+
+        return rng.nextInt(start, end + 1);
     }
 
     public String getEnv(String key, String s) {
@@ -51,6 +55,12 @@ public class Utils {
     public boolean checkValidEmail(String email) {
         if (Objects.isNull(email)) return false;
         return EMAIL_REGEX.matcher(email).matches();
+    }
+
+    public void displayAlert(String msg, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 
     public Gson getGson() {

@@ -1,16 +1,14 @@
 package net.justapie.majutsu.gui;
 
-import net.justapie.majutsu.cache.Cache;
-import net.justapie.majutsu.cache.CacheObject;
 import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
 import net.justapie.majutsu.db.schema.user.User;
-
-import java.util.Objects;
 
 public class SessionStore {
     private static final SessionStore INSTANCE = new SessionStore();
 
     private long currentUserId;
+
+    private User currentUser;
 
     public SessionStore() {
     }
@@ -23,20 +21,16 @@ public class SessionStore {
         this.currentUserId = userId;
     }
 
-    public User getCurrentUser() {
-        CacheObject<User> user = Cache.getInstance().get("user");
-        if (Objects.isNull(user)) {
-            return UserRepositoryFactory.getInstance().create().getUserById(this.currentUserId);
-        }
+    public long getCurrentUserId() {
+        return currentUserId;
+    }
 
-        return user.getData();
+    public User fetchCurrentUser() {
+        currentUser = UserRepositoryFactory.getInstance().create().getUserById(this.currentUserId);
+        return currentUser;
     }
 
     public void clearSession() {
         this.currentUserId = 0;
-    }
-
-    public boolean isLoggedIn() {
-        return this.currentUserId != 0;
     }
 }

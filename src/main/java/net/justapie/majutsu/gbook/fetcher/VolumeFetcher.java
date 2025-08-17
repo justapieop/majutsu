@@ -24,16 +24,16 @@ public class VolumeFetcher extends BaseFetcher<Volume, GetVolumeHandler> {
 
     @Override
     public Volume get() {
-        CacheObject<Volume> vol = Cache.getInstance().get("volume:" + this.extractId());
+        CacheObject vol = Cache.getInstance().get("volume:" + this.extractId());
 
         if (!Objects.isNull(vol)) {
-            return vol.getData();
+            return (Volume) vol.getData();
         }
 
         this.start();
 
         Volume v = this.getHttpResponse().body();
-        Cache.getInstance().put("volume:" + this.extractId(), v);
+        Cache.getInstance().put("volume:" + this.extractId(), v, Cache.INDEFINITE_TTL);
         return v;
     }
 }

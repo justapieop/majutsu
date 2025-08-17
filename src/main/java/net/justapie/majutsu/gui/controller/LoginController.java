@@ -1,7 +1,7 @@
 package net.justapie.majutsu.gui.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
 import net.justapie.majutsu.db.schema.user.User;
@@ -20,22 +20,18 @@ public class LoginController extends BaseController {
     private TextField passwordField;
 
     @FXML
-    private Label authPrompt;
-
-
-    @FXML
     private void onRegisterButtonClick() {
-        if (!this.validateInput()) {
-            this.authPrompt.setText("Invalid email or password");
+        if (this.isWrongPassword()) {
+            Utils.getInstance().displayAlert("Invalid email or password", Alert.AlertType.ERROR);
             return;
         }
         String email = this.emailField.getText();
         String password = this.passwordField.getText();
 
-        User user = UserRepositoryFactory.getInstance().create().createUser("User", email, password);
+        User user = UserRepositoryFactory.getInstance().create().createUser("User", email, password, false);
 
         if (Objects.isNull(user)) {
-            this.authPrompt.setText("User already exists");
+            Utils.getInstance().displayAlert("User already exists", Alert.AlertType.ERROR);
             return;
         }
 
@@ -43,13 +39,15 @@ public class LoginController extends BaseController {
                 user.getId()
         );
 
+        Utils.getInstance().displayAlert("Registered successfully", Alert.AlertType.INFORMATION);
+
         new DashboardSplashController().process();
     }
 
     @FXML
     private void onLoginButtonClick() {
-        if (!this.validateInput()) {
-            this.authPrompt.setText("Invalid email or password");
+        if (this.isWrongPassword()) {
+            Utils.getInstance().displayAlert("Invalid email or password successfully", Alert.AlertType.ERROR);
             return;
         }
         String email = this.emailField.getText();
@@ -58,7 +56,7 @@ public class LoginController extends BaseController {
         String hashedPassword = UserRepositoryFactory.getInstance().create().getPassword(email);
 
         if (Objects.isNull(hashedPassword) || !CryptoUtils.getInstance().comparePassword(password, hashedPassword)) {
-            this.authPrompt.setText("Invalid credentials");
+            Utils.getInstance().displayAlert("Invalid credentials", Alert.AlertType.ERROR);
             return;
         }
 
@@ -66,10 +64,12 @@ public class LoginController extends BaseController {
                 UserRepositoryFactory.getInstance().create().getUserIdByEmail(email)
         );
 
+        Utils.getInstance().displayAlert("Logged in successfully", Alert.AlertType.INFORMATION);
+
         new DashboardSplashController().process();
     }
 
-    private boolean validateInput() {
+    private boolean isWrongPassword() {
         Validator validator = new Validator();
         validator.createCheck()
                 .dependsOn("emailField", this.emailField.textProperty())
@@ -79,7 +79,6 @@ public class LoginController extends BaseController {
 
                     if (email.isEmpty() || !Utils.getInstance().checkValidEmail(email)) {
                         c.error("Invalid email");
-                        return;
                     }
                 })
                 .dependsOn("passwordField", this.passwordField.textProperty())
@@ -91,6 +90,6 @@ public class LoginController extends BaseController {
                     }
                 });
 
-        return validator.validate();
+        return !validator.validate();
     }
 }

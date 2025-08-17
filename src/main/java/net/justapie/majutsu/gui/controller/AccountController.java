@@ -6,7 +6,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
 import net.justapie.majutsu.db.schema.user.User;
-import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 import net.justapie.majutsu.utils.CryptoUtils;
 
@@ -29,7 +28,7 @@ public class AccountController extends BaseController implements Initializable {
 
     @FXML
     private void onAccountBackButton() {
-        this.switchToScene(SceneType.DASHBOARD);
+        new DashboardSplashController().process();
     }
 
     @FXML
@@ -39,7 +38,7 @@ public class AccountController extends BaseController implements Initializable {
             return;
         }
 
-        User user = SessionStore.getInstance().getCurrentUser();
+        User user = SessionStore.getInstance().fetchCurrentUser();
 
         if (Objects.isNull(user)) {
             return;
@@ -56,7 +55,7 @@ public class AccountController extends BaseController implements Initializable {
             return;
         }
 
-        User user = SessionStore.getInstance().getCurrentUser();
+        User user = SessionStore.getInstance().fetchCurrentUser();
 
         if (Objects.isNull(user)) {
             return;
@@ -68,12 +67,13 @@ public class AccountController extends BaseController implements Initializable {
         }
 
         UserRepositoryFactory.getInstance().create().changePassword(user.getId(), this.newPasswordField.getText());
+        UserRepositoryFactory.getInstance().create().setFirstLogin(user.getId(), false);
         this.changePasswordPrompt.setText("Password changed");
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        User user = SessionStore.getInstance().getCurrentUser();
+        User user = SessionStore.getInstance().fetchCurrentUser();
 
         if (Objects.isNull(user)) {
             return;
