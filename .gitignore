@@ -37,3 +37,9 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Environment file ###
+.env
+
+### Database file ###
+data.db
