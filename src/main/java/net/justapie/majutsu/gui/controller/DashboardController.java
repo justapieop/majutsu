@@ -12,7 +12,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
+import net.justapie.majutsu.cache.Cache;
 import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
+import net.justapie.majutsu.db.repository.user.UserRepository;
 import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
 import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.db.schema.user.User;
@@ -22,6 +24,7 @@ import net.justapie.majutsu.gui.SceneType;
 import net.justapie.majutsu.gui.SessionStore;
 import net.justapie.majutsu.gui.component.BoxInteractive;
 import net.justapie.majutsu.gui.component.GUIComponent;
+import net.justapie.majutsu.gui.controller.prep.BookStatusType;
 import net.justapie.majutsu.gui.controller.prep.DataPreprocessing;
 import net.justapie.majutsu.utils.Utils;
 
@@ -177,6 +180,7 @@ public class DashboardController extends BaseController implements Initializable
                             SessionStore.getInstance().fetchCurrentUser().getId(),
                             book.getId()
                     );
+            Cache.getInstance().remove("book:" + book.getId());
             this.borrowedBooks.add(book);
             this.availableBooks.remove(index);
         }
@@ -195,6 +199,7 @@ public class DashboardController extends BaseController implements Initializable
                             SessionStore.getInstance().fetchCurrentUser().getId(),
                             book.getId()
                     );
+            Cache.getInstance().remove("book:" + book.getId());
             this.availableBooks.add(book);
             this.borrowedBooks.remove(book);
             this.expiredBooks.remove(book);
