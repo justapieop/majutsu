@@ -7,10 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import net.justapie.majutsu.cache.Cache;
 import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
@@ -39,13 +36,13 @@ public class DashboardController extends BaseController implements Initializable
     private ComboBox<String> comboBox;
 
     @FXML
-    private Button borrowedBooksPrompt;
+    private Label borrowedBooksPrompt;
 
     @FXML
-    private Button availableBooksPrompt;
+    private Label availableBooksPrompt;
 
     @FXML
-    private Button expiredBooksPrompt;
+    private Label expiredBooksPrompt;
 
     @FXML
     private VBox availableBookContainer;
@@ -128,14 +125,11 @@ public class DashboardController extends BaseController implements Initializable
 
     private void refresh() {
 
-        // Insert here init functions for numbers.
         Integer numberOfBorrowedBooks = this.borrowedBooks.size();
         Integer numberOfAvailableBooks = this.availableBooks.size();
         Integer numberOfExpiredBooks = this.expiredBooks.size();
 
         this.borrowedBooksPrompt.setText(String.format("Number of borrowed books: %d", numberOfBorrowedBooks));
-        this.borrowedBooksPrompt.setStyle("");
-
         this.availableBooksPrompt.setText(String.format("Number of available books: %d", numberOfAvailableBooks));
         this.expiredBooksPrompt.setText(String.format("Number of expired books: %d", numberOfExpiredBooks));
 
