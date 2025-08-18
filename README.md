@@ -2,7 +2,7 @@
 
 A Certain Magical Index (basically a library management system)
 
-![img.png](assets/cover.png)
+![cover.png](assets/cover.png)
 
 # Project overview
 
@@ -33,8 +33,11 @@ database, which unnecessarily increases the complexity of the program as well as
 - Nguyễn Phan Việt Hưng (24021502): Backend developer
   - Database design for document management
   - SQL query optimization
-  -
 
 # License
 
 This project is licensed under MIT License
+
+# Inheritance tree
+
+![diagram.png](assets/diagram.png)
