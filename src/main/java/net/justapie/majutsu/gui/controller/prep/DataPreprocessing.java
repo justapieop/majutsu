@@ -9,6 +9,7 @@ import net.justapie.majutsu.gui.SessionStore;
 import java.util.List;
 
 public class DataPreprocessing {
+    static final long AVAILABLE_DURATION = 14L * 24 * 60 * 60 * 1000;
     public static BookStatusType getBookStatus(Book book) {
         String bookId = book.getId();
         long userId = SessionStore.getInstance().getCurrentUserId();
@@ -25,7 +26,7 @@ public class DataPreprocessing {
             }
             else {
                 long diff = System.currentTimeMillis() - history.getCreatedAt().getTime();
-                return (diff > 14L * 24 * 60 * 60 * 1000 ? BookStatusType.EXPIRED : BookStatusType.BORROWED);
+                return (diff > AVAILABLE_DURATION ? BookStatusType.EXPIRED : BookStatusType.BORROWED);
             }
         }
     }
