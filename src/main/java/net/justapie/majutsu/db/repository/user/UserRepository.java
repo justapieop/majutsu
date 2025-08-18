@@ -13,6 +13,7 @@ import net.justapie.majutsu.gbook.model.Volume;
 import net.justapie.majutsu.utils.CryptoUtils;
 import net.justapie.majutsu.utils.Utils;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -342,10 +343,26 @@ public class UserRepository {
             statement.setLong(2, id);
 
             statement.executeUpdate();
+
+            LOGGER.debug("Modifying cache if exist");
+            CacheObject obj = Cache.getInstance().get("user:" + id);
+            if (Objects.isNull(obj) || obj.isExpired()) {
+                LOGGER.debug("Cached user {} missed", id);
+                return;
+            }
+            User user = (User) obj.getData();
+
+            // Reflection :troll:
+            Class<User> clazz = User.class;
+            Field field = clazz.getDeclaredField("name");
+
+            field.setAccessible(true);
+            field.set(user, name);
+
         } catch (SQLException e) {
             LOGGER.error("Error occurred while getting updating user name");
             LOGGER.error(e.getMessage());
-        }
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {}
     }
 
     /**
