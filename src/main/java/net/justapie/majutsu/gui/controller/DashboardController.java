@@ -141,12 +141,12 @@ public class DashboardController extends BaseController implements Initializable
 
         availableBookContainer.getChildren().clear();
         for (Book book : this.availableBooks) {
-            availableBookContainer.getChildren().add(GUIComponent.createRow(book));
+            availableBookContainer.getChildren().add(GUIComponent.createRowForBorrowBox(book));
         }
 
         borrowedBookContainer.getChildren().clear();
         for (Book book : this.borrowedBooks) {
-            borrowedBookContainer.getChildren().add(GUIComponent.createRow(book));
+            borrowedBookContainer.getChildren().add(GUIComponent.createRowForReturnBox(book));
         }
     }
 

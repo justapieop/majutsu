@@ -32,7 +32,47 @@ public class GUIComponent {
         return result;
     }
 
-    public static HBox createRow(Book book) {
+    public static HBox createRowForReturnBox(Book book) {
+        HBox row = new HBox();
+
+        Label nameLabel = new Label(book.getVolumeInfo().getTitle());
+        nameLabel.setPrefWidth(300);
+        nameLabel.setWrapText(true);
+        nameLabel.setAlignment(Pos.CENTER);
+
+        String currentStatus = (book.isAvailable() ? "Available" : (DataPreprocessing.isExpired(book) ? "Expired" : "Borrowed"));
+        Label statusLabel = new Label(currentStatus);
+        statusLabel.setPrefWidth(100);
+        statusLabel.setAlignment(Pos.CENTER);
+
+        Label bookAuthors = authorsLabel(book);
+        bookAuthors.setPrefWidth(200);
+        bookAuthors.setAlignment(Pos.CENTER);
+
+        Label categories = categoriesLabel(book);
+        categories.setPrefWidth(200);
+        categories.setAlignment(Pos.CENTER);
+
+        row.getChildren().addAll(
+                nameLabel,
+                bookAuthors,
+                categories,
+                statusLabel
+        );
+
+        row.setStyle("""
+                -fx-border-color: #d0d0d0;
+                -fx-border-width: 1;
+        """);
+        row.setPrefHeight(36);
+        row.setSpacing(18);
+        row.setAlignment(Pos.CENTER);
+        row.setPadding(new Insets(3, 5, 3, 5));
+
+        return row;
+    }
+
+    public static HBox createRowForBorrowBox(Book book) {
         HBox row = new HBox();
 
         Label nameLabel = new Label(book.getVolumeInfo().getTitle());

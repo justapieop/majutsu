@@ -13,7 +13,7 @@ public class BorrowBox extends BookModificationBase implements BoxInteractive {
         selectedOptions = new ArrayList<>();
         for (int i = 0; i < source.size(); i++) {
             final Book book = source.get(i);
-            CheckBox box = new CheckBox(String.format("%s: %s.", book.getId(), book.getVolumeInfo().getTitle()));
+            CheckBox box = new CheckBox(String.format("%s: %s", book.getVolumeInfo().getAuthors(), book.getVolumeInfo().getTitle()));
             box.setAlignment(Pos.CENTER_LEFT);
             final int index = i;
             box.setOnAction(e -> {
