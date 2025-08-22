@@ -1,6 +1,7 @@
 package net.justapie.majutsu.cache;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class Cache {
@@ -8,10 +9,10 @@ public class Cache {
     public static final int INDEFINITE_TTL = 0;
 
     private static final Cache INSTANCE = new Cache();
-    private final HashMap<String, CacheObject> cacheMap;
+    private final ConcurrentHashMap<String, CacheObject> cacheMap;
 
     private Cache() {
-        this.cacheMap = new HashMap<>();
+        this.cacheMap = new ConcurrentHashMap<>();
     }
 
     public static Cache getInstance() {
@@ -45,6 +46,11 @@ public class Cache {
 
     public void remove(String key) {
         this.cacheMap.remove(key);
+    }
+
+    public void removeByPrefix(String prefix) {
+        // Remove all keys that start with the given prefix
+        this.cacheMap.entrySet().removeIf(entry -> entry.getKey().startsWith(prefix));
     }
 
     public static int createTtl(TimeUnit unit, int interval) {

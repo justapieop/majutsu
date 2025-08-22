@@ -68,15 +68,36 @@ public class UserRepository {
     public void setActive(boolean active, List<Long> ids) {
         LOGGER.debug("Setting users {} activation mode to {}", ids, active);
 
-        try (PreparedStatement stmt = CONNECTION.prepareStatement(
+        try (PreparedStatement selectStmt = CONNECTION.prepareStatement(
+                "SELECT id, email FROM users WHERE id = ?"
+        ); PreparedStatement updateStmt = CONNECTION.prepareStatement(
                 "UPDATE users SET active = ? WHERE id = ?"
         )) {
             for (final Long id : ids) {
-                stmt.setBoolean(1, active);
-                stmt.setLong(2, id);
-                stmt.addBatch();
+                // Get email for cache invalidation
+                selectStmt.setLong(1, id);
+                ResultSet rs = selectStmt.executeQuery();
+                String email = null;
+                if (rs.next()) {
+                    email = rs.getString("email");
+                }
+                rs.close();
+                
+                // Update the user
+                updateStmt.setBoolean(1, active);
+                updateStmt.setLong(2, id);
+                updateStmt.addBatch();
+                
+                // Invalidate cache for this user (both by id and email)
+                Cache.getInstance().remove("user:" + id);
+                if (email != null) {
+                    Cache.getInstance().remove("user:" + email);
+                }
             }
-            stmt.executeBatch();
+            updateStmt.executeBatch();
+            
+            // Also invalidate cached users list
+            Cache.getInstance().remove("users");
         } catch (SQLException e) {
             LOGGER.error("Failed to set users {} activation mode to {}", ids, active);
             LOGGER.error(e.getMessage());
@@ -148,6 +169,9 @@ public class UserRepository {
             stmt.executeUpdate();
 
             HistoryRepositoryFactory.getInstance().create().recordBorrow(userId, bookId);
+            
+            // Invalidate user cache to force refresh of borrowed/available books
+            Cache.getInstance().remove("user:" + userId);
 
         } catch (SQLException e) {
             LOGGER.error("Failed while borrowing book {} for user {}", bookId, userId);
@@ -184,6 +208,9 @@ public class UserRepository {
             stmt.executeUpdate();
 
             HistoryRepositoryFactory.getInstance().create().recordReturn(userId, bookId);
+            
+            // Invalidate user cache to force refresh of borrowed/available books
+            Cache.getInstance().remove("user:" + userId);
         } catch (SQLException e) {
             LOGGER.error("Failed while returning book {} for user {}", bookId, userId);
             LOGGER.error(e.getMessage());

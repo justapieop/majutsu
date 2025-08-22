@@ -47,7 +47,7 @@ public class LoginController extends BaseController {
     @FXML
     private void onLoginButtonClick() {
         if (this.isWrongPassword()) {
-            Utils.getInstance().displayAlert("Invalid email or password successfully", Alert.AlertType.ERROR);
+            Utils.getInstance().displayAlert("Invalid email or password", Alert.AlertType.ERROR);
             return;
         }
         String email = this.emailField.getText();
@@ -60,9 +60,14 @@ public class LoginController extends BaseController {
             return;
         }
 
-        SessionStore.getInstance().setCurrentUserId(
-                UserRepositoryFactory.getInstance().create().getUserIdByEmail(email)
-        );
+        // Check if user account is blocked
+        User user = UserRepositoryFactory.getInstance().create().getUserByEmail(email);
+        if (Objects.isNull(user) || !user.isActive()) {
+            Utils.getInstance().displayAlert("Your account has been blocked", Alert.AlertType.ERROR);
+            return;
+        }
+
+        SessionStore.getInstance().setCurrentUserId(user.getId());
 
         Utils.getInstance().displayAlert("Logged in successfully", Alert.AlertType.INFORMATION);
 
