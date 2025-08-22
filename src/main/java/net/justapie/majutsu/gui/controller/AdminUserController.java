@@ -107,7 +107,7 @@ public final class AdminUserController extends AdminBookController implements In
                 false, this.selectedUsers.stream().map(
                         c -> {
                             int idx = this.userTable.getItems().indexOf(c);
-                            c.setActive(true);
+                            c.setActive(false);
                             this.userTable.getItems().set(idx, c);
                             return c.getId();
                         }

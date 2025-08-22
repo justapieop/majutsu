@@ -64,6 +64,10 @@ public class BookRepository {
                 stmt.addBatch();
             }
             stmt.executeBatch();
+            
+            // Invalidate caches after successful insert
+            Cache.getInstance().remove("books");
+            Cache.getInstance().removeByPrefix("user:");
         } catch (SQLException e) {
             LOGGER.error("Failed to insert books to db");
             LOGGER.error(e.getMessage());
@@ -138,10 +142,35 @@ public class BookRepository {
     }
 
     public List<Book> fetchBooksExcept(List<String> ids) {
-        LOGGER.debug("Fetching books {}", ids);
+        LOGGER.debug("Fetching books except {}", ids);
+
+        // If no books to exclude, get all available books
+        if (ids.isEmpty()) {
+            try (PreparedStatement stmt = CONNECTION.prepareStatement(
+                    "SELECT * FROM books WHERE available = true"
+            )) {
+                ResultSet rs = stmt.executeQuery();
+                List<Book> books = new ArrayList<>();
+
+                while (rs.next()) {
+                    Book currentBook = Book.fromResultSet(rs);
+                    assert currentBook != null;
+                    books.add(currentBook);
+                    BookCacheData currentBookData = new BookCacheData(currentBook, DataPreprocessing.getBookStatus(currentBook));
+                    Cache.getInstance().put("book:" + currentBook.getId(), currentBookData, Cache.INDEFINITE_TTL);
+                }
+
+                rs.close();
+                return books;
+            } catch (SQLException e) {
+                LOGGER.debug("Failed while fetching all available books");
+                LOGGER.debug(e.getMessage());
+                return Collections.emptyList();
+            }
+        }
 
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
-                "SELECT * FROM books WHERE id NOT IN (" + createPlaceholder(ids.size()) + ")"
+                "SELECT * FROM books WHERE id NOT IN (" + createPlaceholder(ids.size()) + ") AND available = true"
         )) {
             for (int i = 0; i < ids.size(); i++) {
                 stmt.setString(i + 1, ids.get(i));
@@ -194,10 +223,17 @@ public class BookRepository {
                 stmt.setBoolean(1, available);
                 stmt.setString(2, id);
                 stmt.addBatch();
+                
+                // Invalidate cache for this specific book
+                Cache.getInstance().remove("book:" + id);
             }
             stmt.executeBatch();
 
+            // Invalidate general books cache
             Cache.getInstance().remove("books");
+            
+            // Invalidate all user caches since availability changes affect user's available books
+            Cache.getInstance().removeByPrefix("user:");
         } catch (SQLException e) {
             LOGGER.error("Failed to update book availability");
             LOGGER.error(e.getMessage());
@@ -213,11 +249,18 @@ public class BookRepository {
             for (final String id : bookIds) {
                 stmt.setString(1, id);
                 stmt.addBatch();
+                
+                // Invalidate cache for each specific book being removed
+                Cache.getInstance().remove("book:" + id);
             }
 
             stmt.executeBatch();
 
+            // Invalidate general books cache
             Cache.getInstance().remove("books");
+            
+            // Invalidate all user caches since removed books affect user's available books
+            Cache.getInstance().removeByPrefix("user:");
         } catch (SQLException e) {
             LOGGER.error("Failed to remove books");
             LOGGER.error(e.getMessage());
