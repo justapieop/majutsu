@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import net.justapie.majutsu.db.schema.book.Book;
 import net.justapie.majutsu.gui.controller.prep.DataPreprocessing;
+import net.justapie.majutsu.gui.controller.prep.BookStatusType;
 
 public class GUIComponent {
     private static Label authorsLabel(Book book) {
@@ -40,7 +41,13 @@ public class GUIComponent {
         nameLabel.setWrapText(true);
         nameLabel.setAlignment(Pos.CENTER);
 
-        String currentStatus = (book.isAvailable() ? "Available" : (DataPreprocessing.isExpired(book) ? "Expired" : "Borrowed"));
+        BookStatusType statusType = DataPreprocessing.getBookStatus(book);
+        String currentStatus;
+        if (statusType == BookStatusType.AVAILABLE) {
+            currentStatus = "Available";
+        } else {
+            currentStatus = "Borrowed";
+        }
         Label statusLabel = new Label(currentStatus);
         statusLabel.setPrefWidth(100);
         statusLabel.setAlignment(Pos.CENTER);
