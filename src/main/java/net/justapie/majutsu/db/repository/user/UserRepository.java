@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -68,36 +69,15 @@ public class UserRepository {
     public void setActive(boolean active, List<Long> ids) {
         LOGGER.debug("Setting users {} activation mode to {}", ids, active);
 
-        try (PreparedStatement selectStmt = CONNECTION.prepareStatement(
-                "SELECT id, email FROM users WHERE id = ?"
-        ); PreparedStatement updateStmt = CONNECTION.prepareStatement(
+        try (PreparedStatement stmt = CONNECTION.prepareStatement(
                 "UPDATE users SET active = ? WHERE id = ?"
         )) {
             for (final Long id : ids) {
-                // Get email for cache invalidation
-                selectStmt.setLong(1, id);
-                ResultSet rs = selectStmt.executeQuery();
-                String email = null;
-                if (rs.next()) {
-                    email = rs.getString("email");
-                }
-                rs.close();
-                
-                // Update the user
-                updateStmt.setBoolean(1, active);
-                updateStmt.setLong(2, id);
-                updateStmt.addBatch();
-                
-                // Invalidate cache for this user (both by id and email)
-                Cache.getInstance().remove("user:" + id);
-                if (email != null) {
-                    Cache.getInstance().remove("user:" + email);
-                }
+                stmt.setBoolean(1, active);
+                stmt.setLong(2, id);
+                stmt.addBatch();
             }
-            updateStmt.executeBatch();
-            
-            // Also invalidate cached users list
-            Cache.getInstance().remove("users");
+            stmt.executeBatch();
         } catch (SQLException e) {
             LOGGER.error("Failed to set users {} activation mode to {}", ids, active);
             LOGGER.error(e.getMessage());
@@ -123,41 +103,52 @@ public class UserRepository {
 
     public void borrowBook(long userId, String bookId) {
         LOGGER.debug("Borrowing book {} for user {}", bookId, userId);
-        User user = this.getUserById(userId);
-        if (Objects.isNull(user)) {
-            LOGGER.debug("Nonexistent user of {} borrowing book", userId);
+        
+        // Read current borrowed_books directly from DB to avoid async loading issues
+        String currentBorrowedBooks = "";
+        try (PreparedStatement stmt = CONNECTION.prepareStatement("SELECT borrowed_books FROM users WHERE id = ?")) {
+            stmt.setLong(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                currentBorrowedBooks = rs.getString("borrowed_books");
+                if (currentBorrowedBooks == null) {
+                    currentBorrowedBooks = "";
+                }
+            } else {
+                LOGGER.debug("Nonexistent user of {} borrowing book", userId);
+                return;
+            }
+            rs.close();
+        } catch (SQLException e) {
+            LOGGER.error("Failed to read borrowed_books for user {}", userId);
             return;
         }
 
-        List<Book> modifiableBookList = new ArrayList<>(user.getBorrowedBooks());
-
         Book book = BookRepositoryFactory.getInstance().create().getBookById(bookId);
-
         if (Objects.isNull(book)) {
             LOGGER.debug("Nonexistent book {}", bookId);
             return;
         }
 
-        if (
-                user.getBorrowedBooks()
-                        .stream()
-                        .map(Volume::getId)
-                        .toList()
-                        .contains(bookId)
-        ) {
+        // Check if book is already borrowed
+        List<String> currentBookIds = Arrays.stream(currentBorrowedBooks.split(","))
+                .filter(id -> !id.trim().isEmpty())
+                .toList();
+                
+        if (currentBookIds.contains(bookId)) {
             LOGGER.debug("User {} already borrowed book {}", userId, bookId);
             return;
         }
 
-        LOGGER.debug("Previous number of book user {} borrowed: {}", userId, modifiableBookList.size());
+        LOGGER.debug("Previous number of books user {} borrowed: {}", userId, currentBookIds.size());
 
-        modifiableBookList.add(book);
-
-        LOGGER.debug("Final number of book user {} borrowed: {}", userId, modifiableBookList.size());
-
-        String newBookIdStr = modifiableBookList.stream().map(
-                Volume::getId
-        ).collect(Collectors.joining(","));
+        // Add new book ID
+        String newBookIdStr;
+        if (currentBorrowedBooks.isEmpty()) {
+            newBookIdStr = bookId;
+        } else {
+            newBookIdStr = currentBorrowedBooks + "," + bookId;
+        }
 
         LOGGER.debug("New borrowed bookId string {}", newBookIdStr);
 
@@ -170,7 +161,7 @@ public class UserRepository {
 
             HistoryRepositoryFactory.getInstance().create().recordBorrow(userId, bookId);
             
-            // Invalidate user cache to force refresh of borrowed/available books
+            // Invalidate user cache to force reload
             Cache.getInstance().remove("user:" + userId);
 
         } catch (SQLException e) {
@@ -181,24 +172,40 @@ public class UserRepository {
 
     public void returnBook(long userId, String bookId) {
         LOGGER.debug("Returning book {} for user {}", bookId, userId);
-        User user = this.getUserById(userId);
-        if (Objects.isNull(user)) {
-            LOGGER.debug("Nonexistent user of id {} returning book", userId);
+        
+        // Read current borrowed_books directly from DB to avoid async loading issues
+        String currentBorrowedBooks = "";
+        try (PreparedStatement stmt = CONNECTION.prepareStatement("SELECT borrowed_books FROM users WHERE id = ?")) {
+            stmt.setLong(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                currentBorrowedBooks = rs.getString("borrowed_books");
+                if (currentBorrowedBooks == null) {
+                    currentBorrowedBooks = "";
+                }
+            } else {
+                LOGGER.debug("Nonexistent user of id {} returning book", userId);
+                return;
+            }
+            rs.close();
+        } catch (SQLException e) {
+            LOGGER.error("Failed to read borrowed_books for user {}", userId);
             return;
         }
 
-        List<Book> modifiableBookList = new ArrayList<>(user.getBorrowedBooks());
-
-        if (!modifiableBookList.stream().map(Book::getId).toList().contains(bookId)) {
-            LOGGER.debug("User {} did not borrowed book {}", user, bookId);
+        // Check if book is actually borrowed
+        List<String> currentBookIds = Arrays.stream(currentBorrowedBooks.split(","))
+                .filter(id -> !id.trim().isEmpty())
+                .collect(Collectors.toList());
+                
+        if (!currentBookIds.contains(bookId)) {
+            LOGGER.debug("User {} did not borrow book {}", userId, bookId);
             return;
         }
 
-        modifiableBookList.removeIf(b -> b.getId().equals(bookId));
-
-        String newBookIdStr = modifiableBookList.stream().map(
-                Volume::getId
-        ).collect(Collectors.joining(","));
+        // Remove the book ID
+        currentBookIds.remove(bookId);
+        String newBookIdStr = String.join(",", currentBookIds);
 
         try (PreparedStatement stmt = CONNECTION.prepareStatement(
                 "UPDATE users SET borrowed_books = ? WHERE id = ?"
@@ -209,7 +216,7 @@ public class UserRepository {
 
             HistoryRepositoryFactory.getInstance().create().recordReturn(userId, bookId);
             
-            // Invalidate user cache to force refresh of borrowed/available books
+            // Invalidate user cache to force reload
             Cache.getInstance().remove("user:" + userId);
         } catch (SQLException e) {
             LOGGER.error("Failed while returning book {} for user {}", bookId, userId);

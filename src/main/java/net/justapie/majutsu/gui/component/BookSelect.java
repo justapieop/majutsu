@@ -66,9 +66,18 @@ public class BookSelect extends BaseComponent<GridPane> {
                 this.book.getCheckBox()
         );
 
-        ImageView imgView = new ImageView(
-                new Image(this.book.getVolumeInfo().getImageLinks().getThumbnail())
-        );
+        // Handle null image links gracefully
+        ImageView imgView;
+        if (this.book.getVolumeInfo().getImageLinks() != null && 
+            this.book.getVolumeInfo().getImageLinks().getThumbnail() != null) {
+            imgView = new ImageView(
+                    new Image(this.book.getVolumeInfo().getImageLinks().getThumbnail())
+            );
+        } else {
+            imgView = new ImageView();
+            imgView.setFitWidth(64);
+            imgView.setFitHeight(64);
+        }
 
         this.book.getCheckBox().setPadding(new Insets(0, 20, 0, 0));
 

@@ -50,6 +50,9 @@ public class VolumeInfo {
     }
 
     public List<String> getCategories() {
+        if (this.categories == null) {
+            return Collections.emptyList();
+        }
         return Collections.unmodifiableList(this.categories);
     }
 
@@ -66,6 +69,9 @@ public class VolumeInfo {
     }
 
     public List<IndustryIdentifier> getIndustryIdentifiers() {
+        if (this.industryIdentifiers == null) {
+            return Collections.emptyList();
+        }
         return Collections.unmodifiableList(this.industryIdentifiers);
     }
 
