@@ -88,10 +88,6 @@ public class HistoryRepository {
         ResultSet rs;
         try {
             rs = stmt.executeQuery();
-            if (rs.isBeforeFirst()) {
-                return Collections.emptyList();
-            }
-
             List<History> histories = new ArrayList<>();
 
             while (rs.next()) {

@@ -38,6 +38,12 @@ database, which unnecessarily increases the complexity of the program as well as
 
 This project is licensed under MIT License
 
+# Demo
+
+[![Demo Video](https://img.youtube.com/vi/miRE6xTlmG0/maxresdefault.jpg)](https://youtu.be/miRE6xTlmG0)
+
+Click the image above to watch the demo video.
+
 # Inheritance tree
 
 ![diagram.png](assets/diagram.png)
