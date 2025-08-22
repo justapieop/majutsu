@@ -65,9 +65,12 @@ public class BookRepository {
             }
             stmt.executeBatch();
             
-            // Invalidate caches after successful insert
+            // Invalidate relevant caches after successful book addition
             Cache.getInstance().remove("books");
+            // Invalidate user caches since available books have changed
             Cache.getInstance().removeByPrefix("user:");
+            
+            LOGGER.debug("Successfully added {} books and invalidated caches", book.size());
         } catch (SQLException e) {
             LOGGER.error("Failed to insert books to db");
             LOGGER.error(e.getMessage());
@@ -80,21 +83,23 @@ public class BookRepository {
         LOGGER.debug("Checking cached books {}", ids);
 
         List<Book> result = new ArrayList<>();
-        for (int i = ids.size() - 1; i >= 0; i--) {
-            String bookId = ids.get(i);
+        List<String> missingIds = new ArrayList<>();
+        
+        for (String bookId : ids) {
             CacheObject cacheData = Cache.getInstance().get("book:" + bookId);
             if (!Objects.isNull(cacheData) && !cacheData.isExpired()) {
                 LOGGER.debug("Book: {} hit cache", bookId);
                 result.add(((BookCacheData) cacheData.getData()).getBook());
-                ids.remove(i);
+            } else {
+                missingIds.add(bookId);
             }
         }
-        if (ids.isEmpty()) {
+        
+        if (missingIds.isEmpty()) {
             LOGGER.debug("All books hit cache, don't need to fetch");
-        }
-        else {
+        } else {
             LOGGER.debug("Preparing to fetch missing books");
-            result.addAll(forceBookFetch(ids));
+            result.addAll(forceBookFetch(missingIds));
         }
         return result;
     }
@@ -231,9 +236,6 @@ public class BookRepository {
 
             // Invalidate general books cache
             Cache.getInstance().remove("books");
-            
-            // Invalidate all user caches since availability changes affect user's available books
-            Cache.getInstance().removeByPrefix("user:");
         } catch (SQLException e) {
             LOGGER.error("Failed to update book availability");
             LOGGER.error(e.getMessage());
@@ -249,18 +251,20 @@ public class BookRepository {
             for (final String id : bookIds) {
                 stmt.setString(1, id);
                 stmt.addBatch();
-                
-                // Invalidate cache for each specific book being removed
-                Cache.getInstance().remove("book:" + id);
             }
 
             stmt.executeBatch();
 
-            // Invalidate general books cache
+            // Invalidate all relevant caches after successful book removal
             Cache.getInstance().remove("books");
-            
-            // Invalidate all user caches since removed books affect user's available books
+            // Invalidate individual book caches for removed books
+            for (String bookId : bookIds) {
+                Cache.getInstance().remove("book:" + bookId);
+            }
+            // Invalidate user caches since available/borrowed books have changed
             Cache.getInstance().removeByPrefix("user:");
+            
+            LOGGER.debug("Successfully removed {} books and invalidated caches", bookIds.size());
         } catch (SQLException e) {
             LOGGER.error("Failed to remove books");
             LOGGER.error(e.getMessage());

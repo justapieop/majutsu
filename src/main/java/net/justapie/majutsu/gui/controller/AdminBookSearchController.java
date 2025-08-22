@@ -85,9 +85,12 @@ public class AdminBookSearchController extends BaseController {
 
                     this.selectedListVBox.getChildren().clear();
                     for (final Map.Entry<DisplayableBook, Integer> entry : this.selected.entrySet()) {
-                        SelectedBook selectedBook = new SelectedBook(
-                                entry.getKey().getVolumeInfo().getImageLinks().getThumbnail()
-                        );
+                        String thumbnailUrl = null;
+                        if (entry.getKey().getVolumeInfo().getImageLinks() != null) {
+                            thumbnailUrl = entry.getKey().getVolumeInfo().getImageLinks().getThumbnail();
+                        }
+                        
+                        SelectedBook selectedBook = new SelectedBook(thumbnailUrl);
 
                         this.selectedListVBox.getChildren().addFirst(
                                 selectedBook.getMaster()

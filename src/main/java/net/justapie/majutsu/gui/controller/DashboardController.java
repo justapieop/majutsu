@@ -1,6 +1,8 @@
 package net.justapie.majutsu.gui.controller;
 
 import ch.qos.logback.classic.Logger;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import net.justapie.majutsu.db.repository.book.BookRepositoryFactory;
 import net.justapie.majutsu.db.repository.user.UserRepositoryFactory;
 import net.justapie.majutsu.db.schema.book.Book;
@@ -107,12 +110,18 @@ public class DashboardController extends BaseController implements Initializable
 
         List<Book> bookList = BookRepositoryFactory.getInstance().create().getAllBooks();
 
-        this.borrowedBooks = user.getBorrowedBooks();
-        this.availableBooks = user.getAvailableBooks();
+        // Initialize book lists (this will trigger async loading if needed)
+        this.borrowedBooks = new ArrayList<>();
+        this.availableBooks = new ArrayList<>();
+        this.expiredBooks = new ArrayList<>();
 
-        this.expiredBooks = new ArrayList<>(this.borrowedBooks.stream().filter((book) -> {
-            return DataPreprocessing.isExpired(book);
-        }).toList());
+        // Show initial state with loading indicators
+        this.borrowedBooksPrompt.setText("Loading borrowed books...");
+        this.availableBooksPrompt.setText("Loading available books...");
+        this.expiredBooksPrompt.setText("Loading expired books...");
+
+        // Set up periodic refresh to update UI once books are loaded
+        setupBookLoadingMonitor(user);
 
         this.availableBookContainer.setPadding(new Insets(5, 12, 0, 12));
         this.availableBookContainer.setSpacing(5);
@@ -120,6 +129,7 @@ public class DashboardController extends BaseController implements Initializable
         this.borrowedBookContainer.setPadding(new Insets(5, 12, 0, 12));
         this.borrowedBookContainer.setSpacing(5);
 
+        // Initial refresh with empty lists
         refresh();
     }
 
@@ -213,6 +223,40 @@ public class DashboardController extends BaseController implements Initializable
             new AdminSplashController().process();
         }
 
+    }
+
+    private void setupBookLoadingMonitor(User user) {
+        // Trigger loading immediately
+        user.getBorrowedBooks(); // This will start async loading if not already started
+        user.getAvailableBooks();
+        
+        // Simple polling mechanism with built-in timeout
+        final int[] attempts = {0};
+        final int maxAttempts = 50; // 5 seconds max
+        
+        Timeline timeline = new Timeline();
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(100), e -> {
+            attempts[0]++;
+            if (user.areBooksLoaded() || attempts[0] >= maxAttempts) {
+                // Books are loaded or timeout reached
+                if (user.areBooksLoaded()) {
+                    this.borrowedBooks = user.getBorrowedBooks();
+                    this.availableBooks = user.getAvailableBooks();
+                    
+                    this.expiredBooks = new ArrayList<>(this.borrowedBooks.stream().filter((book) -> {
+                        return DataPreprocessing.isExpired(book);
+                    }).toList());
+                }
+                
+                // Update UI and stop timeline
+                Platform.runLater(this::refresh);
+                timeline.stop();
+            }
+        });
+        
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
 
 }
